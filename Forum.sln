@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Forum.UI", "Forum.UI\Forum.UI.csproj", "{B7AB4C56-EDD3-42E0-AA0D-7C61BB759AA4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Forum.Entities", "Forum.Entities\Forum.Entities.csproj", "{83B4B97A-799E-4DD8-AF21-D385F3033A40}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Forum.DAL", "Forum.DAL\Forum.DAL.csproj", "{8DCD5B0C-9753-4894-8088-ADC80C1D619A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B7AB4C56-EDD3-42E0-AA0D-7C61BB759AA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7AB4C56-EDD3-42E0-AA0D-7C61BB759AA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7AB4C56-EDD3-42E0-AA0D-7C61BB759AA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7AB4C56-EDD3-42E0-AA0D-7C61BB759AA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83B4B97A-799E-4DD8-AF21-D385F3033A40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83B4B97A-799E-4DD8-AF21-D385F3033A40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83B4B97A-799E-4DD8-AF21-D385F3033A40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83B4B97A-799E-4DD8-AF21-D385F3033A40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DCD5B0C-9753-4894-8088-ADC80C1D619A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DCD5B0C-9753-4894-8088-ADC80C1D619A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DCD5B0C-9753-4894-8088-ADC80C1D619A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DCD5B0C-9753-4894-8088-ADC80C1D619A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
