@@ -7,18 +7,18 @@ using System.Threading.Tasks;
 
 namespace Forum.Entities
 {
-    internal class PostContents : BaseEntity
+    public class Comment : BaseEntity
     {
         [Key]
-        public int PostContentId { get; set; }
-
-        public string? ImagePath { get; set; }
+        public int CommentId { get; set; }
 
         [Required]
         [StringLength(200)]
-        public string PostDescription { get; set; }
+        public string CommentText { get; set; }
 
         public int? PostId { get; set; }
-        public Posts Posts { get; set; }
+        public Post Posts { get; set; }
+
+        public bool IsLiked { get; set; }
     }
 }

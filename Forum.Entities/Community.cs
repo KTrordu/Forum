@@ -7,12 +7,14 @@ using System.Threading.Tasks;
 
 namespace Forum.Entities
 {
-    internal class Communities : BaseEntity
+    public class Community : BaseEntity
     {
         [Key]
         public int CommunityId { get; set; }
 
         [Required]
         public string CommunityName { get; set; }
+
+        public bool IsSubscribed { get; set; } = false;
     }
 }

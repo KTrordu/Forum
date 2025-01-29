@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Forum.Entities
 {
-    internal class Posts : BaseEntity
+    public class Post : BaseEntity
     {
         [Key]
         public int PostId { get; set; }
@@ -17,6 +17,8 @@ namespace Forum.Entities
         public string PostTitle { get; set; }
 
         public int? CommunityId { get; set; }
-        public Communities Communities { get; set; }
+        public Community Communities { get; set; }
+
+        public bool IsLiked { get; set; } 
     }
 }
