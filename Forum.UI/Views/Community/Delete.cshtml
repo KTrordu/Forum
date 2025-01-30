@@ -1,0 +1,25 @@
+﻿@model Forum.UI.ViewModels.CommunityViewModel
+
+@{
+	ViewData["Title"] = "Delete";
+}
+<form asp-controller="Community" asp-action="Delete" method="post">
+	<input type="hidden" asp-for="CommunityId" />
+
+	<div class="border p-3 mt-4">
+		<div class="row pb-2">
+			<h2 class="text-primary">Delete Community</h2>
+			<hr />
+		</div>
+		<div asp-validation-summary="All"></div>
+		<div class="mb-3">
+			<label asp-for="CommunityName"></label>
+			<input asp-for="CommunityName" class="form-control" disabled/>
+			<span asp-validation-for="CommunityName" class="text-danger"></span>
+		</div>
+		<button type="submit" class="btn btn-danger" style="width:150px">Delete</button>
+		<a asp-controller="Community" asp-action="Index" class="btn btn-secondary" style="width:150px">
+			Back to List
+		</a>
+	</div>
+</form>

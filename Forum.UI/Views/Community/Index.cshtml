@@ -1,0 +1,73 @@
+﻿@model IEnumerable<Forum.UI.ViewModels.CommunityViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2 class="text-primary">Community List</h2>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="Community" asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> &nbsp; Create New Community
+            </a>
+        </div>
+    </div>
+</div>
+<br />
+<br />
+
+<table class="table table-bordered table-striped" style="width:100%">
+    <thead>
+        <tr>
+            <th>
+                Community Name
+            </th>
+            <th>
+                Created At
+            </th>
+            <th>
+                Subscribed
+            </th>
+            <th>
+                
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var obj in Model)
+        {
+            <tr>
+                <td width="40%">
+                    @obj.CommunityName
+                </td>
+                <td width="30%">
+                    @obj.CreatedAt.Day.@obj.CreatedAt.Month.@obj.CreatedAt.Year @obj.CreatedAt.DayOfWeek
+                </td>
+                <td width="10%">
+                    @if(obj.IsSubscribed)
+                    {
+                        <i class="bi bi-check2" style="color:green"></i>
+                    }
+                    @if(!obj.IsSubscribed)
+                    {
+                    <i class="bi bi-x" style="color:darkred"></i>
+                    }
+                </td>
+                <td width="10%">
+                    <div>
+                        <a asp-controller="Community" asp-action="Edit" asp-route-id="@obj.CommunityId" style="text-decoration:none; color:navy">
+                            <i class="bi bi-pencil-square" style="color:orange"></i> Edit</a>
+                    </div>
+                </td>
+                <td width="10%">
+                    <div>
+                        <a asp-controller="Community" asp-action="Delete" asp-route-id="@obj.CommunityId" style="text-decoration:none; color:darkred">
+                            <i class="bi bi-x-circle" style="color:darkred"></i> Delete</a>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

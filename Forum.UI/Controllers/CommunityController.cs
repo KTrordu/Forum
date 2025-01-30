@@ -22,6 +22,7 @@ namespace Forum.UI.Controllers
                 .Where(c => !c.IsDeleted)
                 .Select(c => new CommunityViewModel
                 {
+                    CommunityId = c.CommunityId,
                     CommunityName = c.CommunityName,
                     CreatedAt = c.CreatedAt,
                     IsSubscribed = c.IsSubscribed
@@ -67,6 +68,7 @@ namespace Forum.UI.Controllers
 
             var model = new CommunityViewModel
             {
+                CommunityId = community.CommunityId,
                 CommunityName = community.CommunityName,
                 CreatedAt = community.CreatedAt,
                 IsSubscribed = community.IsSubscribed
@@ -80,17 +82,20 @@ namespace Forum.UI.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(CommunityViewModel model)
         {
-            if (!ModelState.IsValid) return View(model);
+            if (ModelState.IsValid)
+            {
+                var community = _db.Communities
+                    .FirstOrDefault(c => c.CommunityId == model.CommunityId);
 
-            var community = _db.Communities
-                .FirstOrDefault(c => c.CommunityId == model.CommunityId);
-            
-            if (community == null) return NotFound();
+                if (community == null) return NotFound();
 
-            community.CommunityName = model.CommunityName;
+                community.CommunityName = model.CommunityName;
 
-            _db.SaveChanges();
-            return RedirectToAction("Index");
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            return View(model);
         }
 
         //DELETE: GET
@@ -105,6 +110,7 @@ namespace Forum.UI.Controllers
 
             var model = new CommunityViewModel
             {
+                CommunityId = community.CommunityId,
                 CommunityName = community.CommunityName,
                 CreatedAt = community.CreatedAt,
                 IsSubscribed = community.IsSubscribed
