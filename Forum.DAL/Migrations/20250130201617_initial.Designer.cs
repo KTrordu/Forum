@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Forum.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250129192901_initial")]
+    [Migration("20250130201617_initial")]
     partial class initial
     {
         /// <inheritdoc />
@@ -27,11 +27,11 @@ namespace Forum.DAL.Migrations
 
             modelBuilder.Entity("Forum.Entities.Comment", b =>
                 {
-                    b.Property<int>("CommentId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CommentId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("CommentText")
                         .IsRequired()
@@ -50,7 +50,7 @@ namespace Forum.DAL.Migrations
                     b.Property<int?>("PostId")
                         .HasColumnType("int");
 
-                    b.HasKey("CommentId");
+                    b.HasKey("Id");
 
                     b.HasIndex("PostId");
 
@@ -59,11 +59,11 @@ namespace Forum.DAL.Migrations
 
             modelBuilder.Entity("Forum.Entities.Community", b =>
                 {
-                    b.Property<int>("CommunityId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CommunityId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("CommunityName")
                         .IsRequired()
@@ -78,18 +78,18 @@ namespace Forum.DAL.Migrations
                     b.Property<bool>("IsSubscribed")
                         .HasColumnType("bit");
 
-                    b.HasKey("CommunityId");
+                    b.HasKey("Id");
 
                     b.ToTable("Communities");
                 });
 
             modelBuilder.Entity("Forum.Entities.Post", b =>
                 {
-                    b.Property<int>("PostId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PostId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CommunityId")
                         .HasColumnType("int");
@@ -108,7 +108,7 @@ namespace Forum.DAL.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.HasKey("PostId");
+                    b.HasKey("Id");
 
                     b.HasIndex("CommunityId");
 
@@ -117,11 +117,11 @@ namespace Forum.DAL.Migrations
 
             modelBuilder.Entity("Forum.Entities.PostContent", b =>
                 {
-                    b.Property<int>("PostContentId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PostContentId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -140,7 +140,7 @@ namespace Forum.DAL.Migrations
                     b.Property<int?>("PostId")
                         .HasColumnType("int");
 
-                    b.HasKey("PostContentId");
+                    b.HasKey("Id");
 
                     b.HasIndex("PostId");
 

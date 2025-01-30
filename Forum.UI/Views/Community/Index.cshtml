@@ -28,7 +28,7 @@
                 Created At
             </th>
             <th>
-                Subscribed
+                Subscription
             </th>
             <th>
                 
@@ -40,12 +40,15 @@
         {
             <tr>
                 <td width="40%">
-                    @obj.CommunityName
+                    <a asp-controller="Post" asp-action="Index" asp-route-id="@obj.Id" style="text-decoration:none; color:navy">
+                        @obj.CommunityName
+                    </a>
                 </td>
                 <td width="30%">
                     @obj.CreatedAt.Day.@obj.CreatedAt.Month.@obj.CreatedAt.Year @obj.CreatedAt.DayOfWeek
                 </td>
                 <td width="10%">
+                    <input type="hidden" asp-for="@obj.Id" />
                     @if(obj.IsSubscribed)
                     {
                         <i class="bi bi-check2" style="color:green"></i>
@@ -57,13 +60,13 @@
                 </td>
                 <td width="10%">
                     <div>
-                        <a asp-controller="Community" asp-action="Edit" asp-route-id="@obj.CommunityId" style="text-decoration:none; color:navy">
+                        <a asp-controller="Community" asp-action="Edit" asp-route-id="@obj.Id" style="text-decoration:none; color:navy">
                             <i class="bi bi-pencil-square" style="color:orange"></i> Edit</a>
                     </div>
                 </td>
                 <td width="10%">
                     <div>
-                        <a asp-controller="Community" asp-action="Delete" asp-route-id="@obj.CommunityId" style="text-decoration:none; color:darkred">
+                        <a asp-controller="Community" asp-action="Delete" asp-route-id="@obj.Id" style="text-decoration:none; color:darkred">
                             <i class="bi bi-x-circle" style="color:darkred"></i> Delete</a>
                     </div>
                 </td>

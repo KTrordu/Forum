@@ -15,7 +15,7 @@ namespace Forum.DAL.Migrations
                 name: "Communities",
                 columns: table => new
                 {
-                    CommunityId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CommunityName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsSubscribed = table.Column<bool>(type: "bit", nullable: false),
@@ -24,14 +24,14 @@ namespace Forum.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Communities", x => x.CommunityId);
+                    table.PrimaryKey("PK_Communities", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Posts",
                 columns: table => new
                 {
-                    PostId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PostTitle = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     CommunityId = table.Column<int>(type: "int", nullable: true),
@@ -41,19 +41,19 @@ namespace Forum.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Posts", x => x.PostId);
+                    table.PrimaryKey("PK_Posts", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Posts_Communities_CommunityId",
                         column: x => x.CommunityId,
                         principalTable: "Communities",
-                        principalColumn: "CommunityId");
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "Comments",
                 columns: table => new
                 {
-                    CommentId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CommentText = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     PostId = table.Column<int>(type: "int", nullable: true),
@@ -63,19 +63,19 @@ namespace Forum.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Comments", x => x.CommentId);
+                    table.PrimaryKey("PK_Comments", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Comments_Posts_PostId",
                         column: x => x.PostId,
                         principalTable: "Posts",
-                        principalColumn: "PostId");
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "PostContents",
                 columns: table => new
                 {
-                    PostContentId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ImagePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PostDescription = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
@@ -85,12 +85,12 @@ namespace Forum.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PostContents", x => x.PostContentId);
+                    table.PrimaryKey("PK_PostContents", x => x.Id);
                     table.ForeignKey(
                         name: "FK_PostContents_Posts_PostId",
                         column: x => x.PostId,
                         principalTable: "Posts",
-                        principalColumn: "PostId");
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(

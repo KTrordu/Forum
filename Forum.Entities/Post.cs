@@ -9,9 +9,6 @@ namespace Forum.Entities
 {
     public class Post : BaseEntity
     {
-        [Key]
-        public int PostId { get; set; }
-
         [Required]
         [StringLength(50)]
         public string PostTitle { get; set; }

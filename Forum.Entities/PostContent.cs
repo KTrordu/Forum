@@ -9,9 +9,6 @@ namespace Forum.Entities
 {
     public class PostContent : BaseEntity
     {
-        [Key]
-        public int PostContentId { get; set; }
-
         public string? ImagePath { get; set; }
 
         [Required]

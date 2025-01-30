@@ -9,9 +9,6 @@ namespace Forum.Entities
 {
     public class Community : BaseEntity
     {
-        [Key]
-        public int CommunityId { get; set; }
-
         [Required]
         public string CommunityName { get; set; }
 

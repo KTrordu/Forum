@@ -9,9 +9,6 @@ namespace Forum.Entities
 {
     public class Comment : BaseEntity
     {
-        [Key]
-        public int CommentId { get; set; }
-
         [Required]
         [StringLength(200)]
         public string CommentText { get; set; }

@@ -22,7 +22,7 @@ namespace Forum.UI.Controllers
                 .Where(c => !c.IsDeleted)
                 .Select(c => new CommunityViewModel
                 {
-                    CommunityId = c.CommunityId,
+                    Id = c.Id,
                     CommunityName = c.CommunityName,
                     CreatedAt = c.CreatedAt,
                     IsSubscribed = c.IsSubscribed
@@ -62,13 +62,13 @@ namespace Forum.UI.Controllers
             if (id == null || id == 0) return NotFound();
 
             var community = _db.Communities
-                .FirstOrDefault(c => c.CommunityId == id);
+                .FirstOrDefault(c => c.Id == id);
 
             if (community == null) return NotFound();
 
             var model = new CommunityViewModel
             {
-                CommunityId = community.CommunityId,
+                Id = community.Id,
                 CommunityName = community.CommunityName,
                 CreatedAt = community.CreatedAt,
                 IsSubscribed = community.IsSubscribed
@@ -85,7 +85,7 @@ namespace Forum.UI.Controllers
             if (ModelState.IsValid)
             {
                 var community = _db.Communities
-                    .FirstOrDefault(c => c.CommunityId == model.CommunityId);
+                    .FirstOrDefault(c => c.Id == model.Id);
 
                 if (community == null) return NotFound();
 
@@ -104,13 +104,13 @@ namespace Forum.UI.Controllers
             if (id == null || id == 0) return NotFound();
 
             var community = _db.Communities
-                .FirstOrDefault(c => c.CommunityId == id);
+                .FirstOrDefault(c => c.Id == id);
 
             if (community == null) return NotFound();
 
             var model = new CommunityViewModel
             {
-                CommunityId = community.CommunityId,
+                Id = community.Id,
                 CommunityName = community.CommunityName,
                 CreatedAt = community.CreatedAt,
                 IsSubscribed = community.IsSubscribed
@@ -127,7 +127,7 @@ namespace Forum.UI.Controllers
             if (id == null || id == 0) return NotFound();
 
             var community = _db.Communities
-                .FirstOrDefault (c => c.CommunityId == id);
+                .FirstOrDefault (c => c.Id == id);
 
             if (community == null) return NotFound();
 

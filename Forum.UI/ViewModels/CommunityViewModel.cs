@@ -6,7 +6,7 @@ namespace Forum.UI.ViewModels
     public class CommunityViewModel
     {
         [Required]
-        public int CommunityId { get; set; }
+        public int Id { get; set; }
 
         [Required]
         [DisplayName("Community Name")]
