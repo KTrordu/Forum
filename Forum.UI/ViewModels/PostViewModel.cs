@@ -21,5 +21,7 @@ namespace Forum.UI.ViewModels
         public string CommunityName { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
     }
 }

@@ -33,7 +33,7 @@
         {
             <tr>
                 <td>@post.PostTitle</td>
-                <td>@post.CreatedAt.ToShortDateString()</td>
+                <td>@post.CreatedAt.Day.@post.CreatedAt.Month.@post.CreatedAt.Year @post.CreatedAt.DayOfWeek</td>
                 <td>
                     <div>
                         <a asp-controller="Post" asp-action="Edit" asp-route-id="@post.Id" asp-route-communityId="@post.CommunityId" 
