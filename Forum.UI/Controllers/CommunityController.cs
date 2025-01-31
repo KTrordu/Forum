@@ -82,20 +82,18 @@ namespace Forum.UI.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(CommunityViewModel model)
         {
-            if (ModelState.IsValid)
-            {
-                var community = _db.Communities
-                    .FirstOrDefault(c => c.Id == model.Id);
+            if (!ModelState.IsValid) return View(model);
 
-                if (community == null) return NotFound();
+            var community = _db.Communities
+                .FirstOrDefault(c => c.Id == model.Id);
 
-                community.CommunityName = model.CommunityName;
+            if (community == null) return NotFound();
 
-                _db.SaveChanges();
-                return RedirectToAction("Index");
-            }
+            community.CommunityName = model.CommunityName;
+            community.UpdatedAt = DateTime.Now;
 
-            return View(model);
+            _db.SaveChanges();
+            return RedirectToAction("Index");
         }
 
         //DELETE: GET
@@ -132,6 +130,9 @@ namespace Forum.UI.Controllers
             if (community == null) return NotFound();
 
             community.IsDeleted = true;
+            community.DeletedAt = DateTime.Now;
+            community.UpdatedAt = DateTime.Now;
+
             _db.SaveChanges();
             return RedirectToAction("Index");
         }

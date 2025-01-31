@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Forum.UI.ViewModels.CommunityViewModel>
+﻿@model IEnumerable<Forum.UI.ViewModels.TopicViewModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -6,16 +6,11 @@
 <div class="container p-3">
     <div class="row pt-4">
         <div class="col-6">
-            <h2 class="text-primary">Community List</h2>
+            <h2 class="text-primary">Topic List</h2>
         </div>
-        <div class="col-3 text-end">
+        <div class="col-6 text-end">
             <a asp-controller="Topic" asp-action="Create" class="btn btn-primary">
                 <i class="bi bi-plus-circle"></i> &nbsp; Create New Topic
-            </a>
-        </div>
-        <div class="col-3 text-end">
-            <a asp-controller="Community" asp-action="Create" class="btn btn-primary">
-                <i class="bi bi-plus-circle"></i> &nbsp; Create New Community
             </a>
         </div>
     </div>
@@ -25,13 +20,10 @@
     <thead>
         <tr>
             <th>
-                Community Name
+                Topic Name
             </th>
             <th>
                 Created At
-            </th>
-            <th>
-                Subscription
             </th>
             <th>
                 
@@ -44,32 +36,21 @@
             <tr>
                 <td width="40%">
                     <a asp-controller="Post" asp-action="Index" asp-route-id="@obj.Id" style="text-decoration:none; color:navy">
-                        @obj.CommunityName
+                        @obj.TopicName
                     </a>
                 </td>
-                <td width="30%">
+                <td width="40%">
                     @obj.CreatedAt.Day.@obj.CreatedAt.Month.@obj.CreatedAt.Year @obj.CreatedAt.DayOfWeek
                 </td>
                 <td width="10%">
-                    <input type="hidden" asp-for="@obj.Id" />
-                    @if(obj.IsSubscribed)
-                    {
-                        <i class="bi bi-check2" style="color:green"></i>
-                    }
-                    @if(!obj.IsSubscribed)
-                    {
-                    <i class="bi bi-x" style="color:darkred"></i>
-                    }
-                </td>
-                <td width="10%">
                     <div>
-                        <a asp-controller="Community" asp-action="Edit" asp-route-id="@obj.Id" style="text-decoration:none; color:navy">
+                        <a asp-controller="Topic" asp-action="Edit" asp-route-id="@obj.Id" style="text-decoration:none; color:navy">
                             <i class="bi bi-pencil-square" style="color:orange"></i> Edit</a>
                     </div>
                 </td>
                 <td width="10%">
                     <div>
-                        <a asp-controller="Community" asp-action="Delete" asp-route-id="@obj.Id" style="text-decoration:none; color:darkred">
+                        <a asp-controller="Topic" asp-action="Delete" asp-route-id="@obj.Id" style="text-decoration:none; color:darkred">
                             <i class="bi bi-x-circle" style="color:darkred"></i> Delete</a>
                     </div>
                 </td>

@@ -18,5 +18,6 @@ namespace Forum.DAL
         public DbSet<Post> Posts { get; set; }
         public DbSet<PostContent> PostContents { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<Topic> Topics { get; set; }
     }
 }

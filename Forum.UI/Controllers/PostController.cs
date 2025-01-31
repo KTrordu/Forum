@@ -29,15 +29,13 @@ namespace Forum.UI.ViewModels
                 .Select(p => new PostViewModel
                 {
                     Id = p.Id,
-                    PostTitle = p.PostTitle,
+                    //PostTitle = p.PostTitle,
                     IsLiked = p.IsLiked,
                     CommunityId = (int)p.CommunityId!,
                     CommunityName = community.CommunityName,
                     CreatedAt = p.CreatedAt
                 })
                 .ToList();
-
-            Console.WriteLine($"Total posts retrieved for CommunityId {id}: {posts.Count}");
 
             var viewModel = new PostListViewModel
             {
@@ -80,7 +78,7 @@ namespace Forum.UI.ViewModels
 
                 var post = new Post
                 {
-                    PostTitle = model.PostTitle,
+                    //PostTitle = model.PostTitle,
                     CommunityId = model.CommunityId
                 };
 
@@ -109,7 +107,7 @@ namespace Forum.UI.ViewModels
             var model = new PostViewModel
             {
                 Id = post.Id,
-                PostTitle = post.PostTitle,
+                //PostTitle = post.PostTitle,
                 IsLiked = post.IsLiked,
                 CommunityId = community.Id,
                 CommunityName = community.CommunityName,
@@ -134,7 +132,7 @@ namespace Forum.UI.ViewModels
 
                 if (community == null || post == null) return NotFound();
 
-                post.PostTitle = model.PostTitle;
+                //post.PostTitle = model.PostTitle;
                 _db.SaveChanges();
 
                 return RedirectToAction("Index", new { id = model.CommunityId });
@@ -159,7 +157,7 @@ namespace Forum.UI.ViewModels
             var model = new PostViewModel
             {
                 Id = post.Id,
-                PostTitle = post.PostTitle,
+                //PostTitle = post.PostTitle,
                 IsLiked = post.IsLiked,
                 CommunityId = community.Id,
                 CommunityName = community.CommunityName,
@@ -182,6 +180,9 @@ namespace Forum.UI.ViewModels
             if (post == null) return NotFound();
 
             post.IsDeleted = true;
+            post.DeletedAt = DateTime.Now;
+            post.UpdatedAt = DateTime.Now;
+
             _db.SaveChanges();
             return RedirectToAction("Index", new {id = communityId});
         }

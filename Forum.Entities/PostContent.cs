@@ -9,6 +9,9 @@ namespace Forum.Entities
 {
     public class PostContent : BaseEntity
     {
+        [StringLength(50)]
+        public string PostTitle { get; set; }
+
         public string? ImagePath { get; set; }
 
         [StringLength(200)]

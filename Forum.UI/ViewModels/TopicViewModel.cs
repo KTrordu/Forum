@@ -1,18 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Forum.UI.ViewModels
 {
-    public class PostViewModel
+    public class TopicViewModel
     {
         [Required]
         public int Id { get; set; }
 
-        [DisplayName("Post Title")]
-        public string PostTitle { get; set; }
-
-        public bool IsLiked { get; set; } = false;
+        [StringLength(20)]
+        [DisplayName("Topic Name")]
+        public string TopicName { get; set; }
 
         public int CommunityId { get; set; }
 
