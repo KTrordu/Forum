@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Forum.UI.ViewModels
 {
@@ -7,10 +8,9 @@ namespace Forum.UI.ViewModels
         [Required]
         public int CommunityId { get; set; }
 
-        [Required]
+        [DisplayName("Community Name")]
         public string CommunityName { get; set; }
 
-        [Required]
         public List<PostViewModel> Posts { get; set; }
     }
 }

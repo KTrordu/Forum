@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Forum.UI.ViewModels
 {
@@ -8,18 +10,16 @@ namespace Forum.UI.ViewModels
         public int Id { get; set; }
 
         [Required]
+        [DisplayName("Post Title")]
         public string PostTitle { get; set; }
 
-        [Required]
         public bool IsLiked { get; set; } = false;
 
-        [Required]
         public int CommunityId { get; set; }
 
-        [Required]
+        [DisplayName("Community Name")]
         public string CommunityName { get; set; }
 
-        [Required]
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

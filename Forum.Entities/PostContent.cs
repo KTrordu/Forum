@@ -11,7 +11,6 @@ namespace Forum.Entities
     {
         public string? ImagePath { get; set; }
 
-        [Required]
         [StringLength(200)]
         public string PostDescription { get; set; }
 

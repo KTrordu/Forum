@@ -1,0 +1,27 @@
+﻿@model Forum.UI.ViewModels.PostViewModel
+
+@{
+	ViewData["Title"] = "Delete";
+}
+<form asp-controller="Post" asp-action="Delete" method="post">
+	<input type="hidden" asp-for="Id" />
+	<input type="hidden" asp-for="CommunityId" />
+
+	<div class="border p-3 mt-4">
+		<div class="row pb-2">
+			<h2 class="text-primary">Delete Post</h2>
+			<hr />
+		</div>
+		<div asp-validation-summary="All"></div>
+		<div class="mb-3">
+			<label asp-for="PostTitle"></label>
+			<input asp-for="PostTitle" class="form-control" disabled/>
+			<span asp-validation-for="PostTitle" class="text-danger"></span>
+		</div>
+		<button type="submit" class="btn btn-primary" style="width:150px">Delete</button>
+		<a asp-controller="Post" asp-action="Index" asp-route-id="@Model.Id" asp-route-communityId="@Model.CommunityId" 
+		class="btn btn-secondary" style="width:150px">
+			Back to List
+		</a>
+	</div>
+</form>

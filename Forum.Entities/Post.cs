@@ -9,13 +9,12 @@ namespace Forum.Entities
 {
     public class Post : BaseEntity
     {
-        [Required]
         [StringLength(50)]
         public string PostTitle { get; set; }
 
         public int? CommunityId { get; set; }
         public Community Communities { get; set; }
 
-        public bool IsLiked { get; set; } 
+        public bool IsLiked { get; set; } = false;
     }
 }

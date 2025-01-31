@@ -8,14 +8,12 @@ namespace Forum.UI.ViewModels
         [Required]
         public int Id { get; set; }
 
-        [Required]
         [DisplayName("Community Name")]
         public string CommunityName { get; set; }
 
-        [Required]
-        public bool IsSubscribed { get; set; }
+        public bool IsSubscribed { get; set; } = false;
 
         [Required]
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

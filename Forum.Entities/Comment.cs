@@ -9,7 +9,6 @@ namespace Forum.Entities
 {
     public class Comment : BaseEntity
     {
-        [Required]
         [StringLength(200)]
         public string CommentText { get; set; }
 

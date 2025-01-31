@@ -9,7 +9,6 @@ namespace Forum.Entities
 {
     public class Community : BaseEntity
     {
-        [Required]
         public string CommunityName { get; set; }
 
         public bool IsSubscribed { get; set; } = false;
