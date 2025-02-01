@@ -14,22 +14,19 @@ namespace Forum.UI.ViewModels
         }
 
         //READ: GET
-        public IActionResult Index(int? id)
+        public IActionResult Index(int? communityId)
         {
             var community = _db.Communities
-                .Where(c => c.Id == id)
+                .Where(c => c.Id == communityId && !c.IsDeleted)
                 .Select(c => new { c.Id, c.CommunityName})
                 .FirstOrDefault();
 
-            if (community == null) return NotFound();
-
             var posts = _db.Posts
-                .Where(p => p.CommunityId == id
-                    && p.IsDeleted == false)
+                .Where(p => p.CommunityId == communityId
+                    && !p.IsDeleted)
                 .Select(p => new PostViewModel
                 {
                     Id = p.Id,
-                    //PostTitle = p.PostTitle,
                     IsLiked = p.IsLiked,
                     CommunityId = (int)p.CommunityId!,
                     CommunityName = community.CommunityName,
@@ -37,30 +34,54 @@ namespace Forum.UI.ViewModels
                 })
                 .ToList();
 
-            var viewModel = new PostListViewModel
+            var postIds = posts.Select(p => p.Id).ToList();
+            var postContents = _db.PostContents
+                .Where(pc => postIds.Contains(pc.PostId.Value))
+                .ToDictionary(pc => pc.PostId, pc => new { pc.PostTitle, pc.PostDescription, pc.ImagePath });
+
+            if (community == null || posts == null || postIds == null || postContents == null) return NotFound();
+
+            foreach (var post in posts)
+            {
+                if (postContents.TryGetValue(post.Id, out var content))
+                {
+                    post.PostTitle = content.PostTitle;
+                    post.PostDescription = content.PostDescription;
+                    post.ImagePath = content.ImagePath;
+                }
+            }
+
+            var postListViewModel = new PostListViewModel
             {
                 CommunityId = community.Id,
                 CommunityName = community.CommunityName,
                 Posts = posts
             };
 
-            return View(viewModel);
+            return View(postListViewModel);
         }
 
         //CREATE: GET
-        public IActionResult Create(int? id)
+        public IActionResult Create(int? communityId, int? topicId)
         {
-            if (id == null || id == 0) return NotFound();
+            if (communityId == null || communityId == 0) return NotFound();
 
             var community = _db.Communities
-                .FirstOrDefault(c => c.Id == id);
+                .Where(c => !c.IsDeleted)
+                .FirstOrDefault(c => c.Id == communityId);
 
-            if (community == null) return NotFound();
+            var topic = _db.Topics
+                .Where(t => !t.IsDeleted)
+                .FirstOrDefault(t => t.Id == topicId);
+
+            if (community == null || topic == null) return NotFound();
 
             var model = new PostViewModel
             {
                 CommunityId = community.Id,
-                CommunityName = community.CommunityName
+                CommunityName = community.CommunityName,
+                TopicId = topic.Id,
+                TopicName = topic.TopicName
             };
 
             return View(model);
@@ -71,46 +92,75 @@ namespace Forum.UI.ViewModels
         [ValidateAntiForgeryToken]
         public IActionResult Create(PostViewModel model)
         {
-            if (ModelState.IsValid)
-            {
-                var community = _db.Communities
-                    .FirstOrDefault(c => c.Id == model.CommunityId);
+            if (!ModelState.IsValid) return View(model);
 
-                var post = new Post
+            var community = _db.Communities
+                .Where(c => !c.IsDeleted)
+                .FirstOrDefault(c => c.Id == model.CommunityId);
+
+            var topic = _db.Topics
+                .Where(t => !t.IsDeleted)
+                .FirstOrDefault(t => t.Id == model.TopicId);
+
+            if (community == null || topic == null) return NotFound();
+
+            var post = new Post
                 {
-                    //PostTitle = model.PostTitle,
-                    CommunityId = model.CommunityId
+                    CommunityId = model.CommunityId,
+                    TopicId = model.Id,
                 };
 
                 _db.Posts.Add(post);
                 _db.SaveChanges();
 
-                return RedirectToAction("Index", new {id = model.CommunityId});
-            }
+            var postContent = new PostContent
+            {
+                PostId = post.Id,
+                PostTitle = model.PostTitle,
+                PostDescription = model.PostDescription,
+                ImagePath = model.ImagePath
+            };
 
-            return View(model);
+            _db.PostContents.Add(postContent);
+            _db.SaveChanges();
+
+            return RedirectToAction("Index", new {communityId = model.CommunityId});
         }
 
         //UPDATE: GET
-        public IActionResult Edit(int? id, int? communityId)
+        public IActionResult Edit(int? id, int? communityId, int? topicId)
         {
             if (id == null || id == 0) return NotFound();
 
             var community = _db.Communities
+                .Where(c => !c.IsDeleted)
                 .FirstOrDefault(c => c.Id == communityId);
 
+            var topic = _db.Topics
+                .Where(t => !t.IsDeleted)
+                .FirstOrDefault(t => t.Id == topicId);
+
             var post = _db.Posts
+                .Where(p => !p.IsDeleted)
                 .FirstOrDefault(p => p.Id == id);
 
-            if (community == null || post == null) return NotFound();
+            var postContent = _db.PostContents
+                .Where(p => !p.IsDeleted)
+                .FirstOrDefault(p => p.PostId == post!.Id);
+
+            if (community == null || topic == null || post == null || postContent == null) return NotFound();
 
             var model = new PostViewModel
             {
                 Id = post.Id,
-                //PostTitle = post.PostTitle,
+                PostTitle = postContent.PostTitle,
+                PostDescription = postContent.PostDescription,
+                ImagePath = postContent.ImagePath,
                 IsLiked = post.IsLiked,
                 CommunityId = community.Id,
                 CommunityName = community.CommunityName,
+                TopicId = topic.Id,
+                TopicName = topic.TopicName,
                 CreatedAt = post.CreatedAt
             };
 
@@ -125,42 +175,79 @@ namespace Forum.UI.ViewModels
             if (ModelState.IsValid)
             {
                 var community = _db.Communities
+                    .Where(c => !c.IsDeleted)
                     .FirstOrDefault(c => c.Id == model.CommunityId);
 
+                var topic = _db.Topics
+                    .Where(t => !t.IsDeleted)
+                    .FirstOrDefault(t => t.Id == model.TopicId);
+
                 var post = _db.Posts
+                    .Where(p => !p.IsDeleted)
                     .FirstOrDefault(p => p.Id == model.Id);
 
-                if (community == null || post == null) return NotFound();
+                if (community == null || topic == null || post == null) return NotFound();
 
-                //post.PostTitle = model.PostTitle;
+                var postContent = _db.PostContents
+                    .Where(p => !p.IsDeleted)
+                    .FirstOrDefault(p => p.Id == post.Id);
+
+                if (postContent == null) return NotFound();
+
+                post.CommunityId = community.Id;
+                post.TopicId = topic.Id;
+                post.UpdatedAt = DateTime.Now;
+                _db.Posts.Update(post);
+
+                postContent.PostTitle = model.PostTitle;
+                postContent.PostDescription = model.PostDescription;
+                postContent.ImagePath = model.ImagePath;
+                _db.PostContents.Update(postContent);
+
                 _db.SaveChanges();
 
-                return RedirectToAction("Index", new { id = model.CommunityId });
+                return RedirectToAction("Index", new { communityId = model.CommunityId });
             }
 
             return View(model);
         }
 
         //DELETE: GET
-        public IActionResult Delete(int? id, int? communityId)
+        public IActionResult Delete(int? id, int? communityId, int? topicId)
         {
-            if (id == null || id == 0) return NotFound();
+            if (id == null || id == 0 || communityId == null || communityId == 0 || topicId == null || topicId == 0) return NotFound();
 
             var community = _db.Communities
+                .Where(c => !c.IsDeleted)
                 .FirstOrDefault(c => c.Id == communityId);
 
+            var topic = _db.Topics
+                .Where(t => !t.IsDeleted)
+                .FirstOrDefault(t => t.Id == topicId);
+
             var post = _db.Posts
+                .Where(p => !p.IsDeleted)
                 .FirstOrDefault(p => p.Id == id);
 
-            if (community == null || post == null) return NotFound();
+            if (community == null || topic == null || post == null) return NotFound();
+
+            var postContent = _db.PostContents
+                .Where(p => !p.IsDeleted)
+                .FirstOrDefault(p => p.Id == post.Id);
+
+            if (postContent == null) return NotFound();
 
             var model = new PostViewModel
             {
                 Id = post.Id,
-                //PostTitle = post.PostTitle,
+                PostTitle = postContent.PostTitle,
+                PostDescription = postContent.PostDescription,
+                ImagePath = postContent.ImagePath,
                 IsLiked = post.IsLiked,
                 CommunityId = community.Id,
                 CommunityName = community.CommunityName,
+                TopicId = topic.Id,
+                TopicName = topic.TopicName,
                 CreatedAt = post.CreatedAt
             };
 
@@ -170,20 +257,34 @@ namespace Forum.UI.ViewModels
         //DELETE: POST
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeletePOST(int? id, int? communityId)
+        public IActionResult DeletePOST(int? id, int? communityId, int? topicId)
         {
-            if (id == null || id == 0) return NotFound();
+            if (id == null || id == 0 || communityId == null || communityId == 0 || topicId == null || topicId == 0) return NotFound();
 
             var post = _db.Posts
-                .FirstOrDefault (p => p.Id == id);
+                .Where(p => !p.IsDeleted)
+                .FirstOrDefault(p => p.Id == id);
 
             if (post == null) return NotFound();
+
+            var postContent = _db.PostContents
+                .Where(p => !p.IsDeleted)
+                .FirstOrDefault(p => p.Id == post.Id);
+
+            if (postContent == null) return NotFound();
 
             post.IsDeleted = true;
             post.DeletedAt = DateTime.Now;
             post.UpdatedAt = DateTime.Now;
+            _db.Posts.Update(post);
+
+            postContent.IsDeleted = true;
+            postContent.DeletedAt = DateTime.Now;
+            postContent.UpdatedAt = DateTime.Now;
+            _db.PostContents.Update(postContent);
 
             _db.SaveChanges();
+
             return RedirectToAction("Index", new {id = communityId});
         }
     }

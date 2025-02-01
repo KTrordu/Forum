@@ -62,6 +62,7 @@ namespace Forum.UI.Controllers
             if (id == null || id == 0) return NotFound();
 
             var community = _db.Communities
+                .Where(c => !c.IsDeleted)
                 .FirstOrDefault(c => c.Id == id);
 
             if (community == null) return NotFound();
@@ -85,6 +86,7 @@ namespace Forum.UI.Controllers
             if (!ModelState.IsValid) return View(model);
 
             var community = _db.Communities
+                .Where(c => !c.IsDeleted)
                 .FirstOrDefault(c => c.Id == model.Id);
 
             if (community == null) return NotFound();
@@ -102,6 +104,7 @@ namespace Forum.UI.Controllers
             if (id == null || id == 0) return NotFound();
 
             var community = _db.Communities
+                .Where(c => !c.IsDeleted)
                 .FirstOrDefault(c => c.Id == id);
 
             if (community == null) return NotFound();
@@ -125,6 +128,7 @@ namespace Forum.UI.Controllers
             if (id == null || id == 0) return NotFound();
 
             var community = _db.Communities
+                .Where(c => !c.IsDeleted)
                 .FirstOrDefault (c => c.Id == id);
 
             if (community == null) return NotFound();

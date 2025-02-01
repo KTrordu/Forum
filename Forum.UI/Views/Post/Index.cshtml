@@ -12,7 +12,7 @@
             <a asp-controller="Community" asp-action="Index" class="btn btn-dark">Back to Communities</a>
         </div>
         <div class="col-6 text-end">
-            <a asp-controller="Post" asp-action="Create" asp-route-id="@Model.CommunityId" class="btn btn-primary">
+            <a asp-controller="Post" asp-action="Create" asp-route-communityId="@Model.CommunityId" class="btn btn-primary">
                 <i class="bi bi-plus-circle"></i> &nbsp; Post Something
             </a>
         </div>
@@ -23,6 +23,7 @@
     <thead>
         <tr>
             <th>Post Title</th>
+            <th>Description</th>
             <th>Created At</th>
             <th></th>
             <th></th>
@@ -31,8 +32,13 @@
     <tbody>
         @foreach (var post in Model.Posts)
         {
+            @if(post.ImagePath != null || post.ImagePath != "")
+            {
+                <img src="@post.ImagePath" alt="@post.PostTitle" />
+            }
             <tr>
                 <td>@post.PostTitle</td>
+                <td>@post.PostDescription</td>
                 <td>@post.CreatedAt.Day.@post.CreatedAt.Month.@post.CreatedAt.Year @post.CreatedAt.DayOfWeek</td>
                 <td>
                     <div>

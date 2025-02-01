@@ -20,7 +20,7 @@
 			<span asp-validation-for="PostTitle" class="text-danger"></span>
 		</div>
 		<button type="submit" class="btn btn-primary" style="width:150px">Edit</button>
-		<a asp-controller="Post" asp-action="Index" asp-route-id="@Model.CommunityId" class="btn btn-secondary" style="width:150px">
+		<a asp-controller="Post" asp-action="Index" asp-route-communityId="@Model.CommunityId" class="btn btn-secondary" style="width:150px">
 			Back to List
 		</a>
 	</div>
