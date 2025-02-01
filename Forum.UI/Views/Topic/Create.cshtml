@@ -5,7 +5,6 @@
 }
 <form asp-controller="Topic" asp-action="Create" method="post">
 	<input type="hidden" asp-for="CommunityId" />
-	<input type="hidden" asp-for="CommunityName" />
 
 	<div class="border p-3 mt-4">
 		<div class="row pb-2">
@@ -19,7 +18,7 @@
 			<span asp-validation-for="TopicName" class="text-danger"></span>
 		</div>
 		<button type="submit" class="btn btn-primary" style="width:150px">Create</button>
-		<a asp-controller="Topic" asp-action="Index" class="btn btn-secondary" style="width:150px">
+		<a asp-controller="Topic" asp-action="Index" asp-route-communityId="@Model.CommunityId" class="btn btn-secondary" style="width:150px">
 			Back to List
 		</a>
 	</div>

@@ -1,6 +1,7 @@
 ﻿using Forum.DAL;
 using Forum.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Forum.UI.ViewModels
 {
@@ -14,32 +15,62 @@ namespace Forum.UI.ViewModels
         }
 
         //READ: GET
-        public IActionResult Index(int? communityId)
+        public IActionResult Index(int? communityId, int? topicId = 0)
         {
             var community = _db.Communities
                 .Where(c => c.Id == communityId && !c.IsDeleted)
                 .Select(c => new { c.Id, c.CommunityName})
                 .FirstOrDefault();
 
-            var posts = _db.Posts
-                .Where(p => p.CommunityId == communityId
-                    && !p.IsDeleted)
+            if (community == null) return NotFound();
+
+            var topic = topicId > 0 ? _db.Topics
+                .Where(t => t.Id == topicId && !t.IsDeleted)
+                .Select(t => new { t.Id, t.TopicName })
+                .FirstOrDefault() : null;
+
+            List<PostViewModel>? posts;
+            if (topic?.Id > 0)
+            {
+                posts = _db.Posts
+                .Where(p => p.CommunityId == communityId && !p.IsDeleted)
                 .Select(p => new PostViewModel
                 {
                     Id = p.Id,
                     IsLiked = p.IsLiked,
                     CommunityId = (int)p.CommunityId!,
                     CommunityName = community.CommunityName,
+                    TopicId = topic.Id,
+                    TopicName = topic.TopicName,
                     CreatedAt = p.CreatedAt
                 })
                 .ToList();
+            }
+            else
+            {
+                posts = _db.Posts
+                .Where(p => p.CommunityId == communityId && !p.IsDeleted)
+                .Select(p => new PostViewModel
+                {
+                    Id = p.Id,
+                    IsLiked = p.IsLiked,
+                    CommunityId = (int)p.CommunityId!,
+                    CommunityName = community.CommunityName,
+                    TopicId = 0,
+                    TopicName = "General",
+                    CreatedAt = p.CreatedAt
+                })
+                .ToList();
+            }
+
+            if (posts == null) return NotFound();
 
             var postIds = posts.Select(p => p.Id).ToList();
             var postContents = _db.PostContents
                 .Where(pc => postIds.Contains(pc.PostId.Value))
                 .ToDictionary(pc => pc.PostId, pc => new { pc.PostTitle, pc.PostDescription, pc.ImagePath });
 
-            if (community == null || posts == null || postIds == null || postContents == null) return NotFound();
+            if (postIds == null || postContents == null) return NotFound();
 
             foreach (var post in posts)
             {
@@ -55,6 +86,8 @@ namespace Forum.UI.ViewModels
             {
                 CommunityId = community.Id,
                 CommunityName = community.CommunityName,
+                TopicId = topic?.Id ?? 0,
+                TopicName = topic?.TopicName ?? "General",
                 Posts = posts
             };
 
@@ -62,7 +95,7 @@ namespace Forum.UI.ViewModels
         }
 
         //CREATE: GET
-        public IActionResult Create(int? communityId, int? topicId)
+        public IActionResult Create(int? communityId)
         {
             if (communityId == null || communityId == 0) return NotFound();
 
@@ -70,18 +103,22 @@ namespace Forum.UI.ViewModels
                 .Where(c => !c.IsDeleted)
                 .FirstOrDefault(c => c.Id == communityId);
 
-            var topic = _db.Topics
-                .Where(t => !t.IsDeleted)
-                .FirstOrDefault(t => t.Id == topicId);
+            var topics = _db.Topics
+                .Where(t => !t.IsDeleted && t.CommunityId == communityId)
+                .Select(t => new SelectListItem
+                {
+                    Value = t.Id.ToString(),
+                    Text = t.TopicName
+                })
+                .ToList();
 
-            if (community == null || topic == null) return NotFound();
+            if (community == null || topics == null) return NotFound();
 
             var model = new PostViewModel
             {
                 CommunityId = community.Id,
                 CommunityName = community.CommunityName,
-                TopicId = topic.Id,
-                TopicName = topic.TopicName
+                Topics = topics
             };
 
             return View(model);
@@ -92,17 +129,19 @@ namespace Forum.UI.ViewModels
         [ValidateAntiForgeryToken]
         public IActionResult Create(PostViewModel model)
         {
-            if (!ModelState.IsValid) return View(model);
+            if (!ModelState.IsValid)
+            {
+                model.Topics = _db.Topics
+                    .Where(t => t.CommunityId == model.CommunityId && !t.IsDeleted)
+                    .Select(t => new SelectListItem
+                    {
+                        Value = t.Id.ToString(),
+                        Text = t.TopicName
+                    })
+                    .ToList();
 
-            var community = _db.Communities
-                .Where(c => !c.IsDeleted)
-                .FirstOrDefault(c => c.Id == model.CommunityId);
-
-            var topic = _db.Topics
-                .Where(t => !t.IsDeleted)
-                .FirstOrDefault(t => t.Id == model.TopicId);
-
-            if (community == null || topic == null) return NotFound();
+                return View(model);
+            }
 
             var post = new Post
                 {

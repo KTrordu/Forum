@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Forum.UI.ViewModels
@@ -15,6 +16,7 @@ namespace Forum.UI.ViewModels
         public int CommunityId { get; set; }
 
         [DisplayName("Community Name")]
+        [BindNever]
         public string CommunityName { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;

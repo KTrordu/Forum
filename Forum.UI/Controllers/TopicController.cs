@@ -34,7 +34,8 @@ namespace Forum.UI.Controllers
         }
 
         //READ: List topics by the communityId
-        public IActionResult Index(int? communityId)
+        [Route("Topic/Community/{communityId}")]
+        public IActionResult IndexByCommunity(int? communityId)
         {
             if (communityId == null || communityId == 0) return NotFound();
 
@@ -62,9 +63,24 @@ namespace Forum.UI.Controllers
         }
 
         //CREATE: GET
-        public IActionResult Create()
+        public IActionResult Create(int? communityId)
         {
-            return View();
+            if (communityId == null || communityId == 0) return NotFound();
+
+            var community = _db.Communities
+                .Where(c => !c.IsDeleted && c.Id == communityId)
+                .Select(c => new { c.Id, c.CommunityName })
+                .FirstOrDefault();
+
+            if (community == null) return NotFound();
+
+            var model = new TopicViewModel
+            {
+                CommunityId = community.Id,
+                CommunityName = community.CommunityName
+            };
+
+            return View(model);
         }
 
         //CREATE: POST
@@ -72,6 +88,7 @@ namespace Forum.UI.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(TopicViewModel model, int? communityId)
         {
+            ModelState.Remove("CommunityName");
             if (!ModelState.IsValid) return View(model);
 
             if (communityId == null || communityId == 0) return NotFound();
@@ -92,7 +109,7 @@ namespace Forum.UI.Controllers
             _db.Topics.Add(topic);
             _db.SaveChanges();
 
-            return RedirectToAction("Index", new {id = communityId});
+            return RedirectToAction("Index", new {communityId = model.CommunityId});
         }
 
         //UPDATE: GET

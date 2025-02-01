@@ -6,6 +6,7 @@
 <form asp-controller="Post" asp-action="Create" method="post">
 	<input type="hidden" asp-for="CommunityId" />
 	<input type="hidden" asp-for="CommunityName" />
+	<input type="hidden" asp-for="TopicName" />
 
 	<div class="border p-3 mt-4">
 		<div class="row pb-2">
@@ -18,8 +19,15 @@
 			<input asp-for="PostTitle" class="form-control" />
 			<span asp-validation-for="PostTitle" class="text-danger"></span>
 		</div>
+		<div class="mb-3">
+			<label asp-for="TopicName"></label>
+			<select asp-for="TopicName" asp-items="Model.Topics" class="form-control">
+				<option value="">Select a Topic</option>
+			</select>
+			<span asp-validation-for="TopicName" class="text-danger"></span>
+		</div>
 		<button type="submit" class="btn btn-primary" style="width:150px">Create</button>
-		<a asp-controller="Post" asp-action="Index" class="btn btn-secondary" style="width:150px">
+		<a asp-controller="Post" asp-action="Index" asp-route-communityId="@Model.CommunityId" class="btn btn-secondary" style="width:150px">
 			Back to List
 		</a>
 	</div>

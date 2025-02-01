@@ -12,7 +12,7 @@
             <a asp-controller="Community" asp-action="Index" class="btn btn-dark">Back to Communities</a>
         </div>
         <div class="col-6 text-end">
-            <a asp-controller="Post" asp-action="Create" asp-route-communityId="@Model.CommunityId" class="btn btn-primary">
+            <a asp-controller="Post" asp-action="Create" asp-route-communityId="@Model.CommunityId" asp-route-topicId="@Model.TopicId" class="btn btn-primary">
                 <i class="bi bi-plus-circle"></i> &nbsp; Post Something
             </a>
         </div>
@@ -42,7 +42,7 @@
                 <td>@post.CreatedAt.Day.@post.CreatedAt.Month.@post.CreatedAt.Year @post.CreatedAt.DayOfWeek</td>
                 <td>
                     <div>
-                        <a asp-controller="Post" asp-action="Edit" asp-route-id="@post.Id" asp-route-communityId="@post.CommunityId" 
+                        <a asp-controller="Post" asp-action="Edit" asp-route-id="@post.Id" asp-route-communityId="@post.CommunityId" asp-route-topicId="@post.TopicId"
                         style="text-decoration:none; color:navy">
                             <i class="bi bi-pencil-square" style="color:orange"></i> Edit
                         </a>
@@ -50,7 +50,7 @@
                 </td>
                 <td>
                     <div>
-                        <a asp-controller="Post" asp-action="Delete" asp-route-id="@post.Id" asp-route-communityId="@post.CommunityId"
+                        <a asp-controller="Post" asp-action="Delete" asp-route-id="@post.Id" asp-route-communityId="@post.CommunityId" asp-route-topicId="@post.TopicId"
                         style="text-decoration:none; color:darkred">
                             <i class="bi bi-x-circle" style="color:darkred"></i> Delete
                         </a>
