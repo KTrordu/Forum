@@ -9,11 +9,11 @@ namespace Forum.Entities
 {
     public class Comment : BaseEntity
     {
-        [StringLength(200)]
-        public string CommentText { get; set; }
-
         public int? PostId { get; set; }
         public Post Posts { get; set; }
+
+        [StringLength(200)]
+        public string CommentText { get; set; }
 
         public bool IsLiked { get; set; }
     }

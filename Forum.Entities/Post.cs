@@ -12,9 +12,9 @@ namespace Forum.Entities
         public int? CommunityId { get; set; }
         public Community Communities { get; set; }
 
-        public bool IsLiked { get; set; } = false;
-
         public int? TopicId { get; set; }
         public Topic Topics { get; set; }
+
+        public bool IsLiked { get; set; } = false;
     }
 }

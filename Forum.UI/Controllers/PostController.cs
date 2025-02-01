@@ -33,7 +33,7 @@ namespace Forum.UI.ViewModels
             if (topic?.Id > 0)
             {
                 posts = _db.Posts
-                .Where(p => p.CommunityId == communityId && !p.IsDeleted)
+                .Where(p => p.CommunityId == communityId && p.TopicId == topicId && !p.IsDeleted)
                 .Select(p => new PostViewModel
                 {
                     Id = p.Id,
@@ -97,11 +97,14 @@ namespace Forum.UI.ViewModels
         //CREATE: GET
         public IActionResult Create(int? communityId)
         {
-            if (communityId == null || communityId == 0) return NotFound();
-
-            var community = _db.Communities
-                .Where(c => !c.IsDeleted)
-                .FirstOrDefault(c => c.Id == communityId);
+            var communities = _db.Communities
+                .Where(c => !c.IsDeleted && c.IsSubscribed)
+                .Select(c => new SelectListItem
+                {
+                    Value = c.Id.ToString(),
+                    Text = c.CommunityName
+                })
+                .ToList();
 
             var topics = _db.Topics
                 .Where(t => !t.IsDeleted && t.CommunityId == communityId)
@@ -112,12 +115,11 @@ namespace Forum.UI.ViewModels
                 })
                 .ToList();
 
-            if (community == null || topics == null) return NotFound();
+            if (communities == null || topics == null) return NotFound();
 
             var model = new PostViewModel
             {
-                CommunityId = community.Id,
-                CommunityName = community.CommunityName,
+                Communities = communities,
                 Topics = topics
             };
 
@@ -131,6 +133,15 @@ namespace Forum.UI.ViewModels
         {
             if (!ModelState.IsValid)
             {
+                model.Communities = _db.Communities
+                    .Where(c => !c.IsDeleted && c.IsSubscribed)
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.Id.ToString(),
+                        Text = c.CommunityName
+                    })
+                    .ToList();
+
                 model.Topics = _db.Topics
                     .Where(t => t.CommunityId == model.CommunityId && !t.IsDeleted)
                     .Select(t => new SelectListItem
@@ -146,7 +157,7 @@ namespace Forum.UI.ViewModels
             var post = new Post
                 {
                     CommunityId = model.CommunityId,
-                    TopicId = model.Id,
+                    TopicId = model.TopicId
                 };
 
                 _db.Posts.Add(post);

@@ -8,9 +8,9 @@ namespace Forum.Entities
 {
     public class Topic : BaseEntity
     {
-        public string TopicName { get; set; }
-
         public int? CommunityId { get; set; }
         public Community Communities { get; set; }
+
+        public string TopicName { get; set; }
     }
 }
