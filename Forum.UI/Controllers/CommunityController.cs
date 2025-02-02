@@ -20,6 +20,7 @@ namespace Forum.UI.Controllers
         {
             var communities = _db.Communities
                 .Where(c => !c.IsDeleted)
+                .OrderByDescending(c => c.UpdatedAt)
                 .Select(c => new CommunityViewModel
                 {
                     Id = c.Id,

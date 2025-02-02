@@ -34,6 +34,7 @@ namespace Forum.UI.ViewModels
             {
                 posts = _db.Posts
                 .Where(p => p.CommunityId == communityId && p.TopicId == topicId && !p.IsDeleted)
+                .OrderByDescending(p => p.UpdatedAt)
                 .Select(p => new PostViewModel
                 {
                     Id = p.Id,
@@ -50,6 +51,7 @@ namespace Forum.UI.ViewModels
             {
                 posts = _db.Posts
                 .Where(p => p.CommunityId == communityId && !p.IsDeleted)
+                .OrderByDescending(p => p.UpdatedAt)
                 .Select(p => new PostViewModel
                 {
                     Id = p.Id,
@@ -99,6 +101,7 @@ namespace Forum.UI.ViewModels
         {
             var communities = _db.Communities
                 .Where(c => !c.IsDeleted && c.IsSubscribed)
+                .OrderByDescending(c => c.UpdatedAt)
                 .Select(c => new SelectListItem
                 {
                     Value = c.Id.ToString(),
@@ -108,6 +111,7 @@ namespace Forum.UI.ViewModels
 
             var topics = _db.Topics
                 .Where(t => !t.IsDeleted && t.CommunityId == communityId)
+                .OrderByDescending (t => t.UpdatedAt)
                 .Select(t => new SelectListItem
                 {
                     Value = t.Id.ToString(),
@@ -135,6 +139,7 @@ namespace Forum.UI.ViewModels
             {
                 model.Communities = _db.Communities
                     .Where(c => !c.IsDeleted && c.IsSubscribed)
+                    .OrderByDescending(c => c.UpdatedAt)
                     .Select(c => new SelectListItem
                     {
                         Value = c.Id.ToString(),
@@ -144,6 +149,7 @@ namespace Forum.UI.ViewModels
 
                 model.Topics = _db.Topics
                     .Where(t => t.CommunityId == model.CommunityId && !t.IsDeleted)
+                    .OrderByDescending(t =>  t.UpdatedAt)
                     .Select(t => new SelectListItem
                     {
                         Value = t.Id.ToString(),
