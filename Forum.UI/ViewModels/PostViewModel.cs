@@ -7,10 +7,8 @@ namespace Forum.UI.ViewModels
 {
     public class PostViewModel
     {
-        [Required]
         public int Id { get; set; }
 
-        [DisplayName("Community")]
         public int CommunityId { get; set; }
 
         public List<SelectListItem>? Communities { get; set; }
@@ -26,16 +24,7 @@ namespace Forum.UI.ViewModels
         [DisplayName("Topic Name")]
         public string? TopicName { get; set; }
 
-        [DisplayName("Post Title")]
-        public string PostTitle { get; set; }
-
-        [DisplayName("Post Description")]
-        public string PostDescription { get; set; }
-
-        [DisplayName("Image")]
-        public string? ImagePath { get; set; }
-
-        public IFormFile? ImageFile { get; set; }
+        public PostContentViewModel PostContent { get; set; }
 
         public bool IsLiked { get; set; } = false;
 

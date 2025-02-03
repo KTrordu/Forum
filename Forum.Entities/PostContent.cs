@@ -15,9 +15,10 @@ namespace Forum.Entities
         [StringLength(50)]
         public string PostTitle { get; set; }
 
-        [StringLength(200)]
+        [StringLength(2000)]
         public string PostDescription { get; set; }
 
+        [StringLength(255)]
         public string? ImagePath { get; set; }
     }
 }

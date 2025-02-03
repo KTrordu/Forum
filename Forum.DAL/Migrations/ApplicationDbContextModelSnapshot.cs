@@ -100,9 +100,6 @@ namespace Forum.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CommunityId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -122,8 +119,6 @@ namespace Forum.DAL.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CommunityId");
 
                     b.HasIndex("TopicId");
 
@@ -145,15 +140,16 @@ namespace Forum.DAL.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ImagePath")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<string>("PostDescription")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<int?>("PostId")
                         .HasColumnType("int");
@@ -218,15 +214,9 @@ namespace Forum.DAL.Migrations
 
             modelBuilder.Entity("Forum.Entities.Post", b =>
                 {
-                    b.HasOne("Forum.Entities.Community", "Communities")
-                        .WithMany()
-                        .HasForeignKey("CommunityId");
-
                     b.HasOne("Forum.Entities.Topic", "Topics")
                         .WithMany()
                         .HasForeignKey("TopicId");
-
-                    b.Navigation("Communities");
 
                     b.Navigation("Topics");
                 });

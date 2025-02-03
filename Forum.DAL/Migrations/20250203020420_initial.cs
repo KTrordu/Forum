@@ -58,7 +58,6 @@ namespace Forum.DAL.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CommunityId = table.Column<int>(type: "int", nullable: true),
                     TopicId = table.Column<int>(type: "int", nullable: true),
                     IsLiked = table.Column<bool>(type: "bit", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -69,11 +68,6 @@ namespace Forum.DAL.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Posts", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Posts_Communities_CommunityId",
-                        column: x => x.CommunityId,
-                        principalTable: "Communities",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Posts_Topics_TopicId",
                         column: x => x.TopicId,
@@ -113,8 +107,8 @@ namespace Forum.DAL.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PostId = table.Column<int>(type: "int", nullable: true),
                     PostTitle = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    PostDescription = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    ImagePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PostDescription = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
+                    ImagePath = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -139,11 +133,6 @@ namespace Forum.DAL.Migrations
                 name: "IX_PostContents_PostId",
                 table: "PostContents",
                 column: "PostId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Posts_CommunityId",
-                table: "Posts",
-                column: "CommunityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Posts_TopicId",

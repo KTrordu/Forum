@@ -16,8 +16,12 @@ namespace Forum.UI.Controllers
         }
 
         //READ: List all topics
-        public IActionResult Index()
+        public IActionResult Index(int? communityId)
         {
+            var community = _db.Communities
+                .Where(c => c.Id == communityId && !c.IsDeleted)
+                .FirstOrDefault();
+
             var topics = _db.Topics
                 .Where(t => !t.IsDeleted)
                 .OrderByDescending(t => t.UpdatedAt)
@@ -31,14 +35,21 @@ namespace Forum.UI.Controllers
                 })
                 .ToList();
 
-            return View(topics);
+            var model = new TopicListViewModel
+            {
+                CommunityId = communityId,
+                CommunityName = community != null ? community.CommunityName : null,
+                Topics = topics
+            };
+
+            return View(model);
         }
 
         //READ: List topics by the communityId
         [Route("Topic/Community/{communityId}")]
-        public IActionResult IndexByCommunity(int? communityId)
+        public IActionResult IndexByCommunity(int communityId)
         {
-            if (communityId == null || communityId == 0) return NotFound();
+            if (communityId == 0) return NotFound();
 
             var community = _db.Communities
                 .Where(t => !t.IsDeleted && t.Id == communityId)
@@ -59,7 +70,14 @@ namespace Forum.UI.Controllers
                 })
                 .ToList();
 
-            return View("Index", topics);
+            var model = new TopicListViewModel
+            {
+                CommunityId = community.Id,
+                CommunityName = community.CommunityName,
+                Topics = topics
+            };
+
+            return View("Index", model);
         }
 
         //CREATE: GET
@@ -74,8 +92,6 @@ namespace Forum.UI.Controllers
                 })
                 .ToList();
 
-            if (communities == null) return NotFound();
-
             var model = new TopicViewModel
             {
                 Communities = communities
@@ -89,9 +105,19 @@ namespace Forum.UI.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(TopicViewModel model, int? communityId)
         {
-            if (!ModelState.IsValid) return View(model);
+            if (!ModelState.IsValid)
+            {
+                model.Communities = _db.Communities
+                    .Where(c => !c.IsDeleted)
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.Id.ToString(),
+                        Text = c.CommunityName
+                    })
+                    .ToList();
 
-            //if (communityId == null || communityId == 0) return NotFound();
+                return View(model);
+            }
 
             var community = _db.Communities
                 .Where(c => !c.IsDeleted)
@@ -101,7 +127,6 @@ namespace Forum.UI.Controllers
 
             var topic = new Topic
             {
-                Id = model.Id,
                 TopicName = model.TopicName,
                 CommunityId = model.CommunityId
             };

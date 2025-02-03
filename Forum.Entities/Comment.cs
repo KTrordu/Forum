@@ -15,6 +15,6 @@ namespace Forum.Entities
         [StringLength(200)]
         public string CommentText { get; set; }
 
-        public bool IsLiked { get; set; }
+        public bool IsLiked { get; set; } = false;
     }
 }

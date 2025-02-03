@@ -28,18 +28,27 @@
             <th>
                 Subscription
             </th>
+            <th>
+
+            </th>
+            <th>
+
+            </th>
+            <th>
+
+            </th>
         </tr>
     </thead>
     <tbody>
         @foreach (var obj in Model)
         {
             <tr>
-                <td width="40%">
+                <td width="15%">
                     <a asp-controller="Post" asp-action="Index" asp-route-communityId="@obj.Id" asp-route-topicId="0" style="text-decoration:none; color:navy">
                         @obj.CommunityName
                     </a>
                 </td>
-                <td width="20%">
+                <td width="15%">
                     @obj.CreatedAt.Day.@obj.CreatedAt.Month.@obj.CreatedAt.Year @obj.CreatedAt.DayOfWeek
                 </td>
                 <td width="10%">
@@ -56,6 +65,11 @@
                 <td width="10%">
                     <a asp-controller="Topic" asp-action="Create" asp-route-communityId="@obj.Id" style="text-decoration:none; color:navy">
                         Create Topic
+                    </a>
+                </td>
+                <td width="10%">
+                    <a asp-controller="Post" asp-action="Create" asp-route-communityId="@obj.Id" style="text-decoration:none; color:navy">
+                        Create Post
                     </a>
                 </td>
                 <td width="10%">

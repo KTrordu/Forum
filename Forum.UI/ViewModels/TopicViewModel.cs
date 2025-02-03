@@ -10,6 +10,7 @@ namespace Forum.UI.ViewModels
         [Required]
         public int Id { get; set; }
 
+        [Required]
         [DisplayName("Community")]
         public int CommunityId { get; set; }
 

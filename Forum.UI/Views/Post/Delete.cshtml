@@ -14,9 +14,9 @@
 		</div>
 		<div asp-validation-summary="All"></div>
 		<div class="mb-3">
-			<label asp-for="PostTitle"></label>
-			<input asp-for="PostTitle" class="form-control" disabled/>
-			<span asp-validation-for="PostTitle" class="text-danger"></span>
+			<label asp-for="PostContent.PostTitle"></label>
+			<input asp-for="PostContent.PostTitle" class="form-control" disabled />
+			<span asp-validation-for="PostContent.PostTitle" class="text-danger"></span>
 		</div>
 		<button type="submit" class="btn btn-primary" style="width:150px">Delete</button>
 		<a asp-controller="Post" asp-action="Index" asp-route-id="@Model.Id" asp-route-communityId="@Model.CommunityId" 

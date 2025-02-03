@@ -15,32 +15,32 @@
 		<div asp-validation-summary="All"></div>
 		<div class="mb-3">
 			<label asp-for="CommunityId"></label>
-			<select asp-for="CommunityId" asp-items="Model.Communities" class="form-control">
+			<select asp-for="CommunityId" asp-items="Model.Communities" class="form-control" id="communityDropdown">
 				<option value="">Select a Community</option>
 			</select>
 			<span asp-validation-for="CommunityId" class="text-danger"></span>
 		</div>
 		<div class="mb-3">
 			<label asp-for="TopicId"></label>
-			<select asp-for="TopicId" asp-items="Model.Topics" class="form-control">
+			<select asp-for="TopicId" class="form-control" id="topicDropdown">
 				<option value="">Select a Topic</option>
 			</select>
 			<span asp-validation-for="TopicId" class="text-danger"></span>
 		</div>
 		<div class="mb-3">
-			<label asp-for="PostTitle"></label>
-			<input asp-for="PostTitle" class="form-control" />
-			<span asp-validation-for="PostTitle" class="text-danger"></span>
+			<label asp-for="PostContent.PostTitle"></label>
+			<input asp-for="PostContent.PostTitle" class="form-control" />
+			<span asp-validation-for="PostContent.PostTitle" class="text-danger"></span>
 		</div>
 		<div class="mb-3">
-			<label asp-for="PostDescription"></label>
-			<textarea asp-for="PostDescription" class="form-control" rows="6" placeholder="Type something..."></textarea>
-			<span asp-validation-for="PostDescription" class="text-danger"></span>
+			<label asp-for="PostContent.PostDescription"></label>
+			<textarea asp-for="PostContent.PostDescription" class="form-control" rows="6" placeholder="Type something..."></textarea>
+			<span asp-validation-for="PostContent.PostDescription" class="text-danger"></span>
 		</div>
 		<div class="mb-3">
-			<label asp-for="ImagePath">Upload Image</label>
-			<input type="file" asp-for="ImagePath" class="form-control" accept="image/*"/>
-			<span asp-validation-for="ImagePath" class="text-danger"></span>
+			<label asp-for="PostContent.ImagePath">Upload Image</label>
+			<input type="file" asp-for="PostContent.ImagePath" class="form-control" accept="image/*" />
+			<span asp-validation-for="PostContent.ImagePath" class="text-danger"></span>
 		</div>
 		
 		<button type="submit" class="btn btn-primary" style="width:150px">Create</button>
@@ -49,3 +49,21 @@
 		</a>
 	</div>
 </form>
+
+<script>
+	document.getElementById("communityDropdown").addEventListener("change", function() {
+		var communityId = this.value;
+		fetch(`/Post/GetTopics?communityId=${communityId}`)
+			.then(response => response.json())
+			.then(data => {
+				var topicDropdown = document.getElementById("topicDropdown");
+				topicDropdown.innerHTML = '<option value="">Select a Topic</option>';
+				data.forEach(topic => {
+					var option = document.createElement("option");
+					option.value = topic.value;
+					option.textContent = topic.text;
+					topicDropdown.appendChild(option);
+				});
+			});
+	});
+</script>

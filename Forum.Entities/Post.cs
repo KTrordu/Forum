@@ -9,9 +9,6 @@ namespace Forum.Entities
 {
     public class Post : BaseEntity
     {
-        public int? CommunityId { get; set; }
-        public Community Communities { get; set; }
-
         public int? TopicId { get; set; }
         public Topic Topics { get; set; }
 
