@@ -46,20 +46,34 @@ namespace Forum.DAL.Repositories
                 .ToList();
         }
 
-        public void CreateCommunity(Community community)
+        public void CreateCommunity(string communityName)
         {
+            var community = new Community
+            {
+                CommunityName = communityName,
+            };
+
             _db.Communities.Add(community);
             _db.SaveChanges();
         }
 
-        public void UpdateCommunity(int communityId, Community newCommunity)
+        public void UpdateCommunity(int communityId, string newCommunityName)
         {
             var community = GetCommunity(communityId);
 
-            community!.CommunityName = newCommunity.CommunityName;
-            community.UpdatedAt = newCommunity.UpdatedAt;
+            community!.CommunityName = newCommunityName;
+            community.UpdatedAt = DateTime.Now;
 
             _db.Communities.Update(community);
+            _db.SaveChanges();
+        }
+
+        public void SubscribeCommunity(Community community)
+        {
+            community.IsSubscribed = !community.IsSubscribed;
+            community.UpdatedAt = DateTime.Now;
+            _db.Update(community);
+
             _db.SaveChanges();
         }
 

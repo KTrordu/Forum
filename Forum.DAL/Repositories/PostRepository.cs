@@ -71,7 +71,7 @@ namespace Forum.DAL.Repositories
             _db.SaveChanges();
         }
 
-        public void UpdatePost(int id, Post newPost, PostContent? newPostContent)
+        public void UpdatePost(int id, Post newPost, PostContent newPostContent)
         {
             var post = GetPost(id);
             var postContent = GetPostContent(id);
@@ -80,14 +80,20 @@ namespace Forum.DAL.Repositories
             post.UpdatedAt = DateTime.Now;
             _db.Posts.Update(post);
 
-            if (newPostContent != null )
-            {
-                postContent!.PostTitle = newPostContent.PostTitle;
-                postContent.PostDescription = newPostContent.PostDescription;
-                postContent.ImagePath = newPostContent.ImagePath;
-                postContent.UpdatedAt = DateTime.Now;
-                _db.Posts.Update(post);
-            }
+            postContent!.PostTitle = newPostContent.PostTitle;
+            postContent.PostDescription = newPostContent.PostDescription;
+            postContent.ImagePath = newPostContent.ImagePath;
+            postContent.UpdatedAt = DateTime.Now;
+            _db.Posts.Update(post);
+            
+            _db.SaveChanges();
+        }
+
+        public void LikePost(Post post)
+        {
+            post.IsLiked = !post.IsLiked;
+            post.UpdatedAt = DateTime.Now;
+            _db.Posts.Update(post);
 
             _db.SaveChanges();
         }

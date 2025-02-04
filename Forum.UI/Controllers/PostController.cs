@@ -185,8 +185,7 @@ namespace Forum.UI.ViewModels
             var post = _postRepository.GetPost(id);
             if (post == null) return NotFound();
 
-            post.IsLiked = !post.IsLiked;
-            _postRepository.UpdatePost(post.Id, post, null);
+            _postRepository.LikePost(post);
 
             return Json(new { isLiked = post.IsLiked });
         }

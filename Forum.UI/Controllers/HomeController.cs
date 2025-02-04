@@ -3,37 +3,36 @@ using Microsoft.AspNetCore.Mvc;
 using Forum.UI.Models;
 using Forum.DAL;
 using Forum.UI.ViewModels;
-using Forum.Entities;
+using Forum.DAL.Repositories;
 
 namespace Forum.UI.Controllers;
 
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-    private readonly ApplicationDbContext _db;
+    private readonly PostRepository _postRepository;
+    private readonly TopicRepository _topicRepository;
+    private readonly CommunityRepository _communityRepository;
 
-    public HomeController(ILogger<HomeController> logger, ApplicationDbContext db)
+    public HomeController(ILogger<HomeController> logger, PostRepository postRepository, TopicRepository topicRepository, CommunityRepository communityRepository)
     {
         _logger = logger;
-        _db = db;
+        _postRepository = postRepository;
+        _topicRepository = topicRepository;
+        _communityRepository = communityRepository;
     }
 
     public IActionResult Index()
     {
-        var posts = _db.Posts
-                .Where(p => !p.IsDeleted)
-                .OrderByDescending(p => p.UpdatedAt)
-                .ToList();
+        var posts = _postRepository.GetPosts();
+        if (posts == null) return NotFound();
 
-        var postIds = posts
+        var postIds = posts!
             .Select(p => p.Id)
             .ToList();
 
-        var postContents = _db.PostContents
-            .Where(pc => !pc.IsDeleted && postIds.Contains(pc.PostId!.Value))
-            .ToDictionary(pc => pc.PostId!.Value, pc => new { pc.PostTitle, pc.PostDescription, pc.ImagePath });
-
-        if (posts == null || postContents == null) return NotFound();
+        var postContents = _postRepository.GetPostContents(postIds);
+        if (postContents == null) return NotFound();
 
         var postViewModels = new List<PostViewModel>();
         var postContentViewModels = new List<PostContentViewModel>();
@@ -49,19 +48,12 @@ public class HomeController : Controller
             var post = posts
                 .Where(p => p.Id == idToDisplay)
                 .FirstOrDefault();
-
             if (post == null) return NotFound();
 
-            var topic = _db.Topics
-                .Where(t => !t.IsDeleted && t.Id == post.TopicId)
-                .FirstOrDefault();
-
+            var topic = _topicRepository.GetTopic((int)post.TopicId!);
             if (topic == null) return NotFound();
 
-            var community = _db.Communities
-                .Where(c => !c.IsDeleted && c.Id == topic.CommunityId)
-                .FirstOrDefault();
-
+            var community = _communityRepository.GetCommunity((int)topic.CommunityId!);
             if (community == null) return NotFound();
 
             var postContentViewModel = new PostContentViewModel

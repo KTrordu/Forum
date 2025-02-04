@@ -8,10 +8,7 @@
 
 <div class="container p-3">
     <div class="row pt-4">
-        <div class="col-6">
-            <a asp-controller="Community" asp-action="Index" class="btn btn-dark">Back to Communities</a>
-        </div>
-        <div class="col-6 text-end">
+        <div class="text-end">
             <a asp-controller="Post" asp-action="Create" asp-route-communityId="@Model.CommunityId" asp-route-topicId="@Model.TopicId" class="btn btn-primary">
                 <i class="bi bi-plus-circle"></i> &nbsp; Post Something
             </a>

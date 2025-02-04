@@ -39,18 +39,24 @@ namespace Forum.DAL.Repositories
                 .ToList();
         }
 
-        public void CreateTopic (Topic topic)
+        public void CreateTopic (int communityId, string topicName)
         {
+            var topic = new Topic
+            {
+                CommunityId = communityId,
+                TopicName = topicName
+            };
+
             _db.Topics.Add(topic);
             _db.SaveChanges();
         }
 
-        public void UpdateTopic (int topicId, Topic newTopic)
+        public void UpdateTopic (int topicId, int newCommunityId, string newTopicName)
         {
             var topic = GetTopic(topicId);
 
-            topic!.CommunityId = newTopic.CommunityId;
-            topic.TopicName = newTopic.TopicName;
+            topic!.CommunityId = newCommunityId;
+            topic.TopicName = newTopicName;
             topic.UpdatedAt = DateTime.Now;
 
             _db.Topics.Update(topic);

@@ -1,5 +1,5 @@
 ﻿using Forum.DAL;
-using Forum.Entities;
+using Forum.DAL.Repositories;
 using Forum.UI.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
@@ -8,19 +8,24 @@ namespace Forum.UI.Controllers
 {
     public class CommunityController : Controller
     {
-        private readonly ApplicationDbContext _db;
+        private readonly PostRepository _postRepository;
+        private readonly TopicRepository _topicRepository;
+        private readonly CommunityRepository _communityRepository;
 
-        public CommunityController(ApplicationDbContext db)
+        public CommunityController(PostRepository postRepository, TopicRepository topicRepository, CommunityRepository communityRepository)
         {
-            _db = db;
+            _postRepository = postRepository;
+            _topicRepository = topicRepository;
+            _communityRepository = communityRepository;
         }
 
         //READ: List the communities
         public IActionResult Index()
         {
-            var communities = _db.Communities
-                .Where(c => !c.IsDeleted)
-                .OrderByDescending(c => c.UpdatedAt)
+            var communities = _communityRepository.GetCommunities();
+            if (communities == null) return NotFound();
+
+            var communitiesList = communities
                 .Select(c => new CommunityViewModel
                 {
                     Id = c.Id,
@@ -36,13 +41,10 @@ namespace Forum.UI.Controllers
         //Subscribe or Unsubscribe to Community
         public IActionResult SubscribeToCommunity(int communityId)
         {
-            var community = _db.Communities
-                .FirstOrDefault(c => !c.IsDeleted && c.Id == communityId);
-
+            var community = _communityRepository.GetCommunity(communityId);
             if (community == null) return NotFound();
 
-            community.IsSubscribed = !community.IsSubscribed;
-            _db.SaveChanges();
+            _communityRepository.SubscribeCommunity(community);
 
             return Json(new { isSubscribed = community.IsSubscribed });
         }
@@ -60,26 +62,15 @@ namespace Forum.UI.Controllers
         {
             if (!ModelState.IsValid) return View(model);
 
-            var community = new Community
-            {
-                CommunityName = model.CommunityName
-            };
-
-            _db.Communities.Add(community);
-            _db.SaveChanges();
+            _communityRepository.CreateCommunity(model.CommunityName);
 
             return RedirectToAction("Index");
         }
 
         //UPDATE: GET
-        public IActionResult Edit(int? id)
+        public IActionResult Edit(int communityId)
         {
-            if (id == null || id == 0) return NotFound();
-
-            var community = _db.Communities
-                .Where(c => !c.IsDeleted)
-                .FirstOrDefault(c => c.Id == id);
-
+            var community = _communityRepository.GetCommunity(communityId);
             if (community == null) return NotFound();
 
             var model = new CommunityViewModel
@@ -100,28 +91,18 @@ namespace Forum.UI.Controllers
         {
             if (!ModelState.IsValid) return View(model);
 
-            var community = _db.Communities
-                .Where(c => !c.IsDeleted)
-                .FirstOrDefault(c => c.Id == model.Id);
-
+            var community = _communityRepository.GetCommunity(model.Id);
             if (community == null) return NotFound();
 
-            community.CommunityName = model.CommunityName;
-            community.UpdatedAt = DateTime.Now;
+            _communityRepository.UpdateCommunity(community.Id, model.CommunityName);
 
-            _db.SaveChanges();
             return RedirectToAction("Index");
         }
 
         //DELETE: GET
-        public IActionResult Delete(int? id)
+        public IActionResult Delete(int communityId)
         {
-            if (id == null || id == 0) return NotFound();
-
-            var community = _db.Communities
-                .Where(c => !c.IsDeleted)
-                .FirstOrDefault(c => c.Id == id);
-
+            var community = _communityRepository.GetCommunity(communityId);
             if (community == null) return NotFound();
 
             var model = new CommunityViewModel
@@ -138,21 +119,13 @@ namespace Forum.UI.Controllers
         //DELETE: POST
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeletePOST(int? id)
+        public IActionResult DeletePOST(int communityId)
         {
-            if (id == null || id == 0) return NotFound();
-
-            var community = _db.Communities
-                .Where(c => !c.IsDeleted)
-                .FirstOrDefault (c => c.Id == id);
-
+            var community = _communityRepository.GetCommunity(communityId);
             if (community == null) return NotFound();
 
-            community.IsDeleted = true;
-            community.DeletedAt = DateTime.Now;
-            community.UpdatedAt = DateTime.Now;
+            _communityRepository.DeleteCommunity(community.Id);
 
-            _db.SaveChanges();
             return RedirectToAction("Index");
         }
     }

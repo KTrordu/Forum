@@ -1,5 +1,5 @@
 ﻿using Forum.DAL;
-using Forum.Entities;
+using Forum.DAL.Repositories;
 using Forum.UI.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -8,23 +8,27 @@ namespace Forum.UI.Controllers
 {
     public class TopicController : Controller
     {
-        private readonly ApplicationDbContext _db;
+        private readonly PostRepository _postRepository;
+        private readonly TopicRepository _topicRepository;
+        private readonly CommunityRepository _communityRepository;
 
-        public TopicController(ApplicationDbContext db)
+        public TopicController(PostRepository postRepository, TopicRepository topicRepository, CommunityRepository communityRepository)
         {
-            _db = db;
+            _postRepository = postRepository;
+            _topicRepository = topicRepository;
+            _communityRepository = communityRepository;
         }
 
         //READ: List all topics
-        public IActionResult Index(int? communityId)
+        public IActionResult Index(int communityId)
         {
-            var community = _db.Communities
-                .Where(c => c.Id == communityId && !c.IsDeleted)
-                .FirstOrDefault();
+            var community = _communityRepository.GetCommunity(communityId);
 
-            var topics = _db.Topics
-                .Where(t => !t.IsDeleted)
-                .OrderByDescending(t => t.UpdatedAt)
+            var topics = _topicRepository.GetTopics();
+
+            if (topics == null) return NotFound();
+
+            var topicsList = topics
                 .Select(t => new TopicViewModel
                 {
                     Id = t.Id,
@@ -39,7 +43,7 @@ namespace Forum.UI.Controllers
             {
                 CommunityId = communityId,
                 CommunityName = community != null ? community.CommunityName : null,
-                Topics = topics
+                Topics = topicsList
             };
 
             return View(model);
@@ -51,15 +55,13 @@ namespace Forum.UI.Controllers
         {
             if (communityId == 0) return NotFound();
 
-            var community = _db.Communities
-                .Where(t => !t.IsDeleted && t.Id == communityId)
-                .FirstOrDefault(t => t.Id == communityId);
-
+            var community = _communityRepository.GetCommunity(communityId);
             if (community == null) return NotFound();
 
-            var topics = _db.Topics
-                .Where(t => t.CommunityId == communityId && !t.IsDeleted)
-                .OrderByDescending (t => t.UpdatedAt)
+            var topics = _topicRepository.GetTopicsByCommunity(community.Id);
+            if (topics == null) return NotFound();
+
+            var topicsList = topics
                 .Select(t => new TopicViewModel
                 {
                     Id= t.Id,
@@ -74,17 +76,19 @@ namespace Forum.UI.Controllers
             {
                 CommunityId = community.Id,
                 CommunityName = community.CommunityName,
-                Topics = topics
+                Topics = topicsList
             };
 
             return View("Index", model);
         }
 
         //CREATE: GET
-        public IActionResult Create(int? communityId)
+        public IActionResult Create()
         {
-            var communities = _db.Communities
-                .Where(c => !c.IsDeleted && c.IsSubscribed)
+            var communities = _communityRepository.GetSubscribedCommunities();
+            if (communities == null) return NotFound();
+
+            var communitiesList = communities
                 .Select(c => new SelectListItem
                 {
                     Value = c.Id.ToString(),
@@ -94,7 +98,7 @@ namespace Forum.UI.Controllers
 
             var model = new TopicViewModel
             {
-                Communities = communities
+                Communities = communitiesList
             };
 
             return View(model);
@@ -103,55 +107,49 @@ namespace Forum.UI.Controllers
         //CREATE: POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(TopicViewModel model, int? communityId)
+        public IActionResult Create(TopicViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                model.Communities = _db.Communities
-                    .Where(c => !c.IsDeleted)
+                var communities = _communityRepository.GetCommunities();
+                if (communities == null) return NotFound();
+
+                var communitiesList = communities
                     .Select(c => new SelectListItem
                     {
-                        Value = c.Id.ToString(),
+                        Value= c.Id.ToString(),
                         Text = c.CommunityName
                     })
                     .ToList();
 
+                model.Communities = communitiesList;
+
                 return View(model);
             }
 
-            var community = _db.Communities
-                .Where(c => !c.IsDeleted)
-                .FirstOrDefault(c => c.Id == model.CommunityId);
-
+            var community = _communityRepository.GetCommunity(model.CommunityId);
             if (community == null) return NotFound();
 
-            var topic = new Topic
-            {
-                TopicName = model.TopicName,
-                CommunityId = model.CommunityId
-            };
-
-            _db.Topics.Add(topic);
-            _db.SaveChanges();
+            _topicRepository.CreateTopic(model.CommunityId, model.TopicName);
 
             return RedirectToAction("IndexByCommunity", new { communityId = model.CommunityId });
         }
 
         //UPDATE: GET
-        public IActionResult Edit(int? topicId, int? communityId)
+        public IActionResult Edit(int topicId)
         {
-            if (topicId == null || topicId == 0) return NotFound();
+            if (topicId == 0) return NotFound();
 
-            var topic = _db.Topics
-                .Where(t => !t.IsDeleted)
-                .FirstOrDefault(t => t.Id == topicId);
+            var topic = _topicRepository.GetTopic(topicId);
+            if (topic == null) return NotFound();
 
-            var community = _db.Communities
-                .Where(c => !c.IsDeleted)
-                .FirstOrDefault(c => c.Id == communityId);
+            var community = _communityRepository.GetCommunity((int)topic.CommunityId!);
+            if (community == null) return NotFound();
 
-            var communities = _db.Communities
-                .Where (c => !c.IsDeleted && c.IsSubscribed)
+            var communities = _communityRepository.GetSubscribedCommunities();
+            if (communities == null) return NotFound();
+
+            var communitiesList = communities
                 .Select(c => new SelectListItem
                 {
                     Value = c.Id.ToString(),
@@ -159,16 +157,13 @@ namespace Forum.UI.Controllers
                 })
                 .ToList();
 
-
-            if (topic == null || community == null || communities == null) return NotFound();
-
             var model = new TopicViewModel
             {
                 Id = topic.Id,
                 TopicName = topic.TopicName,
                 CommunityId = community.Id,
                 CommunityName = community.CommunityName,
-                Communities = communities,
+                Communities = communitiesList,
                 CreatedAt = topic.CreatedAt
             };
 
@@ -178,40 +173,28 @@ namespace Forum.UI.Controllers
         //UPDATE: POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(TopicViewModel model, int? communityId)
+        public IActionResult Edit(TopicViewModel model)
         {
             if (!ModelState.IsValid) return View(model);
 
-            if (communityId == null || communityId == 0) return NotFound();
-
-            var topic = _db.Topics
-                .Where (t => !t.IsDeleted)
-                .FirstOrDefault(t => t.Id == model.Id);
-
+            var topic = _topicRepository.GetTopic(model.Id);
             if (topic == null) return NotFound();
 
-            topic.CommunityId = model.CommunityId;
-            topic.TopicName = model.TopicName;
-            topic.UpdatedAt = DateTime.Now;
+            _topicRepository.UpdateTopic(topic.Id, model.CommunityId, model.TopicName);
 
-            _db.SaveChanges();
             return RedirectToAction("IndexByCommunity", new { communityId = model.CommunityId });
         }
 
         //DELETE: GET
-        public IActionResult Delete(int? topicId, int? communityId)
+        public IActionResult Delete(int topicId)
         {
-            if (topicId == null || topicId == 0) return NotFound();
+            if (topicId == 0) return NotFound();
 
-            var topic = _db.Topics
-                .Where(t => !t.IsDeleted)
-                .FirstOrDefault(t => t.Id == topicId);
+            var topic = _topicRepository.GetTopic(topicId);
+            if (topic == null) return NotFound();
 
-            var community = _db.Communities
-                .Where(c => !c.IsDeleted)
-                .FirstOrDefault(c => c.Id == communityId);
-
-            if (topic == null || community == null) return NotFound();
+            var community = _communityRepository.GetCommunity((int)topic.CommunityId!);
+            if (community == null) return NotFound();
 
             var model = new TopicViewModel
             {
@@ -228,24 +211,16 @@ namespace Forum.UI.Controllers
         //DELETE: POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(TopicViewModel model, int? communityId)
+        public IActionResult Delete(TopicViewModel model)
         {
             if (!ModelState.IsValid) return View(model);
 
-            if (communityId == null || communityId == 0) return NotFound();
-
-            var topic = _db.Topics
-                .Where(t => !t.IsDeleted)
-                .FirstOrDefault(t => t.Id == model.Id);
-
+            var topic = _topicRepository.GetTopic(model.Id);
             if (topic == null) return NotFound();
 
-            topic.IsDeleted = true;
-            topic.DeletedAt = DateTime.Now;
-            topic.UpdatedAt = DateTime.Now;
+            _topicRepository.DeleteTopic(topic.Id);
 
-            _db.SaveChanges();
-            return RedirectToAction("Index", new { id = communityId });
+            return RedirectToAction("Index", new { id = topic.CommunityId });
         }
     }
 }
