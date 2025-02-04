@@ -1,16 +1,106 @@
 ﻿@model Forum.UI.ViewModels.PostListViewModel
 
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
+<h2 style="color:darkgreen"><span style="color:darkred">Home</span></h2>
+
 <div class="container p-3">
-    <div class="row">
-        <div class="col-6"></div>
+    <div class="row pt-4">
+        <div class="col-6">
+            <a asp-controller="Community" asp-action="Index" class="btn btn-dark">Back to Communities</a>
+        </div>
         <div class="col-6 text-end">
-            <a asp-controller="Post" asp-action="Create" class="btn btn-success">
+            <a asp-controller="Post" asp-action="Create" asp-route-communityId="@Model.CommunityId" asp-route-topicId="@Model.TopicId" class="btn btn-primary">
                 <i class="bi bi-plus-circle"></i> &nbsp; Post Something
             </a>
         </div>
     </div>
 </div>
+@foreach (var post in Model.Posts)
+{
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Community</th>
+                <th>Topic</th>
+                <th>Post Title</th>
+                <th>Created At</th>
+                <th>Like</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@post.CommunityName</td>
+                <td>@post.TopicName</td>
+                <td>@post.PostContent.PostTitle</td>
+                <td>@post.CreatedAt.Day.@post.CreatedAt.Month.@post.CreatedAt.Year @post.CreatedAt.DayOfWeek</td>
+                <td>
+                    <button class="btn btn-sm like-button @(post.IsLiked ? "bg-danger" : "bg-success")" data-id="@post.Id" style="border:1px solid black;">
+                        <span class="bi" id="like-icon-@post.Id" style="color:white">
+                            @(post.IsLiked ? "Unlike" : "Like")
+                        </span>
+                    </button>
+                </td>
+                <td>
+                    <div>
+                        <a asp-controller="Post" asp-action="Edit" asp-route-id="@post.Id" asp-route-communityId="@post.CommunityId" asp-route-topicId="@post.TopicId"
+                           style="text-decoration:none; color:navy">
+                            <i class="bi bi-pencil-square" style="color:orange"></i> Edit
+                        </a>
+                    </div>
+                </td>
+                <td>
+                    <div>
+                        <a asp-controller="Post" asp-action="Delete" asp-route-id="@post.Id" asp-route-communityId="@post.CommunityId" asp-route-topicId="@post.TopicId"
+                           style="text-decoration:none; color:darkred">
+                            <i class="bi bi-x-circle" style="color:darkred"></i> Delete
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                @if (!string.IsNullOrEmpty(post.PostContent.ImagePath))
+                {
+                    <img src="@post.PostContent.ImagePath" alt="@post.PostContent.PostTitle" class="img-fluid" style="max-width:200px; max-height:200px; border-radius:5px;" />
+                }
+            </tr>
+            <tr>
+                <td colspan="7" class="text-center">@post.PostContent.PostDescription</td>
+            </tr>
+        </tbody>
+    </table>
+}
+
+<script>
+    document.querySelectorAll(".like-button").forEach(button => {
+        var postId = button.getAttribute("data-id");
+        var icon = document.getElementById(`like-icon-${postId}`);
+
+        if (icon.innerHTML.trim() === "Unlike") button.classList.add("bg-danger");
+        else button.classList.add("bg-success");
+
+        button.addEventListener("click", function () {
+
+            fetch(`/Post/LikePost?id=${postId}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.isLiked) {
+                    icon.innerHTML = "Unlike";
+                    button.classList.remove("bg-success");
+                    button.classList.add("bg-danger");
+                } else {
+                    icon.innerHTML = "Like";
+                    button.classList.remove("bg-danger");
+                    button.classList.add("bg-success");
+                }
+            });
+        });
+    });
+</script>

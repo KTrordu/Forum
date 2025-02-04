@@ -314,7 +314,7 @@ namespace Forum.UI.ViewModels
             _db.PostContents.Add(postContent);
             _db.SaveChanges();
 
-            return RedirectToAction("Index", new {communityId = model.CommunityId});
+            return RedirectToAction("Index", "Home");
         }
 
         //UPDATE: GET
