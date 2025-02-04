@@ -1,4 +1,5 @@
 using Forum.DAL;
+using Forum.DAL.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
     builder.Configuration.GetConnectionString("DefaultConnection")
     ));
 builder.Services.AddRazorPages();
+builder.Services.AddScoped<PostRepository>();
+builder.Services.AddScoped<TopicRepository>();
+builder.Services.AddScoped<CommunityRepository>();
 
 var app = builder.Build();
 
