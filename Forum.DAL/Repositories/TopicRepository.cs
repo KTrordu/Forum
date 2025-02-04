@@ -51,12 +51,11 @@ namespace Forum.DAL.Repositories
             _db.SaveChanges();
         }
 
-        public void UpdateTopic (int topicId, int newCommunityId, string newTopicName)
+        public void UpdateTopic (int topicId, string newTopicName)
         {
             var topic = GetTopic(topicId);
 
-            topic!.CommunityId = newCommunityId;
-            topic.TopicName = newTopicName;
+            topic!.TopicName = newTopicName;
             topic.UpdatedAt = DateTime.Now;
 
             _db.Topics.Update(topic);

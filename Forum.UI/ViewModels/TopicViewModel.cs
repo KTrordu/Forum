@@ -17,8 +17,6 @@ namespace Forum.UI.ViewModels
         [DisplayName("Community")]
         public int CommunityId { get; set; }
 
-        public List<SelectListItem>? Communities { get; set; }
-
         [DisplayName("Community Name")]
         public string? CommunityName { get; set; }
 

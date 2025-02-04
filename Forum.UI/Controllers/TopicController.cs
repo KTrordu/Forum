@@ -53,22 +53,21 @@ namespace Forum.UI.Controllers
         }
 
         //CREATE: GET
-        public IActionResult Create()
+        public IActionResult Create(int communityId)
         {
-            var communities = _communityRepository.GetSubscribedCommunities();
-            if (communities == null) return NotFound();
+            var community = _communityRepository.GetCommunity(communityId);
+            if (community == null) return NotFound();
 
-            var communitiesList = communities
-                .Select(c => new SelectListItem
-                {
-                    Value = c.Id.ToString(),
-                    Text = c.CommunityName
-                })
-                .ToList();
+            var communitiesList = new SelectListItem
+            {
+                Value = community.Id.ToString(),
+                Text = community.CommunityName
+            };
 
             var model = new TopicViewModel
             {
-                Communities = communitiesList
+                CommunityId = community.Id,
+                CommunityName = community.CommunityName
             };
 
             return View(model);
@@ -79,53 +78,24 @@ namespace Forum.UI.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(TopicViewModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                var communities = _communityRepository.GetCommunities();
-                if (communities == null) return NotFound();
-
-                var communitiesList = communities
-                    .Select(c => new SelectListItem
-                    {
-                        Value= c.Id.ToString(),
-                        Text = c.CommunityName
-                    })
-                    .ToList();
-
-                model.Communities = communitiesList;
-
-                return View(model);
-            }
-
+            if (!ModelState.IsValid) return View(model);
+            
             var community = _communityRepository.GetCommunity(model.CommunityId);
             if (community == null) return NotFound();
 
             _topicRepository.CreateTopic(model.CommunityId, model.TopicName);
 
-            return RedirectToAction("IndexByCommunity", new { communityId = model.CommunityId });
+            return RedirectToAction("Index", new { communityId = model.CommunityId });
         }
 
         //UPDATE: GET
         public IActionResult Edit(int topicId)
         {
-            if (topicId == 0) return NotFound();
-
             var topic = _topicRepository.GetTopic(topicId);
             if (topic == null) return NotFound();
 
             var community = _communityRepository.GetCommunity((int)topic.CommunityId!);
             if (community == null) return NotFound();
-
-            var communities = _communityRepository.GetSubscribedCommunities();
-            if (communities == null) return NotFound();
-
-            var communitiesList = communities
-                .Select(c => new SelectListItem
-                {
-                    Value = c.Id.ToString(),
-                    Text = c.CommunityName
-                })
-                .ToList();
 
             var model = new TopicViewModel
             {
@@ -133,7 +103,6 @@ namespace Forum.UI.Controllers
                 TopicName = topic.TopicName,
                 CommunityId = community.Id,
                 CommunityName = community.CommunityName,
-                Communities = communitiesList,
                 CreatedAt = topic.CreatedAt
             };
 
@@ -150,9 +119,9 @@ namespace Forum.UI.Controllers
             var topic = _topicRepository.GetTopic(model.Id);
             if (topic == null) return NotFound();
 
-            _topicRepository.UpdateTopic(topic.Id, model.CommunityId, model.TopicName);
+            _topicRepository.UpdateTopic(topic.Id, model.TopicName);
 
-            return RedirectToAction("IndexByCommunity", new { communityId = model.CommunityId });
+            return RedirectToAction("Index", new { communityId = model.CommunityId });
         }
 
         //DELETE: GET
@@ -190,7 +159,7 @@ namespace Forum.UI.Controllers
 
             _topicRepository.DeleteTopic(topic.Id);
 
-            return RedirectToAction("Index", new { id = topic.CommunityId });
+            return RedirectToAction("Index", new { communityId = topic.CommunityId });
         }
     }
 }

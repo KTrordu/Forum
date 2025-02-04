@@ -13,11 +13,9 @@
 		</div>
 		<div asp-validation-summary="All"></div>
 		<div class="mb-3">
-			<label asp-for="CommunityId"></label>
-			<select asp-for="CommunityId" asp-items="Model.Communities" class="form-control">
-				<option value="">Select a Community</option>
-			</select>
-			<span asp-validation-for="CommunityId" class="text-danger"></span>
+			<label asp-for="CommunityName"></label>
+			<input asp-for="CommunityName" class="form-control" disabled/>
+			<span asp-validation-for="CommunityName" class="text-danger"></span>
 		</div>
 		<div class="mb-3">
 			<label asp-for="TopicName"></label>
