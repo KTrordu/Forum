@@ -10,7 +10,10 @@ namespace Forum.UI.ViewModels
         [Required]
         public int Id { get; set; }
 
-        [Required]
+        [StringLength(20)]
+        [DisplayName("Topic Name")]
+        public string TopicName { get; set; }
+
         [DisplayName("Community")]
         public int CommunityId { get; set; }
 
@@ -18,10 +21,6 @@ namespace Forum.UI.ViewModels
 
         [DisplayName("Community Name")]
         public string? CommunityName { get; set; }
-
-        [StringLength(20)]
-        [DisplayName("Topic Name")]
-        public string TopicName { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }

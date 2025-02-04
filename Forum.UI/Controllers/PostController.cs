@@ -1,5 +1,6 @@
 ﻿using Forum.DAL;
 using Forum.DAL.Repositories;
+using Forum.Entities;
 using Forum.UI.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -98,21 +99,18 @@ namespace Forum.UI.ViewModels
             var postContents = _postRepository.GetPostContents(postIds);
             if (postContents == null) return NotFound();
 
-            var model = new PostListViewModel {};
+            var model = new PostListViewModel
+            {
+                CommunityId = community.Id,
+                CommunityName = community.CommunityName,
+                TopicId = topic.Id,
+                TopicName = topic.TopicName,
+                Posts = new List<PostViewModel> { },
+                Contents = new List<PostContentViewModel> { }
+            };
 
             foreach (var post in posts)
             {
-                var postViewModel = new PostViewModel
-                {
-                    Id = post.Id,
-                    CommunityId = community.Id,
-                    CommunityName = community.CommunityName,
-                    TopicId = topic.Id,
-                    TopicName = topic.TopicName,
-                    IsLiked = post.IsLiked,
-                    CreatedAt = post.CreatedAt
-                };
-
                 var postContentViewModel = new PostContentViewModel
                 {
                     PostTitle = postContents[post.Id].PostTitle,
@@ -120,11 +118,23 @@ namespace Forum.UI.ViewModels
                     ImagePath = postContents[post.Id].ImagePath
                 };
 
+                var postViewModel = new PostViewModel
+                {
+                    Id = post.Id,
+                    CommunityId = community.Id,
+                    CommunityName = community.CommunityName,
+                    TopicId = topic.Id,
+                    TopicName = topic.TopicName,
+                    PostContent = postContentViewModel,
+                    IsLiked = post.IsLiked,
+                    CreatedAt = post.CreatedAt
+                };
+
                 model.Posts.Add(postViewModel);
                 model.Contents.Add(postContentViewModel);
             }
 
-            return View(model);
+            return View("Index", model);
         }
 
         //READ: List posts by community
@@ -136,7 +146,13 @@ namespace Forum.UI.ViewModels
             var topics = _topicRepository.GetTopicsByCommunity(community.Id);
             if (topics == null) return NotFound();
 
-            var model = new PostListViewModel {};
+            var model = new PostListViewModel
+            {
+                CommunityId = community.Id,
+                CommunityName = community.CommunityName,
+                Posts = new List<PostViewModel> {},
+                Contents = new List<PostContentViewModel> {}
+            };
 
             foreach (var topic in topics)
             {
@@ -153,17 +169,6 @@ namespace Forum.UI.ViewModels
 
                 foreach (var post in posts)
                 {
-                    var postViewModel = new PostViewModel
-                    {
-                        Id = post.Id,
-                        CommunityId = community.Id,
-                        CommunityName = community.CommunityName,
-                        TopicId = topic.Id,
-                        TopicName = topic.TopicName,
-                        IsLiked = post.IsLiked,
-                        CreatedAt = post.CreatedAt
-                    };
-
                     var postContentViewModel = new PostContentViewModel
                     {
                         PostTitle = postContents[post.Id].PostTitle,
@@ -171,12 +176,24 @@ namespace Forum.UI.ViewModels
                         ImagePath = postContents[post.Id].ImagePath
                     };
 
-                    model.Posts.Add(postViewModel);
+                    var postViewModel = new PostViewModel
+                    {
+                        Id = post.Id,
+                        CommunityId = community.Id,
+                        CommunityName = community.CommunityName,
+                        TopicId = topic.Id,
+                        TopicName = topic.TopicName,
+                        PostContent = postContentViewModel,
+                        IsLiked = post.IsLiked,
+                        CreatedAt = post.CreatedAt
+                    };
+
                     model.Contents.Add(postContentViewModel);
+                    model.Posts.Add(postViewModel);
                 }
             }
 
-            return View(model);
+            return View("Index", model);
         }
 
         //Like or Unlike Post
@@ -266,17 +283,15 @@ namespace Forum.UI.ViewModels
         }
 
         //UPDATE: GET
-        public IActionResult Edit(int? id)
+        public IActionResult Edit(int id)
         {
-            if (id == null || id == 0) return NotFound();
-
-            var post = _postRepository.GetPost((int)id);
+            var post = _postRepository.GetPost(id);
             if (post == null) return NotFound();
 
             var postContent = _postRepository.GetPostContent(post.Id);
             if (postContent == null) return NotFound();
 
-            var topic = _topicRepository.GetTopic(post.Id);
+            var topic = _topicRepository.GetTopic((int)post.TopicId!);
             if (topic == null) return NotFound();
 
             var community = _communityRepository.GetSubscribedCommunity((int)topic.CommunityId!);
@@ -317,7 +332,7 @@ namespace Forum.UI.ViewModels
                 var postContent = _postRepository.GetPostContent(model.Id);
                 if (postContent == null) return NotFound();
 
-                _postRepository.UpdatePost(post.Id, post, postContent);
+                _postRepository.UpdatePost(post.Id, model.PostContent.PostTitle, model.PostContent.PostDescription, model.PostContent.ImagePath);
 
                 return RedirectToAction("Index", new { communityId = model.CommunityId });
             }

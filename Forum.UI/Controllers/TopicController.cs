@@ -19,65 +19,35 @@ namespace Forum.UI.Controllers
             _communityRepository = communityRepository;
         }
 
-        //READ: List all topics
+        //READ: List topics by the communityId
         public IActionResult Index(int communityId)
         {
             var community = _communityRepository.GetCommunity(communityId);
+            if (community == null) return NotFound();
 
             var topics = _topicRepository.GetTopics();
-
             if (topics == null) return NotFound();
-
-            var topicsList = topics
-                .Select(t => new TopicViewModel
-                {
-                    Id = t.Id,
-                    TopicName = t.TopicName,
-                    CommunityId = (int)t.CommunityId!,
-                    CommunityName = t.Communities.CommunityName,
-                    CreatedAt = t.CreatedAt
-                })
-                .ToList();
 
             var model = new TopicListViewModel
             {
                 CommunityId = communityId,
-                CommunityName = community != null ? community.CommunityName : null,
-                Topics = topicsList
-            };
-
-            return View(model);
-        }
-
-        //READ: List topics by the communityId
-        [Route("Topic/Community/{communityId}")]
-        public IActionResult IndexByCommunity(int communityId)
-        {
-            if (communityId == 0) return NotFound();
-
-            var community = _communityRepository.GetCommunity(communityId);
-            if (community == null) return NotFound();
-
-            var topics = _topicRepository.GetTopicsByCommunity(community.Id);
-            if (topics == null) return NotFound();
-
-            var topicsList = topics
-                .Select(t => new TopicViewModel
-                {
-                    Id= t.Id,
-                    TopicName = t.TopicName,
-                    CommunityId= (int)t.CommunityId!,
-                    CommunityName= t.Communities.CommunityName,
-                    CreatedAt = t.CreatedAt
-                })
-                .ToList();
-
-            var model = new TopicListViewModel
-            {
-                CommunityId = community.Id,
                 CommunityName = community.CommunityName,
-                Topics = topicsList
+                Topics = new List<TopicViewModel> { }
             };
+
+            foreach (var topic in topics)
+            {
+                var topicViewModel = new TopicViewModel
+                {
+                    Id = topic.Id,
+                    TopicName = topic.TopicName,
+                    CommunityId = community.Id,
+                    CommunityName = community.CommunityName,
+                    CreatedAt = topic.CreatedAt
+                };
+
+                model.Topics.Add(topicViewModel);
+            }
 
             return View("Index", model);
         }

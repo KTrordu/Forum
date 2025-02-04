@@ -35,7 +35,7 @@ namespace Forum.UI.Controllers
                 })
                 .ToList();
 
-            return View(communities);
+            return View(communitiesList);
         }
 
         //Subscribe or Unsubscribe to Community

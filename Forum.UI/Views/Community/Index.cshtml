@@ -44,9 +44,9 @@
         {
             <tr>
                 <td width="15%">
-                    <a asp-controller="Post" asp-action="Index" asp-route-communityId="@obj.Id" asp-route-topicId="0" style="text-decoration:none; color:navy">
-                        @obj.CommunityName
-                    </a>
+                    @obj.CommunityName |
+                    <a asp-controller="Topic" asp-action="Index" asp-route-communityId="@obj.Id" style="text-decoration:none; color:navy">Topics </a>|
+                    <a asp-controller="Post" asp-action="IndexByCommunity" asp-route-communityId="@obj.Id" style="text-decoration:none; color:navy">Posts</a>
                 </td>
                 <td width="15%">
                     @obj.CreatedAt.Day.@obj.CreatedAt.Month.@obj.CreatedAt.Year @obj.CreatedAt.DayOfWeek

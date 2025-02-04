@@ -5,8 +5,6 @@
 }
 <form asp-controller="Post" asp-action="Edit" method="post">
 	<input type="hidden" asp-for="Id" />
-	<input type="hidden" asp-for="CommunityId" />
-	<input type="hidden" asp-for="CommunityName" />
 
 	<div class="border p-3 mt-4">
 		<div class="row pb-2">
@@ -15,13 +13,44 @@
 		</div>
 		<div asp-validation-summary="All"></div>
 		<div class="mb-3">
+			<label asp-for="CommunityId"></label>
+			<select asp-for="CommunityId" asp-items="Model.Communities" class="form-control" id="communityDropdown" disabled>
+				<option value="">@Model.CommunityName</option>
+			</select>
+			<span asp-validation-for="CommunityId" class="text-danger"></span>
+		</div>
+		<div class="mb-3">
+			<label asp-for="TopicId"></label>
+			<select asp-for="TopicId" class="form-control" id="topicDropdown" disabled>
+				<option value="">@Model.TopicName</option>
+			</select>
+			<span asp-validation-for="TopicId" class="text-danger"></span>
+		</div>
+		<div class="mb-3">
 			<label asp-for="PostContent.PostTitle"></label>
 			<input asp-for="PostContent.PostTitle" class="form-control" />
 			<span asp-validation-for="PostContent.PostTitle" class="text-danger"></span>
 		</div>
-		<button type="submit" class="btn btn-primary" style="width:150px">Edit</button>
-		<a asp-controller="Post" asp-action="Index" asp-route-communityId="@Model.CommunityId" class="btn btn-secondary" style="width:150px">
-			Back to List
+		<div class="mb-3">
+			<label asp-for="PostContent.PostDescription"></label>
+			<textarea asp-for="PostContent.PostDescription" class="form-control" rows="6" placeholder="Type something..."></textarea>
+			<span asp-validation-for="PostContent.PostDescription" class="text-danger"></span>
+		</div>
+		<div class="mb-3">
+			<label asp-for="PostContent.ImagePath">Upload Image</label>
+			<input type="file" asp-for="PostContent.ImagePath" class="form-control" accept="image/*" />
+			<span asp-validation-for="PostContent.ImagePath" class="text-danger"></span>
+		</div>
+
+		<button type="submit" class="btn btn-primary" style="width:150px">Update</button>
+		<a asp-controller="Community" asp-action="Index" asp-route-communityId="@Model.CommunityId" class="btn btn-secondary" style="width:200px">
+			Back to Communities
+		</a>
+		<a asp-controller="Topic" asp-action="Index" asp-route-topicId="@Model.TopicId" class="btn btn-secondary" style="width:150px">
+			Back to Topics
+		</a>
+		<a asp-controller="Post" asp-action="Index" class="btn btn-secondary" style="width:150px">
+			Back to Posts
 		</a>
 	</div>
 </form>
