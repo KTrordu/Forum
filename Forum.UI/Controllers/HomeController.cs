@@ -24,12 +24,34 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        var posts = _postRepository.GetPosts();
-        if (posts == null) return NotFound();
+        var communities = _communityRepository.GetSubscribedCommunities();
+        if (communities == null) return NotFound();
 
-        var postIds = posts!
-            .Select(p => p.Id)
-            .ToList();
+        var topicIds = new List<int>();
+
+        foreach (var community in communities)
+        {
+            var topics = _topicRepository.GetTopicsByCommunity(community.Id);
+            if (topics == null) return NotFound();
+
+            foreach (var topic in topics)
+            {
+                topicIds.Add(topic.Id);
+            }
+        }
+
+        var postIds = new List<int>();
+
+        foreach (var topicId in topicIds)
+        {
+            var posts = _postRepository.GetPostsByTopic(topicId);
+            if (posts == null) return NotFound();
+
+            foreach (var post in posts)
+            {
+                postIds.Add(post.Id);
+            }
+        }
 
         var postContents = _postRepository.GetPostContents(postIds);
         if (postContents == null) return NotFound();
@@ -38,14 +60,18 @@ public class HomeController : Controller
         var postContentViewModels = new List<PostContentViewModel>();
 
         Random random = new Random();
+        int postCount = postIds.Count;
 
-        for (int i = 0; i < posts.Count; i++)
+        var postList = _postRepository.GetPostsByIds(postIds);
+        if (postList == null) return NotFound();
+
+        for (int i = 0; i < postCount; i++)
         {
             int index = random.Next(postIds.Count);
             int idToDisplay = postIds[index];
             postIds.Remove(idToDisplay);
 
-            var post = posts
+            var post = postList
                 .Where(p => p.Id == idToDisplay)
                 .FirstOrDefault();
             if (post == null) return NotFound();

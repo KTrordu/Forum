@@ -30,6 +30,21 @@ namespace Forum.DAL.Repositories
                 .ToList();
         }
 
+        public List<Post>? GetPostsByIds(List<int> postIds)
+        {
+            var posts = new List<Post>();
+
+            foreach (var postId in postIds)
+            {
+                var post = _db.Posts
+                    .FirstOrDefault(p => p.Id == postId);
+
+                posts.Add(post!);
+            }
+
+            return posts;
+        }
+
         public List<Post>? GetPostsByTopic(int topicId)
         {
             return _db.Posts
