@@ -52,15 +52,11 @@
                     @obj.CreatedAt.Day.@obj.CreatedAt.Month.@obj.CreatedAt.Year @obj.CreatedAt.DayOfWeek
                 </td>
                 <td width="10%">
-                    <input type="hidden" asp-for="@obj.Id" />
-                    @if(obj.IsSubscribed)
-                    {
-                        <i class="bi bi-check2" style="color:green"></i>
-                    }
-                    @if(!obj.IsSubscribed)
-                    {
-                    <i class="bi bi-x" style="color:darkred"></i>
-                    }
+                    <button class="btn btn-sm subscribe-button @(obj.IsSubscribed ? "bg-danger" : "bg-success")" data-communityId="@obj.Id" style="border:1px solid black;">
+                        <span class="bi" id="like-icon-@obj.Id" style="color:white">
+                            @(obj.IsSubscribed ? "Unsubscribe" : "Subscribe")
+                        </span>
+                    </button>
                 </td>
                 <td width="10%">
                     <a asp-controller="Topic" asp-action="Create" asp-route-communityId="@obj.Id" style="text-decoration:none; color:navy">
@@ -88,3 +84,33 @@
         }
     </tbody>
 </table>
+
+<script>
+    document.querySelectorAll(".subscribe-button").forEach(button => {
+        var communityId = button.getAttribute("data-communityId");
+        var icon = document.getElementById(`like-icon-${communityId}`);
+
+        if (icon.innerHTML.trim() === "Unsubscribe") button.classList.add("bg-danger");
+        else button.classList.add("bg-success");
+
+        button.addEventListener("click", function () {
+
+            fetch(`/Community/SubscribeToCommunity?communityId=${communityId}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.isSubscribed) {
+                    icon.innerHTML = "Unsubscribe";
+                    button.classList.remove("bg-success");
+                    button.classList.add("bg-danger");
+                } else {
+                    icon.innerHTML = "Subscribe";
+                    button.classList.remove("bg-danger");
+                    button.classList.add("bg-success");
+                }
+            });
+        });
+    });
+</script>

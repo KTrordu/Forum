@@ -44,8 +44,14 @@
 		</div>
 		
 		<button type="submit" class="btn btn-primary" style="width:150px">Create</button>
+		<a asp-controller="Community" asp-action="Index" asp-route-communityId="@Model.CommunityId" class="btn btn-secondary" style="width:200px">
+			Back to Communities
+		</a>
+		<a asp-controller="Topic" asp-action="Index" asp-route-communityId="@Model.CommunityId" class="btn btn-secondary" style="width:150px">
+			Back to Topics
+		</a>
 		<a asp-controller="Post" asp-action="Index" asp-route-communityId="@Model.CommunityId" class="btn btn-secondary" style="width:150px">
-			Back to List
+			Back to Posts
 		</a>
 	</div>
 </form>

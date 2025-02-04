@@ -34,7 +34,8 @@ namespace Forum.UI.ViewModels
 
             if (posts == null || postContents == null) return NotFound();
 
-            var model = new PostListViewModel();
+            var postViewModels = new List<PostViewModel>();
+            var postContentViewModels = new List<PostContentViewModel>();
 
             foreach (var post in posts)
             {
@@ -50,9 +51,17 @@ namespace Forum.UI.ViewModels
 
                 if (community == null) return NotFound();
 
+                var postContentViewModel = new PostContentViewModel
+                {
+                    PostTitle = postContents[post.Id].PostTitle,
+                    PostDescription = postContents[post.Id].PostDescription,
+                    ImagePath = postContents[post.Id].ImagePath
+                };
+
                 var postViewModel = new PostViewModel
                 {
                     Id = post.Id,
+                    PostContent = postContentViewModel,
                     CommunityId = community.Id,
                     CommunityName = community.CommunityName,
                     TopicId = topic.Id,
@@ -61,16 +70,15 @@ namespace Forum.UI.ViewModels
                     CreatedAt = post.CreatedAt
                 };
 
-                var postContentViewModel = new PostContentViewModel
-                {
-                    PostTitle = postContents[post.Id].PostTitle,
-                    PostDescription = postContents[post.Id].PostDescription,
-                    ImagePath = postContents[post.Id].ImagePath
-                };
-
-                model.Posts.Add(postViewModel);
-                model.Contents.Add(postContentViewModel);
+                postViewModels.Add(postViewModel);
+                postContentViewModels.Add(postContentViewModel);
             }
+
+            var model = new PostListViewModel
+            {
+                Posts = postViewModels,
+                Contents = postContentViewModels
+            };
 
             return View(model);
         }
@@ -193,6 +201,21 @@ namespace Forum.UI.ViewModels
             }
 
             return View(model);
+        }
+
+        //Like or Unlike Post
+        public IActionResult LikePost(int id)
+        {
+            var post = _db.Posts
+                .Where(p => !p.IsDeleted && p.Id == id)
+                .FirstOrDefault();
+
+            if (post == null) return NotFound();
+
+            post.IsLiked = !post.IsLiked;
+            _db.SaveChanges();
+
+            return Json(new { isLiked = post.IsLiked });
         }
 
         //Get Topics for AJAX

@@ -5,13 +5,13 @@ namespace Forum.UI.ViewModels
 {
     public class PostListViewModel
     {
-        public int CommunityId { get; set; }
+        public int? CommunityId { get; set; }
 
-        public string CommunityName { get; set; }
+        public string? CommunityName { get; set; }
 
-        public int TopicId { get; set; }
+        public int? TopicId { get; set; }
 
-        public string TopicName { get; set; }
+        public string? TopicName { get; set; }
 
         public List<PostViewModel> Posts { get; set; }
 

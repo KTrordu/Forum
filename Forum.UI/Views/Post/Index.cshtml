@@ -27,6 +27,7 @@
             <th>Topic</th>
             <th>Post Title</th>
             <th>Created At</th>
+            <th>Like</th>
             <th></th>
             <th></th>
         </tr>
@@ -37,6 +38,13 @@
                 <td>@post.TopicName</td>
                 <td>@post.PostContent.PostTitle</td>
                 <td>@post.CreatedAt.Day.@post.CreatedAt.Month.@post.CreatedAt.Year @post.CreatedAt.DayOfWeek</td>
+                <td>
+                    <button class="btn btn-sm like-button @(post.IsLiked ? "bg-danger" : "bg-success")" data-id="@post.Id" style="border:1px solid black;">
+                        <span class="bi" id="like-icon-@post.Id" style="color:white">
+                            @(post.IsLiked ? "Unlike" : "Like")
+                        </span>
+                    </button>
+                </td>
                 <td>
                     <div>
                         <a asp-controller="Post" asp-action="Edit" asp-route-id="@post.Id" asp-route-communityId="@post.CommunityId" asp-route-topicId="@post.TopicId"
@@ -65,8 +73,38 @@
                 }
             </tr>
             <tr>
-                <td colspan="6" class="text-center">@post.PostContent.PostDescription</td>
+                <td colspan="7" class="text-center">@post.PostContent.PostDescription</td>
             </tr>
     </tbody>
 </table>
 }
+
+<script>
+    document.querySelectorAll(".like-button").forEach(button => {
+        var postId = button.getAttribute("data-id");
+        var icon = document.getElementById(`like-icon-${postId}`);
+
+        if (icon.innerHTML.trim() === "Unlike") button.classList.add("bg-danger");
+        else button.classList.add("bg-success");
+
+        button.addEventListener("click", function () {
+
+            fetch(`/Post/LikePost?id=${postId}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.isLiked) {
+                    icon.innerHTML = "Unlike";
+                    button.classList.remove("bg-success");
+                    button.classList.add("bg-danger");
+                } else {
+                    icon.innerHTML = "Like";
+                    button.classList.remove("bg-danger");
+                    button.classList.add("bg-success");
+                }
+            });
+        });
+    });
+</script>

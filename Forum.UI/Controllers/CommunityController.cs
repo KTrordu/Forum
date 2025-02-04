@@ -33,6 +33,20 @@ namespace Forum.UI.Controllers
             return View(communities);
         }
 
+        //Subscribe or Unsubscribe to Community
+        public IActionResult SubscribeToCommunity(int communityId)
+        {
+            var community = _db.Communities
+                .FirstOrDefault(c => !c.IsDeleted && c.Id == communityId);
+
+            if (community == null) return NotFound();
+
+            community.IsSubscribed = !community.IsSubscribed;
+            _db.SaveChanges();
+
+            return Json(new { isSubscribed = community.IsSubscribed });
+        }
+
         //CREATE: GET
         public IActionResult Create()
         {
