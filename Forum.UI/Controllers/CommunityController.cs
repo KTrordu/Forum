@@ -63,6 +63,7 @@ namespace Forum.UI.Controllers
             if (!ModelState.IsValid) return View(model);
 
             _communityRepository.CreateCommunity(model.CommunityName);
+            TempData["Success"] = "Community created successfully.";
 
             return RedirectToAction("Index");
         }
@@ -95,6 +96,7 @@ namespace Forum.UI.Controllers
             if (community == null) return NotFound();
 
             _communityRepository.UpdateCommunity(community.Id, model.CommunityName);
+            TempData["Success"] = "Community updated successfully.";
 
             return RedirectToAction("Index");
         }
@@ -125,6 +127,7 @@ namespace Forum.UI.Controllers
             if (community == null) return NotFound();
 
             _communityRepository.DeleteCommunity(community.Id);
+            TempData["Success"] = "Community deleted successfully.";
 
             return RedirectToAction("Index");
         }

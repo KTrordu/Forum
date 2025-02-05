@@ -84,6 +84,7 @@ namespace Forum.UI.Controllers
             if (community == null) return NotFound();
 
             _topicRepository.CreateTopic(model.CommunityId, model.TopicName);
+            TempData["Success"] = "Topic created successfully.";
 
             return RedirectToAction("Index", new { communityId = model.CommunityId });
         }
@@ -120,6 +121,7 @@ namespace Forum.UI.Controllers
             if (topic == null) return NotFound();
 
             _topicRepository.UpdateTopic(topic.Id, model.TopicName);
+            TempData["Success"] = "Topic updated successfully.";
 
             return RedirectToAction("Index", new { communityId = model.CommunityId });
         }
@@ -158,6 +160,7 @@ namespace Forum.UI.Controllers
             if (topic == null) return NotFound();
 
             _topicRepository.DeleteTopic(topic.Id);
+            TempData["Success"] = "Topic deleted successfully.";
 
             return RedirectToAction("Index", new { communityId = topic.CommunityId });
         }

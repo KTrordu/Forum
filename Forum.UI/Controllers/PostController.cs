@@ -278,6 +278,7 @@ namespace Forum.UI.ViewModels
                 : null;
 
             _postRepository.CreatePost(model.TopicId, model.PostContent.PostTitle, model.PostContent.PostDescription, model.PostContent.ImagePath);
+            TempData["Success"] = "Post created successfully.";
 
             return RedirectToAction("Index", "Home");
         }
@@ -333,6 +334,7 @@ namespace Forum.UI.ViewModels
                 if (postContent == null) return NotFound();
 
                 _postRepository.UpdatePost(post.Id, model.PostContent.PostTitle, model.PostContent.PostDescription, model.PostContent.ImagePath);
+                TempData["Success"] = "Post updated successfully.";
 
                 return RedirectToAction("Index", new { communityId = model.CommunityId });
             }
@@ -383,6 +385,7 @@ namespace Forum.UI.ViewModels
         public IActionResult DeletePOST(PostViewModel model)
         {
             _postRepository.DeletePost(model.Id);
+            TempData["Success"] = "Post deleted successfully.";
 
             return RedirectToAction("Index", new {id = model.CommunityId});
         }
