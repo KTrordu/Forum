@@ -20,6 +20,6 @@ namespace Forum.UI.ViewModels
         [DisplayName("Community Name")]
         public string? CommunityName { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; }
     }
 }

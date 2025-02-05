@@ -9,6 +9,7 @@ namespace Forum.UI.ViewModels
     {
         public int Id { get; set; }
 
+        [DisplayName("Community")]
         public int CommunityId { get; set; }
 
         public List<SelectListItem>? Communities { get; set; }
