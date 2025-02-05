@@ -74,6 +74,8 @@ namespace Forum.DAL.Repositories
             };
             _db.Posts.Add(post);
 
+            _db.SaveChanges();
+
             var postContent = new PostContent
             {
                 PostId = post.Id,
