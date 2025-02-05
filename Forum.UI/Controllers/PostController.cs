@@ -208,12 +208,12 @@ namespace Forum.UI.ViewModels
         }
 
         //Get Topics for AJAX
-        public IActionResult GetTopics()
+        public IActionResult GetTopics(int communityId)
         {
-            var topics = _topicRepository.GetTopics();
+            var topics = _topicRepository.GetTopicsByCommunity(communityId);
             if (topics == null) return NotFound();
 
-            topics
+            var topicsList = topics
             .Select(t => new SelectListItem
             {
                 Value = t.Id.ToString(),
@@ -221,7 +221,7 @@ namespace Forum.UI.ViewModels
             })
             .ToList();
 
-            return Json(topics);
+            return Json(topicsList);
         }
 
         //CREATE: GET

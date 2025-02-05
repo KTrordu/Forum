@@ -25,7 +25,7 @@ namespace Forum.UI.Controllers
             var community = _communityRepository.GetCommunity(communityId);
             if (community == null) return NotFound();
 
-            var topics = _topicRepository.GetTopics();
+            var topics = _topicRepository.GetTopicsByCommunity(community.Id);
             if (topics == null) return NotFound();
 
             var model = new TopicListViewModel

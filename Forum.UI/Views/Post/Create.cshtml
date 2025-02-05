@@ -57,19 +57,32 @@
 </form>
 
 <script>
-	document.getElementById("communityDropdown").addEventListener("change", function() {
-		var communityId = this.value;
-		fetch(`/Post/GetTopics?communityId=${communityId}`)
-			.then(response => response.json())
-			.then(data => {
-				var topicDropdown = document.getElementById("topicDropdown");
-				topicDropdown.innerHTML = '<option value="">Select a Topic</option>';
-				data.forEach(topic => {
-					var option = document.createElement("option");
-					option.value = topic.value;
-					option.textContent = topic.text;
-					topicDropdown.appendChild(option);
-				});
-			});
-	});
+    document.addEventListener("DOMContentLoaded", function () {
+        var communityDropdown = document.getElementById("communityDropdown");
+        var topicDropdown = document.getElementById("topicDropdown");
+
+        if (communityDropdown) {
+            communityDropdown.addEventListener("change", function () {
+                var communityId = this.value;
+                if (!communityId) {
+                    topicDropdown.innerHTML = '<option value="">Select a Topic</option>';
+                    return;
+                }
+
+                fetch(`/Post/GetTopics?communityId=${communityId}`)
+                    .then(response => {
+                        return response.json();
+                    })
+                    .then(data => {
+                        topicDropdown.innerHTML = '<option value="">Select a Topic</option>';
+                        data.forEach(topic => {
+                            var option = document.createElement("option");
+                            option.value = topic.value;
+                            option.textContent = topic.text;
+                            topicDropdown.appendChild(option);
+                        });
+                    })
+            });
+        }
+    });
 </script>
