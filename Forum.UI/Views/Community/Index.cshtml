@@ -76,8 +76,8 @@
                 </td>
                 <td width="10%">
                     <div>
-                        <a asp-controller="Community" asp-action="Delete" asp-route-communityId="@obj.Id" style="text-decoration:none; color:darkred">
-                            <i class="bi bi-x-circle" style="color:darkred"></i> Delete</a>
+                        <button class="openModal" style="background-color: inherit; border: none; color: darkred;" data-communityId="@obj.Id">
+                            <i class="bi bi-x-circle" style="color:darkred"></i> Delete</button>
                     </div>
                 </td>
             </tr>
@@ -85,8 +85,36 @@
     </tbody>
 </table>
 
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" id="modalContent"></div>
+    </div>
+</div>
+
 <script>
     $(document).ready(function () {
+        //Open Delete Modal
+        $(".openModal").each(function () {
+            var button = $(this);
+            var communityId = button.attr("data-communityId");
+
+            button.click(function () {
+                $.ajax({
+                    type: "GET",
+                    url: "/Community/Delete",
+                    success: function (data) {
+                            $("#modalContent").html(data);
+                            $("#deleteModal").modal("show");
+                    }, error: function () {
+                        toastr.error("Error opening the modal.");
+                    }
+                });
+            });
+        });
+    });
+
+    $(document).ready(function () {
+        //Subscribe to Community
         $(".subscribe-button").each(function () {
             var button = $(this);
             var communityId = button.attr("data-communityId");

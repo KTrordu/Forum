@@ -102,34 +102,21 @@ namespace Forum.UI.Controllers
         }
 
         //DELETE: GET
-        public IActionResult Delete(int communityId)
+        public IActionResult Delete()
         {
-            var community = _communityRepository.GetCommunity(communityId);
-            if (community == null) return NotFound();
-
-            var model = new CommunityViewModel
-            {
-                Id = community.Id,
-                CommunityName = community.CommunityName,
-                CreatedAt = community.CreatedAt,
-                IsSubscribed = community.IsSubscribed
-            };
-
-            return View(model);
+            return PartialView("_DeleteModal");
         }
 
         //DELETE: POST
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("DeleteCommunity")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeletePOST(int communityId)
+        public IActionResult DeleteCommunity(int communityId)
         {
             var community = _communityRepository.GetCommunity(communityId);
             if (community == null) return NotFound();
 
             _communityRepository.DeleteCommunity(community.Id);
-            TempData["Success"] = "Community deleted successfully.";
-
-            return RedirectToAction("Index");
+            return Json(new { success = true, message = "Community deleted successfully." });
         }
     }
 }
