@@ -76,30 +76,33 @@
 }
 
 <script>
-    document.querySelectorAll(".like-button").forEach(button => {
-        var postId = button.getAttribute("data-id");
-        var icon = document.getElementById(`like-icon-${postId}`);
+    $(document).ready(function () {
+        $(".like-button").each(function () {
+            var button = $(this);
+            var postId = button.data("id");
+            var icon = $("#like-icon-" + postId);
 
-        if (icon.innerHTML.trim() === "Unlike") button.classList.add("bg-danger");
-        else button.classList.add("bg-success");
+            if (icon.text().trim() === "Unlike") button.addClass("bg-danger");
+            else button.addClass("bg-success");
 
-        button.addEventListener("click", function () {
-
-            fetch(`/Post/LikePost?id=${postId}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.isLiked) {
-                    icon.innerHTML = "Unlike";
-                    button.classList.remove("bg-success");
-                    button.classList.add("bg-danger");
-                } else {
-                    icon.innerHTML = "Like";
-                    button.classList.remove("bg-danger");
-                    button.classList.add("bg-success");
-                }
+            button.click(function () {
+                $.ajax({
+                    type: "POST",
+                    url: "/Post/LikePost",
+                    data: { id : postId },
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.isLiked) {
+                            icon.text("Unlike");
+                            button.removeClass("bg-success").addClass("bg-danger");
+                        } else {
+                            icon.text("Like");
+                            button.removeClass("bg-danger").addClass("bg-success");
+                        }
+                    }, error: function () {
+                        console.error("Error liking post.");
+                    }
+                });
             });
         });
     });

@@ -86,30 +86,33 @@
 </table>
 
 <script>
-    document.querySelectorAll(".subscribe-button").forEach(button => {
-        var communityId = button.getAttribute("data-communityId");
-        var icon = document.getElementById(`like-icon-${communityId}`);
+    $(document).ready(function () {
+        $(".subscribe-button").each(function () {
+            var button = $(this);
+            var communityId = button.attr("data-communityId");
+            var icon = $("#like-icon-" + communityId);
 
-        if (icon.innerHTML.trim() === "Unsubscribe") button.classList.add("bg-danger");
-        else button.classList.add("bg-success");
+            if (icon.text().trim() === "Unsubscribe") button.addClass("bg-danger");
+            else button.addClass("bg-success");
 
-        button.addEventListener("click", function () {
-
-            fetch(`/Community/SubscribeToCommunity?communityId=${communityId}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.isSubscribed) {
-                    icon.innerHTML = "Unsubscribe";
-                    button.classList.remove("bg-success");
-                    button.classList.add("bg-danger");
-                } else {
-                    icon.innerHTML = "Subscribe";
-                    button.classList.remove("bg-danger");
-                    button.classList.add("bg-success");
-                }
+            button.click(function () {
+                $.ajax({
+                    type: "POST",
+                    url: "/Community/SubscribeToCommunity",
+                    data: { communityId: communityId },
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.isSubscribed) {
+                            icon.text("Unsubscribe");
+                            button.removeClass("bg-success").addClass("bg-danger");
+                        } else {
+                            icon.text("Subscribe");
+                            button.removeClass("bg-danger").addClass("bg-success");
+                        }
+                    }, error: function () {
+                        console.error("Error subscribing to community.");
+                    }
+                });
             });
         });
     });

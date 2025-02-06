@@ -57,32 +57,36 @@
 </form>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var communityDropdown = document.getElementById("communityDropdown");
-        var topicDropdown = document.getElementById("topicDropdown");
+	$(document).ready(function () {
+		var communityDropdown = $("#communityDropdown");
+		var topicDropdown = $("#topicDropdown");
 
-        if (communityDropdown) {
-            communityDropdown.addEventListener("change", function () {
-                var communityId = this.value;
-                if (!communityId) {
-                    topicDropdown.innerHTML = '<option value="">Select a Topic</option>';
-                    return;
-                }
+		if (communityDropdown) {
+			communityDropdown.change(function () {
+				var communityId = $(this).val();
+				if (!communityId) {
+					topicDropdown.html('<option value="">Select a Topic</option>');
+					return;
+				}
 
-                fetch(`/Post/GetTopics?communityId=${communityId}`)
-                    .then(response => {
-                        return response.json();
-                    })
-                    .then(data => {
-                        topicDropdown.innerHTML = '<option value="">Select a Topic</option>';
-                        data.forEach(topic => {
-                            var option = document.createElement("option");
-                            option.value = topic.value;
-                            option.textContent = topic.text;
-                            topicDropdown.appendChild(option);
-                        });
-                    })
-            });
-        }
-    });
+				$.ajax({
+					type: "GET",
+					url: "/Post/GetTopics",
+					data: { communityId: communityId },
+					dataType: "json",
+					success: function (data) {
+						topicDropdown.html('<option value="">Select a Topic</option>');
+						data.forEach(topic => {
+							var option = document.createElement("option");
+							option.value = topic.value;
+							option.textContent = topic.text;
+							topicDropdown.append(option);
+						});
+					}, error: function () {
+						console.error("Error fetching topics.");
+					}
+				});
+			});
+		}
+	});
 </script>
