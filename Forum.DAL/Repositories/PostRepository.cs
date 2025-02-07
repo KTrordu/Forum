@@ -24,10 +24,33 @@ namespace Forum.DAL.Repositories
 
         public List<Post>? GetPosts()
         {
-            return _db.Posts
-                .Where(p => !p.IsDeleted)
-                .OrderByDescending(p => p.UpdatedAt)
+            var communities = _db.Communities
+                .Where(c => !c.IsDeleted)
                 .ToList();
+
+            var topicsList = new List<Topic>();
+
+            foreach (var community in communities)
+            {
+                var topics = _db.Topics
+                    .Where(t => !t.IsDeleted && t.CommunityId == community.Id)
+                    .ToList();
+
+                topicsList.AddRange(topics);
+            }
+
+            var postsList = new List<Post>();
+
+            foreach (var topic in topicsList)
+            {
+                var posts = _db.Posts
+                    .Where(p => !p.IsDeleted && p.TopicId == topic.Id)
+                    .ToList();
+
+                postsList.AddRange(posts);
+            }
+
+            return postsList;
         }
 
         public List<Post>? GetPostsByIds(List<int> postIds)
