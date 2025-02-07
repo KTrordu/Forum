@@ -127,42 +127,21 @@ namespace Forum.UI.Controllers
         }
 
         //DELETE: GET
-        public IActionResult Delete(int topicId)
+        public IActionResult Delete()
         {
-            if (topicId == 0) return NotFound();
-
-            var topic = _topicRepository.GetTopic(topicId);
-            if (topic == null) return NotFound();
-
-            var community = _communityRepository.GetCommunity((int)topic.CommunityId!);
-            if (community == null) return NotFound();
-
-            var model = new TopicViewModel
-            {
-                Id = topic.Id,
-                TopicName = topic.TopicName,
-                CommunityId = community.Id,
-                CommunityName = community.CommunityName,
-                CreatedAt = topic.CreatedAt
-            };
-
-            return View(model);
+            return PartialView("_DeleteModal");
         }
 
         //DELETE: POST
-        [HttpPost]
+        [HttpPost, ActionName("DeleteTopic")]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(TopicViewModel model)
+        public IActionResult DeleteTopic(int topicId)
         {
-            if (!ModelState.IsValid) return View(model);
-
-            var topic = _topicRepository.GetTopic(model.Id);
+            var topic = _topicRepository.GetTopic(topicId);
             if (topic == null) return NotFound();
 
-            _topicRepository.DeleteTopic(topic.Id);
-            TempData["Success"] = "Topic deleted successfully.";
-
-            return RedirectToAction("Index", new { communityId = topic.CommunityId });
+            _topicRepository.DeleteTopic(topicId);
+            return Json(new { success = true, message = "Topic deleted successfully." });
         }
     }
 }

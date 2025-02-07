@@ -37,7 +37,7 @@
     <tbody>
         @foreach (var obj in Model.Topics)
         {
-            <tr>
+            <tr id="topic-@obj.Id">
                 <td width="20%">
                     <a asp-controller="Post" asp-action="IndexByTopic"  asp-route-topicId="@obj.Id" style="text-decoration:none; color:navy">
                         @obj.TopicName
@@ -59,11 +59,70 @@
                 </td>
                 <td width="10%">
                     <div>
-                        <a asp-controller="Topic" asp-action="Delete" asp-route-communityId="@obj.CommunityId" asp-route-topicId="@obj.Id" style="text-decoration:none; color:darkred">
-                            <i class="bi bi-x-circle" style="color:darkred"></i> Delete</a>
+                        <button class="openModal" style="background-color: inherit; border: none; color: darkred;" data-topicId="@obj.Id">
+                            <i class="bi bi-x-circle" style="color:darkred"></i> Delete</button>
                     </div>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteConfirmationModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" id="modalContent"></div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        //Open Delete Modal
+        $(".openModal").each(function () {
+            var button = $(this);
+            var topicId = button.attr("data-topicId");
+
+            button.click(function () {
+                $.ajax({
+                    type: "GET",
+                    url: "/Topic/Delete",
+                    success: function (data) {
+                            $("#modalContent").html(data);
+                            $("#deleteModal").modal("show");
+                            $("#deleteId").val(topicId);
+                    }, error: function () {
+                        toastr.error("Error opening the modal.");
+                    }
+                });
+            });
+        });
+    });
+
+    $(document).ready(function () {
+        //Delete the Topic
+        $(document).on("click", "#confirmDelete", function () {
+            var topicId = $("#deleteId").val();
+            var token = $('input[name="__RequestVerificationToken"]').val(); // Get CSRF token
+
+            $.ajax({
+                type: "POST",
+                url: "/Topic/DeleteTopic",
+                data: { 
+                    topicId: topicId, 
+                    __RequestVerificationToken: token // Include CSRF token
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $("#deleteModal").modal("hide");
+                        $("#topic-" + topicId).remove();
+                        toastr.success(response.message);
+                    } else {
+                        toastr.error("Error: " + response.message);
+                    }
+                },
+                error: function () {
+                    toastr.error("Error deleting topic.");
+                }
+            });
+        });
+    });
+</script>

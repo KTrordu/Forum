@@ -17,7 +17,7 @@
 </div>
 @foreach (var post in Model.Posts)
 {
-    <table class="table table-bordered table-striped">
+    <table class="table table-bordered table-striped" id="post-@post.Id">
         <thead>
             <tr>
                 <th>Community</th>
@@ -52,10 +52,8 @@
                 </td>
                 <td>
                     <div>
-                        <a asp-controller="Post" asp-action="Delete" asp-route-id="@post.Id"
-                           style="text-decoration:none; color:darkred">
-                            <i class="bi bi-x-circle" style="color:darkred"></i> Delete
-                        </a>
+                        <button class="openModal" style="background-color: inherit; border: none; color: darkred;" data-id="@post.Id">
+                            <i class="bi bi-x-circle" style="color:darkred"></i> Delete</button>
                     </div>
                 </td>
             </tr>
@@ -72,8 +70,66 @@
     </table>
 }
 
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteConfirmationModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" id="modalContent"></div>
+    </div>
+</div>
+
 <script>
     $(document).ready(function () {
+        //Open Delete Modal
+        $(".openModal").each(function () {
+            var button = $(this);
+            var id = button.attr("data-id");
+
+            button.click(function () {
+                $.ajax({
+                    type: "GET",
+                    url: "/Post/Delete",
+                    success: function (data) {
+                            $("#modalContent").html(data);
+                            $("#deleteModal").modal("show");
+                            $("#deleteId").val(id);
+                    }, error: function () {
+                        toastr.error("Error opening the modal.");
+                    }
+                });
+            });
+        });
+    });
+
+    $(document).ready(function () {
+        //Delete the Post
+        $(document).on("click", "#confirmDelete", function () {
+            var id = $("#deleteId").val();
+            var token = $('input[name="__RequestVerificationToken"]').val(); // Get CSRF token
+
+            $.ajax({
+                type: "POST",
+                url: "/Post/DeletePost",
+                data: { 
+                    id: id, 
+                    __RequestVerificationToken: token // Include CSRF token
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $("#deleteModal").modal("hide");
+                        $("#post-" + id).remove();
+                        toastr.success(response.message);
+                    } else {
+                        toastr.error("Error: " + response.message);
+                    }
+                },
+                error: function () {
+                    toastr.error("Error deleting post.");
+                }
+            });
+        });
+    });
+
+    $(document).ready(function () {
+        //Like post
         $(".like-button").each(function () {
             var button = $(this);
             var postId = button.data("id");

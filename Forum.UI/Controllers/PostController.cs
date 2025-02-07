@@ -343,51 +343,21 @@ namespace Forum.UI.ViewModels
         }
 
         //DELETE: GET
-        public IActionResult Delete(int id)
+        public IActionResult Delete()
+        {
+             return PartialView("_DeleteModal");
+        }
+
+        //DELETE: POST
+        [HttpPost, ActionName("DeletePost")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeletePost(int id)
         {
             var post = _postRepository.GetPost(id);
             if (post == null) return NotFound();
 
-            var postContent = _postRepository.GetPostContent(id);
-            if (postContent == null) return NotFound();
-
-            var topic = _topicRepository.GetTopic((int)post.TopicId!);
-            if (topic == null) return NotFound();
-
-            var community = _communityRepository.GetCommunity((int)topic.CommunityId!);
-            if (community == null) return NotFound();
-
-            var postContentViewModel = new PostContentViewModel
-            {
-                PostTitle = postContent.PostTitle,
-                PostDescription = postContent.PostDescription,
-                ImagePath = postContent.ImagePath
-            };
-
-            var model = new PostViewModel
-            {
-                Id = post.Id,
-                IsLiked = post.IsLiked,
-                CommunityId = community.Id,
-                CommunityName = community.CommunityName,
-                TopicId = topic.Id,
-                TopicName = topic.TopicName,
-                PostContent = postContentViewModel,
-                CreatedAt = post.CreatedAt
-            };
-
-            return View(model);
-        }
-
-        //DELETE: POST
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public IActionResult DeletePOST(PostViewModel model)
-        {
-            _postRepository.DeletePost(model.Id);
-            TempData["Success"] = "Post deleted successfully.";
-
-            return RedirectToAction("Index", new {id = model.CommunityId});
+            _postRepository.DeletePost(id);
+            return Json(new { success = true, message = "Post deleted successfully." });
         }
     }
 }

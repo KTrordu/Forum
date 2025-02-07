@@ -42,7 +42,7 @@
     <tbody>
         @foreach (var obj in Model)
         {
-            <tr>
+            <tr id="community-@obj.Id">
                 <td width="15%">
                     @obj.CommunityName |
                     <a asp-controller="Topic" asp-action="Index" asp-route-communityId="@obj.Id" style="text-decoration:none; color:navy">Topics </a>|
@@ -85,7 +85,7 @@
     </tbody>
 </table>
 
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteConfirmationModal" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" id="modalContent"></div>
     </div>
@@ -105,10 +105,40 @@
                     success: function (data) {
                             $("#modalContent").html(data);
                             $("#deleteModal").modal("show");
+                            $("#deleteId").val(communityId);
                     }, error: function () {
                         toastr.error("Error opening the modal.");
                     }
                 });
+            });
+        });
+    });
+
+    $(document).ready(function () {
+        //Delete the Community
+        $(document).on("click", "#confirmDelete", function () {
+            var communityId = $("#deleteId").val();
+            var token = $('input[name="__RequestVerificationToken"]').val(); // Get CSRF token
+
+            $.ajax({
+                type: "POST",
+                url: "/Community/DeleteCommunity",
+                data: { 
+                    communityId: communityId, 
+                    __RequestVerificationToken: token // Include CSRF token
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $("#deleteModal").modal("hide");
+                        $("#community-" + communityId).remove();
+                        toastr.success(response.message);
+                    } else {
+                        toastr.error("Error: " + response.message);
+                    }
+                },
+                error: function () {
+                    toastr.error("Error deleting community.");
+                }
             });
         });
     });
