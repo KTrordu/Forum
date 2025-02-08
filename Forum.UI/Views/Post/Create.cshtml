@@ -39,8 +39,13 @@
 		</div>
 		<div class="mb-3">
 			<label asp-for="PostContent.ImageFile">Upload Image</label>
-			<input type="file" asp-for="PostContent.ImageFile" class="form-control" accept="image/*" />
+			<input type="file" asp-for="PostContent.ImageFile" class="form-control" accept="image/jpg, image/jpeg, image/png, image/gif" />
 			<span asp-validation-for="PostContent.ImageFile" class="text-danger"></span>
+		</div>
+		<div class="mb-3">
+			<label asp-for="PostContent.VideoFile">Upload Video</label>
+			<input type="file" asp-for="PostContent.VideoFile" class="form-control" accept="video/mp4, video/avi, video/mov, video/wmv" />
+			<span asp-validation-for="PostContent.VideoFile" class="text-danger"></span>
 		</div>
 		
 		<button type="submit" class="btn btn-primary" style="width:150px">Create</button>

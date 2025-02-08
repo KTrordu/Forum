@@ -18,7 +18,8 @@ namespace Forum.Entities
         [StringLength(2000)]
         public string PostDescription { get; set; }
 
-        [StringLength(255)]
         public string? ImagePath { get; set; }
+
+        public string? VideoPath { get; set; }
     }
 }

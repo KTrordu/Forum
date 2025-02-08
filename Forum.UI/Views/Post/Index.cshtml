@@ -40,6 +40,22 @@
                 </td>
             </tr>
         }
+        @if (!string.IsNullOrEmpty(post.PostContent.VideoPath))
+        {
+            <tr>
+                <td colspan="7" class="text-center">
+                    <div class="row">
+                        <div class="col-3"></div>
+                        <div class="col-6">
+                            <video controls style="width:100%; border-radius:5px; display:inline;">
+                                <source src="@post.PostContent.VideoPath" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="col-3"></div>
+                    </div>
+                </td>
+            </tr>
+        }
         <tr>
         <tr>
             <th>Community</th>

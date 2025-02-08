@@ -367,3 +367,4 @@ myJs/
 
 #Ignore local uploaded files
 Forum.UI/wwwroot/uploads/
+Forum.UI/wwwroot/videos/

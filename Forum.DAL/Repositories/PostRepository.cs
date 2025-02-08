@@ -89,7 +89,7 @@ namespace Forum.DAL.Repositories
                 .ToDictionary(pc => pc.PostId!.Value, pc => pc);
         }
 
-        public void CreatePost(int topicId, string postTitle, string postDescription, string? imagePath)
+        public void CreatePost(int topicId, string postTitle, string postDescription, string? imagePath, string? videoPath)
         {
             var post = new Post
             {
@@ -104,14 +104,15 @@ namespace Forum.DAL.Repositories
                 PostId = post.Id,
                 PostTitle = postTitle,
                 PostDescription = postDescription,
-                ImagePath = imagePath
+                ImagePath = imagePath,
+                VideoPath = videoPath
             };
             _db.PostContents.Add(postContent);
 
             _db.SaveChanges();
         }
 
-        public void UpdatePost(int id, string newPostTitle, string newPostDescription, string? newImagePath)
+        public void UpdatePost(int id, string newPostTitle, string newPostDescription, string? newImagePath, string? newVideoPath)
         {
             var post = GetPost(id);
             var postContent = GetPostContent(post!.Id);
@@ -122,6 +123,7 @@ namespace Forum.DAL.Repositories
             postContent!.PostTitle = newPostTitle;
             postContent.PostDescription = newPostDescription;
             postContent.ImagePath = newImagePath;
+            postContent.VideoPath = newVideoPath;
             postContent.UpdatedAt = DateTime.Now;
             _db.Posts.Update(post);
             

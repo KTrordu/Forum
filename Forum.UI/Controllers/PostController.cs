@@ -13,14 +13,14 @@ namespace Forum.UI.ViewModels
         private readonly PostRepository _postRepository;
         private readonly TopicRepository _topicRepository;
         private readonly CommunityRepository _communityRepository;
-        private readonly ImageHelper _imageHelper;
+        private readonly MediaHelper _mediaHelper;
 
-        public PostController(PostRepository postRepository, TopicRepository topicRepository, CommunityRepository communityRepository, ImageHelper imageHelper)
+        public PostController(PostRepository postRepository, TopicRepository topicRepository, CommunityRepository communityRepository, MediaHelper mediaHelper)
         {
             _postRepository = postRepository;
             _topicRepository = topicRepository;
             _communityRepository = communityRepository;
-            _imageHelper = imageHelper;
+            _mediaHelper = mediaHelper;
         }
 
         //READ: List all posts
@@ -54,7 +54,8 @@ namespace Forum.UI.ViewModels
                 {
                     PostTitle = postContents[post.Id].PostTitle,
                     PostDescription = postContents[post.Id].PostDescription,
-                    ImagePath = postContents[post.Id].ImagePath
+                    ImagePath = postContents[post.Id].ImagePath,
+                    VideoPath = postContents[post.Id].VideoPath
                 };
 
                 var postViewModel = new PostViewModel
@@ -117,7 +118,8 @@ namespace Forum.UI.ViewModels
                 {
                     PostTitle = postContents[post.Id].PostTitle,
                     PostDescription = postContents[post.Id].PostDescription,
-                    ImagePath = postContents[post.Id].ImagePath
+                    ImagePath = postContents[post.Id].ImagePath,
+                    VideoPath = postContents[post.Id].VideoPath
                 };
 
                 var postViewModel = new PostViewModel
@@ -175,7 +177,8 @@ namespace Forum.UI.ViewModels
                     {
                         PostTitle = postContents[post.Id].PostTitle,
                         PostDescription = postContents[post.Id].PostDescription,
-                        ImagePath = postContents[post.Id].ImagePath
+                        ImagePath = postContents[post.Id].ImagePath,
+                        VideoPath = postContents[post.Id].VideoPath
                     };
 
                     var postViewModel = new PostViewModel
@@ -279,7 +282,7 @@ namespace Forum.UI.ViewModels
             {
                 try
                 {
-                    model.PostContent.ImagePath = _imageHelper.SaveImage(model.PostContent.ImageFile);
+                    model.PostContent.ImagePath = _mediaHelper.SaveImage(model.PostContent.ImageFile);
                 }
                 catch (Exception ex)
                 {
@@ -288,7 +291,20 @@ namespace Forum.UI.ViewModels
                 }
             }
 
-            _postRepository.CreatePost(model.TopicId, model.PostContent.PostTitle, model.PostContent.PostDescription, model.PostContent.ImagePath);
+            if (model.PostContent.VideoFile != null)
+            {
+                try
+                {
+                    model.PostContent.VideoPath = _mediaHelper.SaveVideo(model.PostContent.VideoFile);
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("Videofile", ex.Message);
+                    return View(model);
+                }
+            }
+
+            _postRepository.CreatePost(model.TopicId, model.PostContent.PostTitle, model.PostContent.PostDescription, model.PostContent.ImagePath, model.PostContent.VideoPath);
             TempData["Success"] = "Post created successfully.";
 
             return RedirectToAction("Index", "Home");
@@ -313,7 +329,8 @@ namespace Forum.UI.ViewModels
             {
                 PostTitle = postContent.PostTitle,
                 PostDescription = postContent.PostDescription,
-                ImagePath = postContent.ImagePath
+                ImagePath = postContent.ImagePath,
+                VideoPath = postContent.VideoPath
             };
 
             var postViewModel = new PostViewModel
@@ -344,7 +361,7 @@ namespace Forum.UI.ViewModels
                 var postContent = _postRepository.GetPostContent(model.Id);
                 if (postContent == null) return NotFound();
 
-                _postRepository.UpdatePost(post.Id, model.PostContent.PostTitle, model.PostContent.PostDescription, model.PostContent.ImagePath);
+                _postRepository.UpdatePost(post.Id, model.PostContent.PostTitle, model.PostContent.PostDescription, model.PostContent.ImagePath, model.PostContent.VideoPath);
                 TempData["Success"] = "Post updated successfully.";
 
                 return RedirectToAction("Index", new { communityId = model.CommunityId });

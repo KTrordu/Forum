@@ -86,7 +86,8 @@ public class HomeController : Controller
             {
                 PostTitle = postContents[post.Id].PostTitle,
                 PostDescription = postContents[post.Id].PostDescription,
-                ImagePath = postContents[post.Id].ImagePath
+                ImagePath = postContents[post.Id].ImagePath,
+                VideoPath = postContents[post.Id].VideoPath
             };
 
             var postViewModel = new PostViewModel
