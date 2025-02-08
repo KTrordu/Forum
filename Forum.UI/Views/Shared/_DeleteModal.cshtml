@@ -1,13 +1,19 @@
-﻿@Html.AntiForgeryToken()
-<div class="modal-header">
-    <h4 class="modal-title">Delete Confirmation</h4>
-    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-</div>
-<div class="modal-body">
-    <p>Are you sure you want to delete?</p>
-    <input type="hidden" id="deleteId" />
-</div>
-<div class="modal-footer">
-    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-    <button id="confirmDelete" class="btn btn-danger">Delete</button>
+﻿<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteConfirmationModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" id="modalContent">
+            @Html.AntiForgeryToken()
+            <div class="modal-header">
+                <h4 class="modal-title">Delete Confirmation</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete?</p>
+                <input type="hidden" id="deleteId" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="confirmDelete" class="btn btn-danger">Delete</button>
+            </div>
+        </div>
+    </div>
 </div>

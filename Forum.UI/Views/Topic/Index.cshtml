@@ -68,12 +68,6 @@
     </tbody>
 </table>
 
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteConfirmationModal" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" id="modalContent"></div>
-    </div>
-</div>
-
 <script>
     $(document).ready(function () {
         //Open Delete Modal
@@ -82,17 +76,8 @@
             var topicId = button.attr("data-topicId");
 
             button.click(function () {
-                $.ajax({
-                    type: "GET",
-                    url: "/Topic/Delete",
-                    success: function (data) {
-                            $("#modalContent").html(data);
-                            $("#deleteModal").modal("show");
-                            $("#deleteId").val(topicId);
-                    }, error: function () {
-                        toastr.error("Error opening the modal.");
-                    }
-                });
+                $("#deleteModal").modal("show");
+                $("#deleteId").val(topicId);
             });
         });
     });
