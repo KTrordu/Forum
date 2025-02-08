@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Create";
 }
-<form asp-controller="Post" asp-action="Create" method="post">
+<form asp-controller="Post" asp-action="Create" method="post" enctype="multipart/form-data">
 	<input type="hidden" asp-for="CommunityName" />
 	<input type="hidden" asp-for="TopicName" />
 
@@ -38,9 +38,9 @@
 			<span asp-validation-for="PostContent.PostDescription" class="text-danger"></span>
 		</div>
 		<div class="mb-3">
-			<label asp-for="PostContent.ImagePath">Upload Image</label>
-			<input type="file" asp-for="PostContent.ImagePath" class="form-control" accept="image/*" />
-			<span asp-validation-for="PostContent.ImagePath" class="text-danger"></span>
+			<label asp-for="PostContent.ImageFile">Upload Image</label>
+			<input type="file" asp-for="PostContent.ImageFile" class="form-control" accept="image/*" />
+			<span asp-validation-for="PostContent.ImageFile" class="text-danger"></span>
 		</div>
 		
 		<button type="submit" class="btn btn-primary" style="width:150px">Create</button>

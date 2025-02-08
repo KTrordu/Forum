@@ -23,9 +23,27 @@
 <table class="table table-bordered table-striped" id="post-@post.Id">
     <thead>
         <tr>
+            <th colspan="7" class="text-center">@post.PostContent.PostTitle</th>
+        </tr>
+        @if (!string.IsNullOrEmpty(post.PostContent.ImagePath))
+        {
+            <tr>
+                <td colspan="7" class="text-center">
+                    <div class="row">
+                        <div class="col-3"></div>
+                        <div class="col-6">
+                            <img src="@post.PostContent.ImagePath" alt="@post.PostContent.PostTitle"
+                                    class="img-fluid mx-auto" style="width:100%; border-radius:5px; display:inline;" />
+                        </div>
+                        <div class="col-3"></div>
+                    </div>
+                </td>
+            </tr>
+        }
+        <tr>
+        <tr>
             <th>Community</th>
             <th>Topic</th>
-            <th>Post Title</th>
             <th>Created At</th>
             <th>Like</th>
             <th></th>
@@ -36,7 +54,6 @@
             <tr>
                 <td>@post.CommunityName</td>
                 <td>@post.TopicName</td>
-                <td>@post.PostContent.PostTitle</td>
                 <td>@post.CreatedAt.Day.@post.CreatedAt.Month.@post.CreatedAt.Year @post.CreatedAt.DayOfWeek</td>
                 <td>
                     <button class="btn btn-sm like-button @(post.IsLiked ? "bg-danger" : "bg-success")" data-id="@post.Id" style="border:1px solid black;">
@@ -59,12 +76,6 @@
                             <i class="bi bi-x-circle" style="color:darkred"></i> Delete</button>
                     </div>
                 </td>
-            </tr>
-            <tr>
-                @if (!string.IsNullOrEmpty(post.PostContent.ImagePath))
-                {
-                    <img src="@post.PostContent.ImagePath" alt="@post.PostContent.PostTitle" class="img-fluid" style="max-width:200px; max-height:200px; border-radius:5px;" />
-                }
             </tr>
             <tr>
                 <td colspan="7" class="text-center">@post.PostContent.PostDescription</td>

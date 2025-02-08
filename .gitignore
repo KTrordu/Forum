@@ -364,3 +364,6 @@ FodyWeavers.xsd
 
 # Ignore test js files
 myJs/
+
+#Ignore local uploaded files
+wwwroot/uploads/

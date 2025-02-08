@@ -4,40 +4,39 @@ using System.IO;
 
 namespace Forum.UI.Helpers
 {
-    public static class ImageHelper
+    public class ImageHelper
     {
-        private static string _uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly string[] _allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
+        private const long _maxFileSize = 10 * 1024 * 1024;
 
-        public static string SaveImage(IFormFile imageFile)
+        public ImageHelper(IWebHostEnvironment webHostEnvironment)
         {
-            if (imageFile == null) return null;
+            _webHostEnvironment = webHostEnvironment;
+        }
 
-            if (!Directory.Exists(_uploadsFolder))
-            {
-                Directory.CreateDirectory(_uploadsFolder);
-            }
+        public string? SaveImage(IFormFile file)
+        {
+            if (file == null || file.Length == 0) return null;
 
-            string extension = Path.GetExtension(imageFile.FileName);
-            string uniqueFileName = $"{Guid.NewGuid()}{extension}";
-            string filePath = Path.Combine(_uploadsFolder, uniqueFileName);
+            string extension = Path.GetExtension(file.FileName).ToLower();
+
+            if (!_allowedExtensions.Contains(extension)) throw new ArgumentException("ImageFile", "Only JPG, JPEG, PNG and GIF files are supported.");
+            if (file.Length > _maxFileSize) throw new ArgumentException("File size can be at most 10 MB.");
+
+            string fileName = Guid.NewGuid().ToString() + extension;
+            string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
+
+            if (!Directory.Exists(uploadPath)) Directory.CreateDirectory(uploadPath);
+
+            string filePath = Path.Combine(uploadPath, fileName);
 
             using (var fileStream = new FileStream(filePath, FileMode.Create))
             {
-                imageFile.CopyTo(fileStream);
+                file.CopyTo(fileStream);
             }
 
-            return uniqueFileName;
-        }
-
-        public static void DeleteImage(string imagePath)
-        {
-            if (string.IsNullOrEmpty(imagePath)) return;
-
-            string filePath = Path.Combine(_uploadsFolder, Path.GetFileName(imagePath));
-            if (File.Exists(filePath))
-            {
-                File.Delete(filePath);
-            }
+            return "/uploads/" + fileName;
         }
     }
 }

@@ -10,11 +10,8 @@ namespace Forum.UI.ViewModels
         [DisplayName("Post Description")]
         public string PostDescription { get; set; }
 
-        [DisplayName("Image")]
         public string? ImagePath { get; set; }
 
         public IFormFile? ImageFile { get; set; }
-
-        public string? DisplayImagePath => string.IsNullOrEmpty(ImagePath) ? null : $"/uploads/{ImagePath}";
     }
 }

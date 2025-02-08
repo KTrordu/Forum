@@ -13,12 +13,14 @@ namespace Forum.UI.ViewModels
         private readonly PostRepository _postRepository;
         private readonly TopicRepository _topicRepository;
         private readonly CommunityRepository _communityRepository;
+        private readonly ImageHelper _imageHelper;
 
-        public PostController(PostRepository postRepository, TopicRepository topicRepository, CommunityRepository communityRepository)
+        public PostController(PostRepository postRepository, TopicRepository topicRepository, CommunityRepository communityRepository, ImageHelper imageHelper)
         {
             _postRepository = postRepository;
             _topicRepository = topicRepository;
             _communityRepository = communityRepository;
+            _imageHelper = imageHelper;
         }
 
         //READ: List all posts
@@ -273,9 +275,18 @@ namespace Forum.UI.ViewModels
                 return View(model);
             }
 
-            string? imagePath = model.PostContent.ImageFile != null
-                ? "/uploads/" + ImageHelper.SaveImage(model.PostContent.ImageFile)
-                : null;
+            if (model.PostContent.ImageFile != null)
+            {
+                try
+                {
+                    model.PostContent.ImagePath = _imageHelper.SaveImage(model.PostContent.ImageFile);
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("ImageFile", ex.Message);
+                    return View(model);
+                }
+            }
 
             _postRepository.CreatePost(model.TopicId, model.PostContent.PostTitle, model.PostContent.PostDescription, model.PostContent.ImagePath);
             TempData["Success"] = "Post created successfully.";

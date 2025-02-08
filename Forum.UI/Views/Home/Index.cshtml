@@ -1,14 +1,17 @@
 ﻿@model Forum.UI.ViewModels.PostListViewModel
 
 @{
-    ViewData["Title"] = "Home";
+    ViewData["Title"] = "Index";
 }
 
-<h2 style="color:darkgreen"><span style="color:darkred">Home</span></h2>
+<h2 style="color:darkgreen">@Model.CommunityName <span style="color:darkred">Posts</span></h2>
 
 <div class="container p-3">
     <div class="row pt-4">
-        <div class="text-end">
+        <div class="col-6">
+            <a asp-controller="Community" asp-action="Index" class="btn btn-dark">Back to Communities</a>
+        </div>
+        <div class="col-6 text-end">
             <a asp-controller="Post" asp-action="Create" asp-route-communityId="@Model.CommunityId" asp-route-topicId="@Model.TopicId" class="btn btn-primary">
                 <i class="bi bi-plus-circle"></i> &nbsp; Post Something
             </a>
@@ -20,9 +23,26 @@
     <table class="table table-bordered table-striped" id="post-@post.Id">
         <thead>
             <tr>
+                <th colspan="7" class="text-center">@post.PostContent.PostTitle</th>
+            </tr>
+            @if (!string.IsNullOrEmpty(post.PostContent.ImagePath))
+            {
+                <tr>
+                    <td colspan="7" class="text-center">
+                        <div class="row">
+                            <div class="col-3"></div>
+                            <div class="col-6">
+                                    <img src="@post.PostContent.ImagePath" alt="@post.PostContent.PostTitle"
+                                         class="img-fluid mx-auto" style="width:100%; border-radius:5px; display:inline;" />
+                            </div>
+                            <div class="col-3"></div>
+                        </div>
+                    </td>
+                </tr>
+            }
+            <tr>
                 <th>Community</th>
                 <th>Topic</th>
-                <th>Post Title</th>
                 <th>Created At</th>
                 <th>Like</th>
                 <th></th>
@@ -33,7 +53,6 @@
             <tr>
                 <td>@post.CommunityName</td>
                 <td>@post.TopicName</td>
-                <td>@post.PostContent.PostTitle</td>
                 <td>@post.CreatedAt.Day.@post.CreatedAt.Month.@post.CreatedAt.Year @post.CreatedAt.DayOfWeek</td>
                 <td>
                     <button class="btn btn-sm like-button @(post.IsLiked ? "bg-danger" : "bg-success")" data-id="@post.Id" style="border:1px solid black;">
@@ -53,15 +72,10 @@
                 <td>
                     <div>
                         <button class="openModal" style="background-color: inherit; border: none; color: darkred;" data-id="@post.Id">
-                            <i class="bi bi-x-circle" style="color:darkred"></i> Delete</button>
+                            <i class="bi bi-x-circle" style="color:darkred"></i> Delete
+                        </button>
                     </div>
                 </td>
-            </tr>
-            <tr>
-                @if (!string.IsNullOrEmpty(post.PostContent.ImagePath))
-                {
-                    <img src="@post.PostContent.ImagePath" alt="@post.PostContent.PostTitle" class="img-fluid" style="max-width:200px; max-height:200px; border-radius:5px;" />
-                }
             </tr>
             <tr>
                 <td colspan="7" class="text-center">@post.PostContent.PostDescription</td>
@@ -108,8 +122,8 @@
             $.ajax({
                 type: "POST",
                 url: "/Post/DeletePost",
-                data: { 
-                    id: id, 
+                data: {
+                    id: id,
                     __RequestVerificationToken: token // Include CSRF token
                 },
                 success: function (response) {
@@ -128,34 +142,35 @@
         });
     });
 
-    $(document).ready(function () {
-        //Like post
-        $(".like-button").each(function () {
-            var button = $(this);
-            var postId = button.data("id");
-            var icon = $("#like-icon-" + postId);
+        $(document).ready(function () {
+            //Like post
+            $(".like-button").each(function () {
+                var button = $(this);
+                var postId = button.data("id");
+                var icon = $("#like-icon-" + postId);
 
-            if (icon.text().trim() === "Unlike") button.addClass("bg-danger");
-            else button.addClass("bg-success");
+                if (icon.text().trim() === "Unlike") button.addClass("bg-danger");
+                else button.addClass("bg-success");
 
-            button.click(function () {
-                $.ajax({
-                    type: "POST",
-                    url: "/Post/LikePost",
-                    data: { id : postId },
-                    success: function (data) {
-                        if (data.isLiked) {
-                            icon.text("Unlike");
-                            button.removeClass("bg-success").addClass("bg-danger");
-                        } else {
-                            icon.text("Like");
-                            button.removeClass("bg-danger").addClass("bg-success");
+                button.click(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: "/Post/LikePost",
+                        data: { id : postId },
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.isLiked) {
+                                icon.text("Unlike");
+                                button.removeClass("bg-success").addClass("bg-danger");
+                            } else {
+                                icon.text("Like");
+                                button.removeClass("bg-danger").addClass("bg-success");
+                            }
+                        }, error: function () {
+                            console.error("Error liking post.");
                         }
-                    }, error: function () {
-                        console.error("Error liking post.");
-                    }
+                    });
                 });
             });
         });
-    });
 </script>

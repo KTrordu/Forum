@@ -1,5 +1,7 @@
 using Forum.DAL;
 using Forum.DAL.Repositories;
+using Forum.UI.Helpers;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +15,13 @@ builder.Services.AddRazorPages();
 builder.Services.AddScoped<PostRepository>();
 builder.Services.AddScoped<TopicRepository>();
 builder.Services.AddScoped<CommunityRepository>();
+builder.Services.AddScoped<ImageHelper>();
+
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 10 * 1024 * 1024;
+});
+
 
 var app = builder.Build();
 
