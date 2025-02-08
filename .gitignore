@@ -366,4 +366,4 @@ FodyWeavers.xsd
 myJs/
 
 #Ignore local uploaded files
-wwwroot/uploads/
+Forum.UI/wwwroot/uploads/
