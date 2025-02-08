@@ -89,6 +89,11 @@ namespace Forum.DAL.Repositories
                 .ToDictionary(pc => pc.PostId!.Value, pc => pc);
         }
 
+        public List<Post> InitializePostList()
+        {
+            return new List<Post>();
+        }
+
         public void CreatePost(int topicId, string postTitle, string postDescription, string? imagePath, string? videoPath)
         {
             var post = new Post

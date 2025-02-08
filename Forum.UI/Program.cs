@@ -15,6 +15,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddScoped<PostRepository>();
 builder.Services.AddScoped<TopicRepository>();
 builder.Services.AddScoped<CommunityRepository>();
+builder.Services.AddScoped<HelperRepository>();
 builder.Services.AddScoped<MediaHelper>();
 
 builder.Services.Configure<FormOptions>(options =>

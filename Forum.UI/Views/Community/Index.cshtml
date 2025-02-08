@@ -85,6 +85,8 @@
     </tbody>
 </table>
 
+<partial name="_DeleteOptionsModalCommunity"></partial>
+
 <script>
     $(document).ready(function () {
         //Open Delete Modal
@@ -93,40 +95,129 @@
             var communityId = button.attr("data-communityId");
 
             button.click(function () {
-                $("#deleteModal").modal("show");
+                $("#deleteOptionsModal").modal("show");
                 $("#deleteId").val(communityId);
             });
         });
     });
 
     $(document).ready(function () {
-        //Delete the Community
-        $(document).on("click", "#confirmDelete", function () {
-            var communityId = $("#deleteId").val();
-            var token = $('input[name="__RequestVerificationToken"]').val(); // Get CSRF token
+        //Show the select list or hide it
+        $('input[name="deleteOption"]').change(function () {
+            var selectList = $("#selectCommunityList");
 
-            $.ajax({
-                type: "POST",
-                url: "/Community/DeleteCommunity",
-                data: { 
-                    communityId: communityId, 
-                    __RequestVerificationToken: token // Include CSRF token
-                },
-                success: function (response) {
-                    if (response.success) {
-                        $("#deleteModal").modal("hide");
-                        $("#community-" + communityId).remove();
-                        toastr.success(response.message);
-                    } else {
-                        toastr.error("Error: " + response.message);
-                    }
-                },
-                error: function () {
-                    toastr.error("Error deleting community.");
-                }
-            });
+            if ($("#transferTopics").is(":checked")) {
+                selectList.removeClass("d-none").show();
+            } else {
+                selectList.addClass("d-none").hide();
+            }
         });
     });
+
+    $(document).ready(function () {
+        //Load the communities into the select list
+        var communityList = $("#communities");
+
+        $.ajax({
+            type: "GET",
+            url: "/Community/GetCommunities",
+            dataType: "json",
+            success: function (data) {
+                communityList.html('<option value="">Select a Community</option>');
+                data.forEach(community => {
+                    var option = document.createElement("option");
+                    option.value = community.value;
+                    option.textContent = community.text;
+                    communityList.append(option);
+                });
+            }, error: function () {
+                toastr.error("Error loading communities.");
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        $(document).on("click", "#confirmDeleteOption", function () {
+            var isTransfer = $("#transferTopics").is(":checked");
+            var isDeleteEverything = $("#deleteEverything").is(":checked");
+            var communityId = $("#deleteId").val();
+            var token = $('#deleteOptionsModal input[name="__RequestVerificationToken"]').val();
+
+            if (isDeleteEverything) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Community/DeleteCommunityCascading",
+                    data: { 
+                        communityId: communityId, 
+                        __RequestVerificationToken: token
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            $("#deleteOptionsModal").modal("hide");
+                            $("#community-" + communityId).remove();
+                            toastr.success(response.message);
+                        } else {
+                            toastr.error("Error: " + response.message);
+                        }
+                    },
+                    error: function () {
+                        toastr.error("Error deleting community.");
+                    }
+                });
+            }
+
+            if (isTransfer) {
+                var selectedCommunity = $("select#communities").children("option:selected").val();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Community/ChangeTopicsCommunity",
+                    data: { 
+                        oldCommunityId: communityId,
+                        newCommunityId: selectedCommunity,
+                        __RequestVerificationToken: token
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            toastr.success(response.message);
+                        } else {
+                            toastr.error("Error: " + response.message);
+                        }
+                    },
+                    error: function () {
+                        toastr.error("Error transferring topics and posts to new community.");
+                    }
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Community/DeleteCommunity",
+                    data: { 
+                        communityId: communityId,
+                        __RequestVerificationToken: token
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            $("#deleteOptionsModal").modal("hide");
+                            $("#community-" + communityId).remove();
+                            toastr.success(response.message);
+                        } else {
+                            toastr.error("Error: " + response.message);
+                        }
+                    },
+                    error: function () {
+                        toastr.error("Error deleting community.");
+                    }
+                });
+            }
+
+        });
+    });
+
+    @*var communityId = $("#deleteId").val();
+            
+
+            *@
 
     $(document).ready(function () {
         //Subscribe to Community

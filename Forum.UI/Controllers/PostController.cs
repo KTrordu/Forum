@@ -219,12 +219,12 @@ namespace Forum.UI.ViewModels
             if (topics == null) return NotFound();
 
             var topicsList = topics
-            .Select(t => new SelectListItem
-            {
-                Value = t.Id.ToString(),
-                Text = t.TopicName
-            })
-            .ToList();
+                .Select(t => new SelectListItem
+                {
+                    Value = t.Id.ToString(),
+                    Text = t.TopicName
+                })
+                .ToList();
 
             return Json(topicsList);
         }

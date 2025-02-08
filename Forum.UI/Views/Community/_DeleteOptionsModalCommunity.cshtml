@@ -1,0 +1,30 @@
+<div class="modal fade" id="deleteOptionsModal" tabindex="-1" aria-labelledby="deleteOptionConfirmationModal" aria-hidden="true">
+    @Html.AntiForgeryToken()
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" id="modalContent">
+            <div class="modal-header">
+                <h4 class="modal-title">Delete Options</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <h5>Please select the delete option:</h5>
+                <input type="radio" name="deleteOption" id="deleteEverything">
+                <label for="deleteEverything">Delete the community with its topics and posts.</label>
+                <br>
+                <input type="radio" name="deleteOption" id="transferTopics">
+                <label for="transferTopics">Delete the community but transfer its topics and posts to another community.</label>
+
+                <input type="hidden" id="deleteId">
+
+                <div class="mt-3 d-none" id="selectCommunityList">
+                    <label for="communities"><h5>Choose a Community:</h5></label>
+                    <select name="communities" id="communities"></select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="confirmDeleteOption" class="btn btn-danger">Confirm Delete</button>
+            </div>
+        </div>
+    </div>
+</div>

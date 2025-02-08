@@ -120,7 +120,7 @@ namespace Forum.UI.Controllers
             var topic = _topicRepository.GetTopic(model.Id);
             if (topic == null) return NotFound();
 
-            _topicRepository.UpdateTopic(topic.Id, model.TopicName);
+            _topicRepository.UpdateTopic(topic.Id, model.CommunityId, model.TopicName);
             TempData["Success"] = "Topic updated successfully.";
 
             return RedirectToAction("Index", new { communityId = model.CommunityId });
