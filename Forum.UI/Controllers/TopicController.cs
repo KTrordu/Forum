@@ -1,6 +1,7 @@
 ﻿using Forum.DAL;
 using Forum.DAL.Repositories;
 using Forum.Entities;
+using Forum.UI.DTOs;
 using Forum.UI.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -56,7 +57,7 @@ namespace Forum.UI.Controllers
         }
 
         //Get topics as a list
-        public IActionResult GetTopics(int topicId)
+        public IActionResult GetTopicsList(int topicId)
         {
             var topic = _topicRepository.GetTopic(topicId);
             if (topic == null) return NotFound();
@@ -78,6 +79,24 @@ namespace Forum.UI.Controllers
                 .ToList();
 
             return Json(topicsList);
+        }
+
+        //Get topics by community
+        public IActionResult GetTopics(int communityId)
+        {
+            var topics = _topicRepository.GetTopicsByCommunity(communityId);
+            if (topics == null) return NotFound();
+
+            var topicsList = topics
+                .Select(t => new TopicDTO
+                {
+                    Id = t.Id,
+                    TopicName = t.TopicName,
+                    CreatedAt = $"{t.CreatedAt.Day}.{t.CreatedAt.Month}.{t.CreatedAt.Year} {t.CreatedAt.DayOfWeek}"
+                })
+                .ToList();
+
+            return Json(new { data = topicsList });
         }
 
         //Change the topic of posts

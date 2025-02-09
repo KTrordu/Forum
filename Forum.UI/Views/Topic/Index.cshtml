@@ -10,14 +10,14 @@
             <h2 class="text-primary">Topic List</h2>
         </div>
         <div class="col-6 text-end">
-            <a asp-controller="Topic" asp-action="Create" asp-route-communityId="@Model.CommunityId" class="btn btn-primary">
+            <a asp-controller="Topic" asp-action="Create" asp-route-communityId="@Model.CommunityId" data-communityId="@Model.CommunityId" class="btn btn-primary" id="commBut">
                 <i class="bi bi-plus-circle"></i> &nbsp; Create New Topic
             </a>
         </div>
     </div>
 </div>
 
-<table class="table table-bordered table-striped" style="width:100%">
+@* <table class="table table-bordered table-striped" style="width:100%">
     <thead>
         <tr>
             <th>
@@ -66,21 +66,69 @@
             </tr>
         }
     </tbody>
+</table> *@
+
+<table id="topicTable" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Topic Name</th>
+            <th>Created At</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
 </table>
 
 <partial name="_DeleteOptionsModalTopic" />
 
 <script>
     $(document).ready(function () {
-        //Open Delete Modal
-        $(".openModal").each(function () {
-            var button = $(this);
-            var topicId = button.attr("data-topicId");
+        //List topics
+        var communityId = $("#commBut").attr("data-communityId");
 
-            button.click(function () {
-                $("#deleteOptionsModal").modal("show");
-                $("#deleteId").val(topicId);
-            });
+        $('#topicTable').DataTable({
+            "ajax": {
+                "url": "/Topic/GetTopics",
+                "type": "GET",
+                "data": { communityId: communityId },
+                "datatype": "json"
+            },
+            "columns": [
+                {   "data": "id", "visible": false},
+                {   "data": "topicName",
+                    "render": function (data, type, row) {
+                        return data + ` | <a href="/Post/IndexByTopic/?topicId=${row.id}" style="text-decoration:none; color:navy">Posts</a>`;
+                    } 
+                },
+                {   "data": "createdAt" },
+                {
+                    "data": null,
+                    "render": function (data, type, row) {
+                        return `
+                            <a href="/Topic/Edit/?topicId=${row.id}" style="text-decoration:none; color:navy">
+                                <i class="bi bi-pencil-square" style="color:orange"></i> Edit
+                            </a>
+                            &nbsp; | &nbsp;
+                            <button class="openModal" style="background-color: initial; border: none; color: darkred;" data-topicId="${row.id}">
+                                <i class="bi bi-x-circle" style="color:darkred"></i> Delete
+                            </button>`;
+                    }
+                }
+            ],
+            "error": function (xhr, error, code) {
+                toastr.error("Error in DataTable AJAX:", error);
+                toastr.error("Response:", xhr.responseText);
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        //Open Delete Modal
+        $(document).on("click", ".openModal", function () {
+            var topicId = $(this).attr("data-topicId");
+
+            $("#deleteOptionsModal").modal("show");
+            $("#deleteId").val(topicId);
         });
     });
 
@@ -105,7 +153,7 @@
 
             $.ajax({
                 type: "GET",
-                url: "/Topic/GetTopics",
+                url: "/Topic/GetTopicsList",
                 data: { topicId: topicId },
                 dataType: "json",
                 success: function (data) {

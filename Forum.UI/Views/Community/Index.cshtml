@@ -1,4 +1,4 @@
-﻿@* @model IEnumerable<Forum.UI.ViewModels.CommunityViewModel>
+﻿@model IEnumerable<Forum.UI.ViewModels.CommunityViewModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -14,7 +14,7 @@
             </a>
         </div>
     </div>
-</div> *@
+</div>
 
 @* <table class="table table-bordered table-striped" style="width:100%">
     <thead>
@@ -198,6 +198,7 @@
     });
 
     $(document).ready(function () {
+        //Delete according to the delete option
         $(document).on("click", "#confirmDeleteOption", function () {
             var isTransfer = $("#transferTopics").is(":checked");
             var isDeleteEverything = $("#deleteEverything").is(":checked");
