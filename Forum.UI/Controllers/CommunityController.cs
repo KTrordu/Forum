@@ -53,10 +53,16 @@ namespace Forum.UI.Controllers
         }
 
         //Get communities list
-        public IActionResult GetCommunities()
+        public IActionResult GetCommunities(int communityId)
         {
             var communities = _communityRepository.GetSubscribedCommunities();
             if (communities == null) return NotFound();
+
+            var currentCommunity = communities
+                .FirstOrDefault(c => c.Id == communityId);
+            if (currentCommunity == null) return NotFound();
+
+            communities.Remove(currentCommunity);
 
             var communitiesList = communities
                 .Select(c => new SelectListItem

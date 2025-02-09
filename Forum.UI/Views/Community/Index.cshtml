@@ -116,23 +116,27 @@
 
     $(document).ready(function () {
         //Load the communities into the select list
-        var communityList = $("#communities");
+        $(document).on("click", ".openModal", function () {
+            var communityList = $("#communities");
+            var communityId = $("#deleteId").val();
 
-        $.ajax({
-            type: "GET",
-            url: "/Community/GetCommunities",
-            dataType: "json",
-            success: function (data) {
-                communityList.html('<option value="">Select a Community</option>');
-                data.forEach(community => {
-                    var option = document.createElement("option");
-                    option.value = community.value;
-                    option.textContent = community.text;
-                    communityList.append(option);
-                });
-            }, error: function () {
-                toastr.error("Error loading communities.");
-            }
+            $.ajax({
+                type: "GET",
+                url: "/Community/GetCommunities",
+                data: { communityId: communityId },
+                dataType: "json",
+                success: function (data) {
+                    communityList.html('<option value="">Select a Community</option>');
+                    data.forEach(community => {
+                        var option = document.createElement("option");
+                        option.value = community.value;
+                        option.textContent = community.text;
+                        communityList.append(option);
+                    });
+                }, error: function () {
+                    toastr.error("Error loading communities.");
+                }
+            });
         });
     });
 
