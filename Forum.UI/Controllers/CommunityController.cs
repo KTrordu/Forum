@@ -1,5 +1,6 @@
 ﻿using Forum.DAL;
 using Forum.DAL.Repositories;
+using Forum.UI.DTOs;
 using Forum.UI.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -25,20 +26,22 @@ namespace Forum.UI.Controllers
         //READ: List the communities
         public IActionResult Index()
         {
-            var communities = _communityRepository.GetCommunities();
-            if (communities == null) return NotFound();
+            //var communities = _communityRepository.GetCommunities();
+            //if (communities == null) return NotFound();
 
-            var communitiesList = communities
-                .Select(c => new CommunityViewModel
-                {
-                    Id = c.Id,
-                    CommunityName = c.CommunityName,
-                    CreatedAt = c.CreatedAt,
-                    IsSubscribed = c.IsSubscribed
-                })
-                .ToList();
+            //var communitiesList = communities
+            //    .Select(c => new CommunityViewModel
+            //    {
+            //        Id = c.Id,
+            //        CommunityName = c.CommunityName,
+            //        CreatedAt = c.CreatedAt,
+            //        IsSubscribed = c.IsSubscribed
+            //    })
+            //    .ToList();
 
-            return View(communitiesList);
+            //return View(communitiesList);
+
+            return View();
         }
 
         //Subscribe or Unsubscribe to Community
@@ -53,7 +56,26 @@ namespace Forum.UI.Controllers
         }
 
         //Get communities list
-        public IActionResult GetCommunities(int communityId)
+        public IActionResult GetCommunities()
+        {
+            var communities = _communityRepository.GetCommunities();
+            if (communities == null) return NotFound();
+
+            var communitiesList = communities
+                .Select(c => new CommunityDTO
+                {
+                    Id = c.Id,
+                    CommunityName = c.CommunityName,
+                    CreatedAt = $"{c.CreatedAt.Day}.{c.CreatedAt.Month}.{c.CreatedAt.Year} {c.CreatedAt.DayOfWeek}",
+                    IsSubscribed = c.IsSubscribed
+                })
+                .ToList();
+
+            return Json(new { data = communitiesList });
+        }
+
+        //Get other communities list
+        public IActionResult GetOtherCommunities(int communityId)
         {
             var communities = _communityRepository.GetSubscribedCommunities();
             if (communities == null) return NotFound();

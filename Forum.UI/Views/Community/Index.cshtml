@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Forum.UI.ViewModels.CommunityViewModel>
+﻿@* @model IEnumerable<Forum.UI.ViewModels.CommunityViewModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -14,9 +14,9 @@
             </a>
         </div>
     </div>
-</div>
+</div> *@
 
-<table class="table table-bordered table-striped" style="width:100%">
+@* <table class="table table-bordered table-striped" style="width:100%">
     <thead>
         <tr>
             <th>
@@ -83,21 +83,78 @@
             </tr>
         }
     </tbody>
+</table> *@
+
+<table id="communityTable" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Community Name</th>
+            <th>Created At</th>
+            <th>Subscription</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
 </table>
 
 <partial name="_DeleteOptionsModalCommunity"></partial>
 
 <script>
     $(document).ready(function () {
-        //Open Delete Modal
-        $(".openModal").each(function () {
-            var button = $(this);
-            var communityId = button.attr("data-communityId");
+        //List communities
+        $('#communityTable').DataTable({
+            "ajax": {
+                "url": "/Community/GetCommunities",
+                "type": "GET",
+                "datatype": "json"
+            },
+            "columns": [
+                {   "data": "id", "visible": false},
+                {   "data": "communityName",
+                    "render": function (data, type, row) {
+                        return data + ` | <a href="/Topic/Index/?communityId=${row.id}" style="text-decoration:none; color:navy">Topics</a> |
+                        <a href="/Post/IndexByCommunity/?communityId=${row.id}" style="text-decoration:none; color:navy">Posts</a>`;
+                    } 
+                },
+                {   "data": "createdAt" },
+                {
+                    "data": "isSubscribed",
+                    "render": function (data, type, row) {
+                        let buttonClass = data ? "bg-danger" : "bg-success";
+                        let text = data ? "Unsubscribe" : "Subscribe";
+                        return `<button class="btn btn-sm subscribe-button ${buttonClass}" data-communityId="${row.id}" style="border:1px solid black;">
+                                    <span class="bi" id="like-icon-${row.id}" style="color:white">${text}</span>
+                                </button>`;
+                    }
+                },
+                {
+                    "data": null,
+                    "render": function (data, type, row) {
+                        return `
+                            <a href="/Community/Edit/?communityId=${row.id}" style="text-decoration:none; color:navy">
+                                <i class="bi bi-pencil-square" style="color:orange"></i> Edit
+                            </a>
+                            &nbsp; | &nbsp;
+                            <button class="openModal" style="background-color: initial; border: none; color: darkred;" data-communityId="${row.id}">
+                                <i class="bi bi-x-circle" style="color:darkred"></i> Delete
+                            </button>`;
+                    }
+                }
+            ],
+            "error": function (xhr, error, code) {
+                toastr.error("Error in DataTable AJAX:", error);
+                toastr.error("Response:", xhr.responseText);
+            }
+        });
+    });
 
-            button.click(function () {
-                $("#deleteOptionsModal").modal("show");
-                $("#deleteId").val(communityId);
-            });
+    $(document).ready(function () {
+        //Open Delete Modal
+        $(document).on("click", ".openModal", function () {
+            var communityId = $(this).attr("data-communityId");
+
+            $("#deleteOptionsModal").modal("show");
+            $("#deleteId").val(communityId);
         });
     });
 
@@ -122,7 +179,7 @@
 
             $.ajax({
                 type: "GET",
-                url: "/Community/GetCommunities",
+                url: "/Community/GetOtherCommunities",
                 data: { communityId: communityId },
                 dataType: "json",
                 success: function (data) {
@@ -220,32 +277,30 @@
 
     $(document).ready(function () {
         //Subscribe to Community
-        $(".subscribe-button").each(function () {
-            var button = $(this);
-            var communityId = button.attr("data-communityId");
+        $(document).on("click", ".subscribe-button", function () {
+            var communityId = $(this).attr("data-communityId");
             var icon = $("#like-icon-" + communityId);
+            var button = $(this);
 
             if (icon.text().trim() === "Unsubscribe") button.addClass("bg-danger");
             else button.addClass("bg-success");
 
-            button.click(function () {
-                $.ajax({
-                    type: "POST",
-                    url: "/Community/SubscribeToCommunity",
-                    data: { communityId: communityId },
-                    dataType: "json",
-                    success: function (data) {
-                        if (data.isSubscribed) {
-                            icon.text("Unsubscribe");
-                            button.removeClass("bg-success").addClass("bg-danger");
-                        } else {
-                            icon.text("Subscribe");
-                            button.removeClass("bg-danger").addClass("bg-success");
-                        }
-                    }, error: function () {
-                        console.error("Error subscribing to community.");
+            $.ajax({
+                type: "POST",
+                url: "/Community/SubscribeToCommunity",
+                data: { communityId: communityId },
+                dataType: "json",
+                success: function (data) {
+                    if (data.isSubscribed) {
+                        icon.text("Unsubscribe");
+                        button.removeClass("bg-success").addClass("bg-danger");
+                    } else {
+                        icon.text("Subscribe");
+                        button.removeClass("bg-danger").addClass("bg-success");
                     }
-                });
+                }, error: function () {
+                    console.error("Error subscribing to community.");
+                }
             });
         });
     });
