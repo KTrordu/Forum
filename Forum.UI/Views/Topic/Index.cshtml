@@ -68,6 +68,8 @@
     </tbody>
 </table>
 
+<partial name="_DeleteOptionsModalTopic" />
+
 <script>
     $(document).ready(function () {
         //Open Delete Modal
@@ -76,38 +78,126 @@
             var topicId = button.attr("data-topicId");
 
             button.click(function () {
-                $("#deleteModal").modal("show");
+                $("#deleteOptionsModal").modal("show");
                 $("#deleteId").val(topicId);
             });
         });
     });
 
     $(document).ready(function () {
-        //Delete the Topic
-        $(document).on("click", "#confirmDelete", function () {
+        //Show the select list or hide it
+        $('input[name="deleteOption"]').change(function () {
+            var selectList = $("#selectTopicList");
+
+            if ($("#transferPosts").is(":checked")) {
+                selectList.removeClass("d-none").show();
+            } else {
+                selectList.addClass("d-none").hide();
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        //Load the topics into the select list
+        $(document).on("click", ".openModal", function () {
+            var topicList = $("#topics");
             var topicId = $("#deleteId").val();
-            var token = $('input[name="__RequestVerificationToken"]').val(); // Get CSRF token
 
             $.ajax({
-                type: "POST",
-                url: "/Topic/DeleteTopic",
-                data: { 
-                    topicId: topicId, 
-                    __RequestVerificationToken: token // Include CSRF token
-                },
-                success: function (response) {
-                    if (response.success) {
-                        $("#deleteModal").modal("hide");
-                        $("#topic-" + topicId).remove();
-                        toastr.success(response.message);
-                    } else {
-                        toastr.error("Error: " + response.message);
-                    }
-                },
-                error: function () {
-                    toastr.error("Error deleting topic.");
+                type: "GET",
+                url: "/Topic/GetTopics",
+                data: { topicId: topicId },
+                dataType: "json",
+                success: function (data) {
+                    topicList.html('<option value="">Select a Topic</option>');
+                    data.forEach(topic => {
+                        var option = document.createElement("option");
+                        option.value = topic.value;
+                        option.textContent = topic.text;
+                        topicList.append(option);
+                    });
+                }, error: function () {
+                    toastr.error("Error loading topics.");
                 }
             });
+        });
+    });
+
+    $(document).ready(function () {
+        $(document).on("click", "#confirmDeleteOption", function () {
+            var isTransfer = $("#transferPosts").is(":checked");
+            var isDeleteEverything = $("#deleteEverything").is(":checked");
+            var topicId = $("#deleteId").val();
+            var token = $('#deleteOptionsModal input[name="__RequestVerificationToken"]').val();
+
+            if (isDeleteEverything) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Topic/DeleteTopicCascading",
+                    data: { 
+                        topicId: topicId, 
+                        __RequestVerificationToken: token
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            $("#deleteOptionsModal").modal("hide");
+                            $("#topic-" + topicId).remove();
+                            toastr.success(response.message);
+                        } else {
+                            toastr.error("Error: " + response.message);
+                        }
+                    },
+                    error: function () {
+                        toastr.error("Error deleting community.");
+                    }
+                });
+            }
+
+            if (isTransfer) {
+                var selectedTopic = $("select#topics").children("option:selected").val();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Topic/ChangePostsTopic",
+                    data: { 
+                        oldTopicId: topicId,
+                        newTopicId: selectedTopic,
+                        __RequestVerificationToken: token
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            toastr.success(response.message);
+                        } else {
+                            toastr.error("Error: " + response.message);
+                        }
+                    },
+                    error: function () {
+                        toastr.error("Error transferring posts to new topic.");
+                    }
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Topic/DeleteTopic",
+                    data: { 
+                        topicId: topicId,
+                        __RequestVerificationToken: token
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            $("#deleteOptionsModal").modal("hide");
+                            $("#topic-" + topicId).remove();
+                            toastr.success(response.message);
+                        } else {
+                            toastr.error("Error: " + response.message);
+                        }
+                    },
+                    error: function () {
+                        toastr.error("Error deleting topic.");
+                    }
+                });
+            }
+
         });
     });
 </script>

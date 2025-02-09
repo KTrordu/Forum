@@ -46,5 +46,28 @@ namespace Forum.DAL.Repositories
 
             _db.SaveChanges();
         }
+
+        public void DeleteTopicCascading(Topic topic, List<Post> posts, Dictionary<int, PostContent> postContents)
+        {
+            foreach (var post in posts)
+            {
+                post.IsDeleted = true;
+                post.DeletedAt = DateTime.Now;
+                post.UpdatedAt = DateTime.Now;
+                _db.Posts.Update(post);
+
+                postContents[post.Id].IsDeleted = true;
+                postContents[post.Id].DeletedAt = DateTime.Now;
+                postContents[post.Id].UpdatedAt = DateTime.Now;
+                _db.PostContents.Update(postContents[post.Id]);
+            }
+
+            topic.IsDeleted = true;
+            topic.DeletedAt = DateTime.Now;
+            topic.UpdatedAt = DateTime.Now;
+            _db.Topics.Update(topic);
+
+            _db.SaveChanges();
+        }
     }
 }

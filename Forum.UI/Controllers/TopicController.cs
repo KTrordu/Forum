@@ -1,5 +1,6 @@
 ﻿using Forum.DAL;
 using Forum.DAL.Repositories;
+using Forum.Entities;
 using Forum.UI.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -11,12 +12,14 @@ namespace Forum.UI.Controllers
         private readonly PostRepository _postRepository;
         private readonly TopicRepository _topicRepository;
         private readonly CommunityRepository _communityRepository;
+        private readonly HelperRepository _helperRepository;
 
-        public TopicController(PostRepository postRepository, TopicRepository topicRepository, CommunityRepository communityRepository)
+        public TopicController(PostRepository postRepository, TopicRepository topicRepository, CommunityRepository communityRepository, HelperRepository helperRepository)
         {
             _postRepository = postRepository;
             _topicRepository = topicRepository;
             _communityRepository = communityRepository;
+            _helperRepository = helperRepository;
         }
 
         //READ: List topics by the communityId
@@ -50,6 +53,49 @@ namespace Forum.UI.Controllers
             }
 
             return View("Index", model);
+        }
+
+        //Get topics as a list
+        public IActionResult GetTopics(int topicId)
+        {
+            var topic = _topicRepository.GetTopic(topicId);
+            if (topic == null) return NotFound();
+
+            var community = _communityRepository.GetCommunity((int)topic.CommunityId!);
+            if (community == null) return NotFound();
+
+            var topics = _topicRepository.GetTopicsByCommunity(community.Id);
+            if (topics == null) return NotFound();
+
+            topics.Remove(topic);
+
+            var topicsList = topics
+                .Select(c => new SelectListItem
+                {
+                    Value = c.Id.ToString(),
+                    Text = c.TopicName
+                })
+                .ToList();
+
+            return Json(topicsList);
+        }
+
+        //Change the topic of posts
+        public IActionResult ChangePostsTopic(int oldTopicId, int  newTopicId)
+        {
+            var oldTopic = _topicRepository.GetTopic(oldTopicId);
+            var newTopic = _topicRepository.GetTopic(newTopicId);
+            if (oldTopic == null || newTopic == null) return NotFound();
+
+            var posts = _postRepository.GetPostsByTopic(oldTopic.Id);
+            if (posts == null) return NotFound();
+
+            foreach (var post in posts)
+            {
+                _postRepository.UpdatePostTopic(post, newTopicId);
+            }
+
+            return Json(new { success = true, message = "Topic of the posts are updated successfully." });
         }
 
         //CREATE: GET
@@ -142,6 +188,31 @@ namespace Forum.UI.Controllers
 
             _topicRepository.DeleteTopic(topicId);
             return Json(new { success = true, message = "Topic deleted successfully." });
+        }
+
+        //Delete the topic and its subentities
+        [HttpPost,ActionName("DeleteTopicCascading")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteTopicCascading(int topicId)
+        {
+            var topic = _topicRepository.GetTopic(topicId);
+            if (topic == null) return NotFound();
+
+            var posts = _postRepository.GetPostsByTopic(topic.Id);
+            if (posts == null) return NotFound();
+
+            var postContents = _postRepository.GetPostContents(posts);
+            if (postContents == null) return NotFound();
+
+            try
+            {
+                _helperRepository.DeleteTopicCascading(topic, posts, postContents);
+                return Json(new { success = true, message = "Topic and its posts are deleted successfully." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex });
+            }
         }
     }
 }

@@ -89,6 +89,17 @@ namespace Forum.DAL.Repositories
                 .ToDictionary(pc => pc.PostId!.Value, pc => pc);
         }
 
+        public Dictionary<int, PostContent>? GetPostContents(List<Post> posts)
+        {
+            var postIds = posts
+                .Select(p => p.Id)
+                .ToList();
+
+            return _db.PostContents
+                .Where(pc => !pc.IsDeleted && postIds.Contains(pc.PostId!.Value))
+                .ToDictionary(pc => pc.PostId!.Value, pc => pc);
+        }
+
         public List<Post> InitializePostList()
         {
             return new List<Post>();
@@ -132,6 +143,15 @@ namespace Forum.DAL.Repositories
             postContent.UpdatedAt = DateTime.Now;
             _db.Posts.Update(post);
             
+            _db.SaveChanges();
+        }
+
+        public void UpdatePostTopic(Post post, int newTopicId)
+        {
+            post.TopicId = newTopicId;
+            post.UpdatedAt = DateTime.Now;
+            _db.Posts.Update(post);
+
             _db.SaveChanges();
         }
 

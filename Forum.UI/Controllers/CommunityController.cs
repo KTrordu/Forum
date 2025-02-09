@@ -81,7 +81,6 @@ namespace Forum.UI.Controllers
 
             foreach (var topic in topics)
             {
-                topic.CommunityId = newCommunityId;
                 _topicRepository.UpdateTopic(topic.Id, newCommunityId, topic.TopicName);
             }
 
@@ -158,7 +157,7 @@ namespace Forum.UI.Controllers
             return Json(new { success = true, message = "Community deleted successfully." });
         }
 
-        //DELETE: Delete everything connected to the community
+        //DELETE: Delete the community and its subentities
         [HttpPost,ActionName("DeleteCommunityCascading")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteCommunityCascading(int communityId)
