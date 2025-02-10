@@ -1,4 +1,6 @@
 ﻿@model Forum.UI.ViewModels.CommunityViewModel
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
 
 @{
     ViewData["Title"] = "Create";
@@ -6,7 +8,7 @@
 <form asp-controller="Community" asp-action="Create" method="post">
 	<div class="border p-3 mt-4">
 		<div class="row pb-2">
-			<h2 class="text-primary">Create Community</h2>
+			<h2 class="text-primary">@Localizer["CreateCommunity"]</h2>
 			<hr />
 		</div>
 		<div asp-validation-summary="All"></div>
@@ -17,7 +19,7 @@
 		</div>
 		<button type="submit" class="btn btn-primary" style="width:150px">Create</button>
 		<a asp-controller="Community" asp-action="Index" class="btn btn-secondary" style="width:150px">
-			Back to List
+			@Localizer["BackToList"]
 		</a>
 	</div>
 </form>

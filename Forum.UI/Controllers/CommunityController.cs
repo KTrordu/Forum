@@ -4,6 +4,7 @@ using Forum.UI.DTOs;
 using Forum.UI.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Localization;
 using System.Linq;
 
 namespace Forum.UI.Controllers
@@ -14,13 +15,15 @@ namespace Forum.UI.Controllers
         private readonly TopicRepository _topicRepository;
         private readonly CommunityRepository _communityRepository;
         private readonly HelperRepository _helperRepository;
+        private readonly IStringLocalizer<CommunityController> _localizer;
 
-        public CommunityController(PostRepository postRepository, TopicRepository topicRepository, CommunityRepository communityRepository, HelperRepository helperRepository)
+        public CommunityController(PostRepository postRepository, TopicRepository topicRepository, CommunityRepository communityRepository, HelperRepository helperRepository, IStringLocalizer<CommunityController> localizer)
         {
             _postRepository = postRepository;
             _topicRepository = topicRepository;
             _communityRepository = communityRepository;
             _helperRepository = helperRepository;
+            _localizer = localizer;
         }
 
         //READ: List the communities

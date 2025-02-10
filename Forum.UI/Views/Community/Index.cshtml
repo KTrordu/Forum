@@ -1,4 +1,6 @@
 ﻿@model IEnumerable<Forum.UI.ViewModels.CommunityViewModel>
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
 
 @{
     ViewData["Title"] = "Index";
@@ -6,93 +8,24 @@
 <div class="container p-3">
     <div class="row pt-4">
         <div class="col-6">
-            <h2 class="text-primary">Community List</h2>
+            <h2 class="text-primary">@Localizer["CommunityList"]</h2>
         </div>
         <div class="col-6 text-end">
             <a asp-controller="Community" asp-action="Create" class="btn btn-primary">
-                <i class="bi bi-plus-circle"></i> &nbsp; Create New Community
+                <i class="bi bi-plus-circle"></i> &nbsp; @Localizer["CreateNewCommunity"]
             </a>
         </div>
     </div>
 </div>
 
-@* <table class="table table-bordered table-striped" style="width:100%">
-    <thead>
-        <tr>
-            <th>
-                Community Name
-            </th>
-            <th>
-                Created At
-            </th>
-            <th>
-                Subscription
-            </th>
-            <th>
-
-            </th>
-            <th>
-
-            </th>
-            <th>
-
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var obj in Model)
-        {
-            <tr id="community-@obj.Id">
-                <td width="15%">
-                    @obj.CommunityName |
-                    <a asp-controller="Topic" asp-action="Index" asp-route-communityId="@obj.Id" style="text-decoration:none; color:navy">Topics </a>|
-                    <a asp-controller="Post" asp-action="IndexByCommunity" asp-route-communityId="@obj.Id" style="text-decoration:none; color:navy">Posts</a>
-                </td>
-                <td width="15%">
-                    @obj.CreatedAt.Day.@obj.CreatedAt.Month.@obj.CreatedAt.Year @obj.CreatedAt.DayOfWeek
-                </td>
-                <td width="10%">
-                    <button class="btn btn-sm subscribe-button @(obj.IsSubscribed ? "bg-danger" : "bg-success")" data-communityId="@obj.Id" style="border:1px solid black;">
-                        <span class="bi" id="like-icon-@obj.Id" style="color:white">
-                            @(obj.IsSubscribed ? "Unsubscribe" : "Subscribe")
-                        </span>
-                    </button>
-                </td>
-                <td width="10%">
-                    <a asp-controller="Topic" asp-action="Create" asp-route-communityId="@obj.Id" style="text-decoration:none; color:navy">
-                        Create Topic
-                    </a>
-                </td>
-                <td width="10%">
-                    <a asp-controller="Post" asp-action="Create" asp-route-communityId="@obj.Id" style="text-decoration:none; color:navy">
-                        Create Post
-                    </a>
-                </td>
-                <td width="10%">
-                    <div>
-                        <a asp-controller="Community" asp-action="Edit" asp-route-communityId="@obj.Id" style="text-decoration:none; color:navy">
-                            <i class="bi bi-pencil-square" style="color:orange"></i> Edit</a>
-                    </div>
-                </td>
-                <td width="10%">
-                    <div>
-                        <button class="openModal" style="background-color: inherit; border: none; color: darkred;" data-communityId="@obj.Id">
-                            <i class="bi bi-x-circle" style="color:darkred"></i> Delete</button>
-                    </div>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table> *@
-
 <table id="communityTable" class="table table-bordered table-striped">
     <thead>
         <tr>
             <th>Id</th>
-            <th>Community Name</th>
-            <th>Created At</th>
-            <th>Subscription</th>
-            <th>Actions</th>
+            <th>@Localizer["CommunityName"]</th>
+            <th>@Localizer["CreatedAt"]</th>
+            <th>@Localizer["Subscription"]</th>
+            <th>@Localizer["Actions"]</th>
         </tr>
     </thead>
 </table>

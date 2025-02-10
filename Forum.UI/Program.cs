@@ -2,12 +2,27 @@ using Forum.DAL;
 using Forum.DAL.Repositories;
 using Forum.UI.Helpers;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+var supportedCultures = new[] { "en-US", "tr-TR" };
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    options.DefaultRequestCulture = new RequestCulture("en-US");
+    options.SupportedCultures = supportedCultures.Select(c => new CultureInfo(c)).ToList();
+    options.SupportedUICultures = supportedCultures.Select(c => new CultureInfo(c)).ToList();
+});
+
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddViewLocalization()
+    .AddDataAnnotationsLocalization();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection")
     ));
@@ -23,8 +38,9 @@ builder.Services.Configure<FormOptions>(options =>
     options.MultipartBodyLengthLimit = 10 * 1024 * 1024;
 });
 
-
 var app = builder.Build();
+
+app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
