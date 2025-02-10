@@ -8,9 +8,9 @@ namespace Forum.UI.Helpers
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly string[] _allowedImageExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
-        private readonly string[] _allowedVideoExtensions = { ".mp4" };
+        //private readonly string[] _allowedVideoExtensions = { ".mp4" };
         private const long _maxImageSize = 10 * 1024 * 1024;
-        private const long _maxVideoSize = 50 * 1024 * 1024;
+        //private const long _maxVideoSize = 50 * 1024 * 1024;
 
         public MediaHelper(IWebHostEnvironment webHostEnvironment)
         {
@@ -41,28 +41,28 @@ namespace Forum.UI.Helpers
             return "/uploads/" + fileName;
         }
 
-        public string? SaveVideo(IFormFile file)
-        {
-            if (file == null || file.Length == 0) return null;
+        //public string? SaveVideo(IFormFile file)
+        //{
+        //    if (file == null || file.Length == 0) return null;
 
-            string extension = Path.GetExtension(file.FileName).ToLower();
+        //    string extension = Path.GetExtension(file.FileName).ToLower();
 
-            if (!_allowedVideoExtensions.Contains(extension)) throw new ArgumentException("VideoFile", "Only MP4 files are supported.");
-            if (file.Length > _maxVideoSize) throw new ArgumentException("File size can be at most 10 MB.");
+        //    if (!_allowedVideoExtensions.Contains(extension)) throw new ArgumentException("VideoFile", "Only MP4 files are supported.");
+        //    if (file.Length > _maxVideoSize) throw new ArgumentException("File size can be at most 10 MB.");
 
-            string fileName = Guid.NewGuid().ToString() + extension;
-            string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "videos");
+        //    string fileName = Guid.NewGuid().ToString() + extension;
+        //    string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "videos");
 
-            if (!Directory.Exists(uploadPath)) Directory.CreateDirectory(uploadPath);
+        //    if (!Directory.Exists(uploadPath)) Directory.CreateDirectory(uploadPath);
 
-            string filePath = Path.Combine(uploadPath, fileName);
+        //    string filePath = Path.Combine(uploadPath, fileName);
 
-            using (var fileStream = new FileStream(filePath, FileMode.Create))
-            {
-                file.CopyTo(fileStream);
-            }
+        //    using (var fileStream = new FileStream(filePath, FileMode.Create))
+        //    {
+        //        file.CopyTo(fileStream);
+        //    }
 
-            return "/videos/" + fileName;
-        }
+        //    return "/videos/" + fileName;
+        //}
     }
 }

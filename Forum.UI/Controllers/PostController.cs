@@ -291,18 +291,18 @@ namespace Forum.UI.ViewModels
                 }
             }
 
-            if (model.PostContent.VideoFile != null)
-            {
-                try
-                {
-                    model.PostContent.VideoPath = _mediaHelper.SaveVideo(model.PostContent.VideoFile);
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("Videofile", ex.Message);
-                    return View(model);
-                }
-            }
+            //if (model.PostContent.VideoFile != null)
+            //{
+            //    try
+            //    {
+            //        model.PostContent.VideoPath = _mediaHelper.SaveVideo(model.PostContent.VideoFile);
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        ModelState.AddModelError("Videofile", ex.Message);
+            //        return View(model);
+            //    }
+            //}
 
             _postRepository.CreatePost(model.TopicId, model.PostContent.PostTitle, model.PostContent.PostDescription, model.PostContent.ImagePath, model.PostContent.VideoPath);
             TempData["Success"] = "Post created successfully.";
