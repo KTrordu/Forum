@@ -1,14 +1,29 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.Extensions.Localization;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Forum.UI.ViewModels
 {
     public class CommunityViewModel
     {
+        private readonly IStringLocalizer<CommunityViewModel> _localizer;
+
+        public CommunityViewModel(IStringLocalizer<CommunityViewModel> localizer)
+        {
+            _localizer = localizer;
+        }
+
+        public CommunityViewModel()
+        {
+            
+        }
+
+        public string? CommunityNameLabel => _localizer?["CommunityNameLabel"];
+
         [Required]
         public int Id { get; set; }
 
-        [DisplayName("Community Name")]
+        [Required(ErrorMessage = "CommunityNameRequired")]
         public string CommunityName { get; set; }
 
         public bool IsSubscribed { get; set; } = false;

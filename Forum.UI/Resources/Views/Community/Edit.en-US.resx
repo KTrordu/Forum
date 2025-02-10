@@ -120,6 +120,9 @@
   <data name="BackToList" xml:space="preserve">
     <value>Back to List</value>
   </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
   <data name="EditCommunity" xml:space="preserve">
     <value>Edit Community</value>
   </data>

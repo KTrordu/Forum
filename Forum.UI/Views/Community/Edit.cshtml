@@ -15,11 +15,11 @@
 		</div>
 		<div asp-validation-summary="All"></div>
 		<div class="mb-3">
-			<label asp-for="CommunityName"></label>
+			<label asp-for="CommunityName">@Model.CommunityNameLabel</label>
 			<input asp-for="CommunityName" class="form-control" />
 			<span asp-validation-for="CommunityName" class="text-danger"></span>
 		</div>
-		<button type="submit" class="btn btn-primary" style="width:150px">Edit</button>
+		<button type="submit" class="btn btn-primary" style="width:150px">@Localizer["Edit"]</button>
 		<a asp-controller="Community" asp-action="Index" class="btn btn-secondary" style="width:150px">
 			@Localizer["BackToList"]
 		</a>

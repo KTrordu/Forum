@@ -15,9 +15,9 @@ namespace Forum.UI.Controllers
         private readonly TopicRepository _topicRepository;
         private readonly CommunityRepository _communityRepository;
         private readonly HelperRepository _helperRepository;
-        private readonly IStringLocalizer<CommunityController> _localizer;
+        private readonly IStringLocalizer<CommunityViewModel> _localizer;
 
-        public CommunityController(PostRepository postRepository, TopicRepository topicRepository, CommunityRepository communityRepository, HelperRepository helperRepository, IStringLocalizer<CommunityController> localizer)
+        public CommunityController(PostRepository postRepository, TopicRepository topicRepository, CommunityRepository communityRepository, HelperRepository helperRepository, IStringLocalizer<CommunityViewModel> localizer)
         {
             _postRepository = postRepository;
             _topicRepository = topicRepository;
@@ -29,21 +29,6 @@ namespace Forum.UI.Controllers
         //READ: List the communities
         public IActionResult Index()
         {
-            //var communities = _communityRepository.GetCommunities();
-            //if (communities == null) return NotFound();
-
-            //var communitiesList = communities
-            //    .Select(c => new CommunityViewModel
-            //    {
-            //        Id = c.Id,
-            //        CommunityName = c.CommunityName,
-            //        CreatedAt = c.CreatedAt,
-            //        IsSubscribed = c.IsSubscribed
-            //    })
-            //    .ToList();
-
-            //return View(communitiesList);
-
             return View();
         }
 
@@ -121,7 +106,8 @@ namespace Forum.UI.Controllers
         //CREATE: GET
         public IActionResult Create()
         {
-            return View();
+            var viewModel = new CommunityViewModel(_localizer);
+            return View(viewModel);
         }
 
         //CREATE: POST
@@ -129,8 +115,15 @@ namespace Forum.UI.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(CommunityViewModel model)
         {
-            if (!ModelState.IsValid) return View(model);
+            if (!ModelState.IsValid)
+            {
+                var viewModel = new CommunityViewModel(_localizer)
+                {
+                    CommunityName = model.CommunityName
+                };
 
+                return View(viewModel);
+            }
             _communityRepository.CreateCommunity(model.CommunityName);
             TempData["Success"] = "Community created successfully.";
 
@@ -143,7 +136,7 @@ namespace Forum.UI.Controllers
             var community = _communityRepository.GetCommunity(communityId);
             if (community == null) return NotFound();
 
-            var model = new CommunityViewModel
+            var model = new CommunityViewModel(_localizer)
             {
                 Id = community.Id,
                 CommunityName = community.CommunityName,
@@ -159,7 +152,15 @@ namespace Forum.UI.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(CommunityViewModel model)
         {
-            if (!ModelState.IsValid) return View(model);
+            if (!ModelState.IsValid)
+            {
+                var viewModel = new CommunityViewModel(_localizer)
+                {
+                    CommunityName = model.CommunityName
+                };
+
+                return View(viewModel);
+            }
 
             var community = _communityRepository.GetCommunity(model.Id);
             if (community == null) return NotFound();
