@@ -4,6 +4,7 @@ using Forum.UI.Models;
 using Forum.DAL;
 using Forum.UI.ViewModels;
 using Forum.DAL.Repositories;
+using Microsoft.AspNetCore.Localization;
 
 namespace Forum.UI.Controllers;
 
@@ -113,6 +114,18 @@ public class HomeController : Controller
         };
 
         return View(model);
+    }
+
+    [HttpPost]
+    public IActionResult SetLanguage(string culture, string returnUrl)
+    {
+        Response.Cookies.Append(
+            CookieRequestCultureProvider.DefaultCookieName,
+            CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+            new CookieOptions { Expires = DateTimeOffset.Now.AddYears(1) }
+        );
+
+        return LocalRedirect(returnUrl);
     }
 
     public IActionResult Privacy()
