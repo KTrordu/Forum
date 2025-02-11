@@ -117,15 +117,22 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public IActionResult SetLanguage(string culture, string returnUrl)
+    public IActionResult SetLanguage(string culture)
     {
-        Response.Cookies.Append(
-            CookieRequestCultureProvider.DefaultCookieName,
-            CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
-            new CookieOptions { Expires = DateTimeOffset.Now.AddYears(1) }
-        );
+        try
+        {
+            Response.Cookies.Append(
+                CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+                new CookieOptions { Expires = DateTimeOffset.Now.AddYears(1) }
+            );
 
-        return LocalRedirect(returnUrl);
+            return Json(new { success = true, message = "Language changed succesfully." });
+        }
+        catch (Exception ex)
+        {
+            return Json(new { success = false, message = ex.Message });
+        }
     }
 
     public IActionResult Privacy()

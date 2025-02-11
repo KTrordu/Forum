@@ -38,12 +38,11 @@
                             <a class="nav-link text-dark" asp-controller="Post" asp-action="Index">Posts</a>
                         </li>
                         <li class="nav-item ms-auto">
-                            <form id="cultureForm" asp-controller="Home" asp-action="SetLanguage" method="post">
-                                <select name="culture" onchange="document.getElementById('cultureForm').submit()">
+                            <form id="cultureForm">
+                                <select id="langChange" name="culture">
                                     <option value="en-US" selected="@(CultureInfo.CurrentCulture.Name == "en-US")">English</option>
                                     <option value="tr-TR" selected="@(CultureInfo.CurrentCulture.Name == "tr-TR")">Türkçe</option>
                                 </select>
-                                <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
                             </form>
                         </li>
                     </ul>
@@ -73,3 +72,30 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+<script>
+    $(document).ready(function () {
+        $(document).on("change", "#langChange", function () {
+            let culture = $("#langChange").find(":selected").val();
+
+            $.ajax({
+                type: "POST",
+                url: "/Home/SetLanguage",
+                data: { 
+                    culture: culture
+                },
+                success: function (response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        location.reload();
+                    } else {
+                        toastr.error("Error: " + response.message);
+                    }
+                },
+                error: function () {
+                    toastr.error("Error setting the language.");
+                }
+            });
+        });
+    });
+</script>
