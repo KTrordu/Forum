@@ -4,6 +4,7 @@ using Forum.Entities;
 using Forum.UI.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Localization;
 using System.Linq;
 
 namespace Forum.UI.ViewModels
@@ -14,13 +15,24 @@ namespace Forum.UI.ViewModels
         private readonly TopicRepository _topicRepository;
         private readonly CommunityRepository _communityRepository;
         private readonly MediaHelper _mediaHelper;
+        private readonly IStringLocalizer<PostViewModel> _postLocalizer;
+        private readonly IStringLocalizer<PostContentViewModel> _postContentLocalizer;
+        private readonly IStringLocalizer<PostListViewModel> _postListLocalizer;
+        private readonly IStringLocalizer<PostController> _localizer;
 
-        public PostController(PostRepository postRepository, TopicRepository topicRepository, CommunityRepository communityRepository, MediaHelper mediaHelper)
+        public PostController(PostRepository postRepository, TopicRepository topicRepository, 
+            CommunityRepository communityRepository, MediaHelper mediaHelper, IStringLocalizer<PostViewModel> postLocalizer, 
+            IStringLocalizer<PostContentViewModel> postContentLocalizer, IStringLocalizer<PostListViewModel> postListLocalizer,
+            IStringLocalizer<PostController> localizer)
         {
             _postRepository = postRepository;
             _topicRepository = topicRepository;
             _communityRepository = communityRepository;
             _mediaHelper = mediaHelper;
+            _postLocalizer = postLocalizer;
+            _postContentLocalizer = postContentLocalizer;
+            _postListLocalizer = postListLocalizer;
+            _localizer = localizer;
         }
 
         //READ: List all posts
@@ -50,7 +62,7 @@ namespace Forum.UI.ViewModels
 
                 if (community == null) return NotFound();
 
-                var postContentViewModel = new PostContentViewModel
+                var postContentViewModel = new PostContentViewModel(_postContentLocalizer)
                 {
                     PostTitle = postContents[post.Id].PostTitle,
                     PostDescription = postContents[post.Id].PostDescription,
@@ -58,7 +70,7 @@ namespace Forum.UI.ViewModels
                     VideoPath = postContents[post.Id].VideoPath
                 };
 
-                var postViewModel = new PostViewModel
+                var postViewModel = new PostViewModel(_postLocalizer, _postContentLocalizer)
                 {
                     Id = post.Id,
                     PostContent = postContentViewModel,
@@ -74,7 +86,7 @@ namespace Forum.UI.ViewModels
                 postContentViewModels.Add(postContentViewModel);
             }
 
-            var model = new PostListViewModel
+            var model = new PostListViewModel(_postListLocalizer)
             {
                 Posts = postViewModels,
                 Contents = postContentViewModels
@@ -102,7 +114,7 @@ namespace Forum.UI.ViewModels
             var postContents = _postRepository.GetPostContents(postIds);
             if (postContents == null) return NotFound();
 
-            var model = new PostListViewModel
+            var model = new PostListViewModel(_postListLocalizer)
             {
                 CommunityId = community.Id,
                 CommunityName = community.CommunityName,
@@ -114,7 +126,7 @@ namespace Forum.UI.ViewModels
 
             foreach (var post in posts)
             {
-                var postContentViewModel = new PostContentViewModel
+                var postContentViewModel = new PostContentViewModel(_postContentLocalizer)
                 {
                     PostTitle = postContents[post.Id].PostTitle,
                     PostDescription = postContents[post.Id].PostDescription,
@@ -122,7 +134,7 @@ namespace Forum.UI.ViewModels
                     VideoPath = postContents[post.Id].VideoPath
                 };
 
-                var postViewModel = new PostViewModel
+                var postViewModel = new PostViewModel(_postLocalizer, _postContentLocalizer)
                 {
                     Id = post.Id,
                     CommunityId = community.Id,
@@ -150,7 +162,7 @@ namespace Forum.UI.ViewModels
             var topics = _topicRepository.GetTopicsByCommunity(community.Id);
             if (topics == null) return NotFound();
 
-            var model = new PostListViewModel
+            var model = new PostListViewModel(_postListLocalizer)
             {
                 CommunityId = community.Id,
                 CommunityName = community.CommunityName,
@@ -173,7 +185,7 @@ namespace Forum.UI.ViewModels
 
                 foreach (var post in posts)
                 {
-                    var postContentViewModel = new PostContentViewModel
+                    var postContentViewModel = new PostContentViewModel(_postContentLocalizer)
                     {
                         PostTitle = postContents[post.Id].PostTitle,
                         PostDescription = postContents[post.Id].PostDescription,
@@ -181,7 +193,7 @@ namespace Forum.UI.ViewModels
                         VideoPath = postContents[post.Id].VideoPath
                     };
 
-                    var postViewModel = new PostViewModel
+                    var postViewModel = new PostViewModel(_postLocalizer, _postContentLocalizer)
                     {
                         Id = post.Id,
                         CommunityId = community.Id,
@@ -243,7 +255,7 @@ namespace Forum.UI.ViewModels
                 })
                 .ToList();
 
-            var model = new PostViewModel
+            var model = new PostViewModel(_postLocalizer, _postContentLocalizer)
             {
                 Communities = communitiesList,
                 Topics = new List<SelectListItem>()
@@ -275,7 +287,13 @@ namespace Forum.UI.ViewModels
                     })
                     .ToList();
 
-                return View(model);
+                var viewModel = new PostViewModel(_postLocalizer, _postContentLocalizer)
+                {
+                    Communities = model.Communities,
+                    Topics = model.Topics
+                };
+
+                return View(viewModel);
             }
 
             if (model.PostContent.ImageFile != null)
@@ -325,7 +343,7 @@ namespace Forum.UI.ViewModels
             var community = _communityRepository.GetSubscribedCommunity((int)topic.CommunityId!);
             if (community == null) return NotFound();
 
-            var postContentViewModel = new PostContentViewModel
+            var postContentViewModel = new PostContentViewModel(_postContentLocalizer)
             {
                 PostTitle = postContent.PostTitle,
                 PostDescription = postContent.PostDescription,
@@ -333,7 +351,7 @@ namespace Forum.UI.ViewModels
                 VideoPath = postContent.VideoPath
             };
 
-            var postViewModel = new PostViewModel
+            var postViewModel = new PostViewModel(_postLocalizer, _postContentLocalizer)
             {
                 Id = post.Id,
                 IsLiked = post.IsLiked,
@@ -367,7 +385,21 @@ namespace Forum.UI.ViewModels
                 return RedirectToAction("Index", new { communityId = model.CommunityId });
             }
 
-            return View(model);
+            var viewModel = new PostViewModel(_postLocalizer, _postContentLocalizer)
+            {
+                Id = model.Id,
+                CommunityId = model.CommunityId,
+                Communities = model.Communities,
+                CommunityName = model.CommunityName,
+                TopicId = model.TopicId,
+                Topics = model.Topics,
+                TopicName = model.TopicName,
+                PostContent = model.PostContent,
+                IsLiked = model.IsLiked,
+                CreatedAt = model.CreatedAt
+            };
+
+            return View(viewModel);
         }
 
         //DELETE: GET

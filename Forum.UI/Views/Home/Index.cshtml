@@ -1,19 +1,21 @@
 ﻿@model Forum.UI.ViewModels.PostListViewModel
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h2 style="color:darkgreen">@Model.CommunityName <span style="color:darkred">Posts</span></h2>
+<h2 style="color:darkgreen">@Model.CommunityName <span style="color:darkred">@Localizer["Posts"]</span></h2>
 
 <div class="container p-3">
     <div class="row pt-4">
         <div class="col-6">
-            <a asp-controller="Community" asp-action="Index" class="btn btn-dark">Go to Communities</a>
+            <a asp-controller="Community" asp-action="Index" class="btn btn-dark">@Localizer["BackToCommunities"]</a>
         </div>
         <div class="col-6 text-end">
             <a asp-controller="Post" asp-action="Create" asp-route-communityId="@Model.CommunityId" asp-route-topicId="@Model.TopicId" class="btn btn-primary">
-                <i class="bi bi-plus-circle"></i> &nbsp; Post Something
+                <i class="bi bi-plus-circle"></i> &nbsp; @Localizer["PostSomething"]
             </a>
         </div>
     </div>
@@ -32,8 +34,8 @@
                         <div class="row">
                             <div class="col-3"></div>
                             <div class="col-6">
-                                    <img src="@post.PostContent.ImagePath" alt="@post.PostContent.PostTitle"
-                                         class="img-fluid mx-auto" style="width:100%; border-radius:5px; display:inline;" />
+                                <img src="@post.PostContent.ImagePath" alt="@post.PostContent.PostTitle"
+                                     class="img-fluid mx-auto" style="width:100%; border-radius:5px; display:inline;" />
                             </div>
                             <div class="col-3"></div>
                         </div>
@@ -41,26 +43,27 @@
                 </tr>
             }
             @* @if (!string.IsNullOrEmpty(post.PostContent.VideoPath))
-            {
-                <tr>
-                    <td colspan="7" class="text-center">
-                        <div class="row">
-                            <div class="col-3"></div>
-                            <div class="col-6">
-                                <video controls style="width:100%; border-radius:5px; display:inline;">
-                                    <source src="@post.PostContent.VideoPath" type="video/mp4">
-                                </video>
-                            </div>
-                            <div class="col-3"></div>
-                        </div>
-                    </td>
-                </tr>
-            } *@
+        {
             <tr>
-                <th>Community</th>
-                <th>Topic</th>
-                <th>Created At</th>
-                <th>Like</th>
+                <td colspan="7" class="text-center">
+                    <div class="row">
+                        <div class="col-3"></div>
+                        <div class="col-6">
+                            <video controls style="width:100%; border-radius:5px; display:inline;">
+                                    <source src="/Media/Video/@System.IO.Path.GetFileName(post.PostContent.VideoPath)" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="col-3"></div>
+                    </div>
+                </td>
+            </tr>
+        } *@
+            <tr>
+            <tr>
+                <th>@Localizer["Community"]</th>
+                <th>@Localizer["Topic"]</th>
+                <th>@Localizer["CreatedAt"]</th>
+                <th>@Localizer["Liking"]</th>
                 <th></th>
                 <th></th>
             </tr>
@@ -73,7 +76,7 @@
                 <td>
                     <button class="btn btn-sm like-button @(post.IsLiked ? "bg-danger" : "bg-success")" data-id="@post.Id" style="border:1px solid black;">
                         <span class="bi" id="like-icon-@post.Id" style="color:white">
-                            @(post.IsLiked ? "Unlike" : "Like")
+                            @(post.IsLiked ? Localizer["Unlike"] : Localizer["Like"])
                         </span>
                     </button>
                 </td>
@@ -81,14 +84,14 @@
                     <div>
                         <a asp-controller="Post" asp-action="Edit" asp-route-id="@post.Id"
                            style="text-decoration:none; color:navy">
-                            <i class="bi bi-pencil-square" style="color:orange"></i> Edit
+                            <i class="bi bi-pencil-square" style="color:orange"></i> @Localizer["Edit"]
                         </a>
                     </div>
                 </td>
                 <td>
                     <div>
                         <button class="openModal" style="background-color: inherit; border: none; color: darkred;" data-id="@post.Id">
-                            <i class="bi bi-x-circle" style="color:darkred"></i> Delete
+                            <i class="bi bi-x-circle" style="color:darkred"></i> @Localizer["Delete"]
                         </button>
                     </div>
                 </td>

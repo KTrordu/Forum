@@ -17,8 +17,6 @@ namespace Forum.UI.ViewModels
 
         }
 
-        public string? CommunityNameLabel => _localizer["CommunityNameLabel"];
-
         public int? CommunityId { get; set; }
         
         public string? CommunityName { get; set; }

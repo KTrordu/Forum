@@ -26,7 +26,13 @@ builder.Services.AddControllersWithViews()
     .AddDataAnnotationsLocalization(options =>
     {
         options.DataAnnotationLocalizerProvider = (type, factory) =>
-            factory.Create(typeof(CommunityViewModel));
+        {
+            var resourceType = Type.GetType($"Forum.UI.Resources.ViewModels.{type.Name}");
+
+            if ( resourceType != null ) return factory.Create( resourceType );
+
+            return factory.Create( type );
+        };
     });
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection")

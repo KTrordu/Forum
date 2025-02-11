@@ -1,13 +1,28 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.Extensions.Localization;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Forum.UI.ViewModels
 {
     public class PostContentViewModel
     {
-        [DisplayName("Post Title")]
+        private readonly IStringLocalizer<PostContentViewModel> _localizer;
+
+        public PostContentViewModel(IStringLocalizer<PostContentViewModel> localizer)
+        {
+            _localizer = localizer;
+        }
+
+        public PostContentViewModel() : this(null!) { }
+
+        public string? PostTitleLabel => _localizer?["PostTitleLabel"];
+        public string? PostDescriptionLabel => _localizer?["PostDescriptionLabel"];
+        public string? ImagePathLabel => _localizer?["ImagePathLabel"];
+
+        [Required(ErrorMessage = "PostTitleRequired")]
         public string PostTitle { get; set; }
 
-        [DisplayName("Post Description")]
+        [Required(ErrorMessage = "PostDescriptionRequired")]
         public string PostDescription { get; set; }
 
         public string? ImagePath { get; set; }

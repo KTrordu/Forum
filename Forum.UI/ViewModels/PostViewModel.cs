@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Localization;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -7,22 +8,37 @@ namespace Forum.UI.ViewModels
 {
     public class PostViewModel
     {
+        private readonly IStringLocalizer<PostViewModel> _localizer;
+        private readonly IStringLocalizer<PostContentViewModel> _contentLocalizer;
+
+        public PostViewModel(IStringLocalizer<PostViewModel> localizer, IStringLocalizer<PostContentViewModel> contentLocalizer)
+        {
+            _localizer = localizer;
+            _contentLocalizer = contentLocalizer;
+            PostContent = new PostContentViewModel(contentLocalizer);
+        }
+
+        public PostViewModel() : this(null!, null!) { }
+
+        public string? TopicIdLabel => _localizer?["TopicIdLabel"];
+        public string? TopicNameLabel => _localizer?["TopicNameLabel"];
+        public string? CommunityIdLabel => _localizer?["CommunityIdLabel"];
+        public string? CommunityNameLabel => _localizer?["CommunityNameLabel"];
+
         public int Id { get; set; }
 
-        [DisplayName("Community")]
+        [Required(ErrorMessage = "CommunityIdRequired")]
         public int CommunityId { get; set; }
 
         public List<SelectListItem>? Communities { get; set; }
 
-        [DisplayName("Community Name")]
         public string? CommunityName { get; set; }
 
-        [DisplayName("Topic")]
+        [Required(ErrorMessage = "TopicIdRequired")]
         public int TopicId { get; set; }
 
         public List<SelectListItem>? Topics { get; set; }
-
-        [DisplayName("Topic Name")]
+        
         public string? TopicName { get; set; }
 
         public PostContentViewModel PostContent { get; set; }

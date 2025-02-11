@@ -1,10 +1,23 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.Extensions.Localization;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Forum.UI.ViewModels
 {
     public class PostListViewModel
     {
+        private readonly IStringLocalizer<PostListViewModel> _localizer;
+
+        public PostListViewModel(IStringLocalizer<PostListViewModel> localizer)
+        {
+            _localizer = localizer;
+        }
+
+        public PostListViewModel()
+        {
+
+        }
+
         public int? CommunityId { get; set; }
 
         public string? CommunityName { get; set; }
