@@ -37,7 +37,19 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="Post" asp-action="Index">Posts</a>
                         </li>
-                        <li class="nav-item ms-auto">
+                        <li class="nav-item mt-2 mx-2">
+                            <input id="selectComm" type="hidden" value="">
+                            <select id="commDrop" name="community">
+                                <option value="">Select a Community</option>
+                            </select>
+                        </li>
+                        <li class="nav-item mt-2">
+                            <input id="selectTop" type="hidden" value="">
+                            <select id="topDrop" name="topic">
+                                <option value="">Select a Topic</option>
+                            </select>
+                        </li>
+                        <li class="nav-item ms-auto mt-2">
                             <form id="cultureForm">
                                 <select id="langChange" name="culture">
                                     <option value="en-US" selected="@(CultureInfo.CurrentCulture.Name == "en-US")">English</option>
@@ -94,6 +106,61 @@
                 },
                 error: function () {
                     toastr.error("Error setting the language.");
+                }
+            });
+        });
+    });
+
+    $(document).ready(function () {
+        let communities;
+        let topics;
+        let selectedComm = $("#selectComm");
+        let selectedTop = $("#selectTop");
+
+        $.ajax({
+            type: "GET",
+            url: "/Home/GetCommunitiesTopics",
+            dataType: "json",
+            success: function (response) {
+                if (response.success) {
+                    console.log(response.message);
+                    displayDropdown(response.communities);
+                    communities = response.communities;
+                    topics = response.topics;
+                } else {
+                    toastr.error("Error: " + response.message);
+                }
+            },
+            error: function () {
+                toastr.error("Error loading the Communities/Topics.");
+            }
+        });
+
+        function displayDropdown(communities) {
+            var communityDropdown = $("#commDrop");
+            var topicDropdown = $("#topDrop");
+
+            communities.forEach(community => {
+                var option = document.createElement("option");
+                option.value = community.id;
+                option.textContent = community.communityName;
+                communityDropdown.append(option);
+            });
+        }
+
+        $(document).on("change", "#commDrop", function () {
+            var comm = $(this).find(":selected").val();
+            var topicDropdown = $("#topDrop");
+
+            selectedComm.val(comm);
+            topicDropdown.html(`<option value="">Select a Topic</option>`);
+
+            topics.forEach(topic => {
+                if (topic.communityId == comm) {
+                    var option = document.createElement("option");
+                    option.value = topic.id;
+                    option.textContent = topic.topicName;
+                    topicDropdown.append(option);
                 }
             });
         });

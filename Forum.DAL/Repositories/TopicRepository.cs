@@ -31,6 +31,22 @@ namespace Forum.DAL.Repositories
                 .ToList();
         }
 
+        public List<Topic>? GetSubscribedTopics(List<Community> subscribedCommunities)
+        {
+            var topicsList = new List<Topic>();
+
+            foreach (var community in subscribedCommunities)
+            {
+                var topics = _db.Topics
+                    .Where(t => !t.IsDeleted && t.CommunityId == community.Id)
+                    .ToList();
+
+                topicsList.AddRange(topics);
+            }
+
+            return topicsList;
+        }
+
         public List<Topic>? GetTopicsByCommunity(int communityId)
         {
             return _db.Topics

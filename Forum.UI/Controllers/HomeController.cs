@@ -5,6 +5,7 @@ using Forum.DAL;
 using Forum.UI.ViewModels;
 using Forum.DAL.Repositories;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Forum.UI.Controllers;
 
@@ -128,6 +129,39 @@ public class HomeController : Controller
             );
 
             return Json(new { success = true, message = "Language changed succesfully." });
+        }
+        catch (Exception ex)
+        {
+            return Json(new { success = false, message = ex.Message });
+        }
+    }
+
+    public IActionResult GetCommunitiesTopics()
+    {
+        try
+        {
+            var communitiesList = _communityRepository.GetSubscribedCommunities();
+            if (communitiesList == null) return NotFound();
+            var communitiesSelectList = communitiesList
+                .Select(c => new
+                {
+                    c.Id,
+                    c.CommunityName
+                })
+                .ToList();
+
+            var topicsList = _topicRepository.GetSubscribedTopics(communitiesList);
+            if (topicsList == null) return NotFound();
+            var topicsSelectList = topicsList
+                .Select(t => new
+                {
+                    t.Id,
+                    t.TopicName,
+                    t.CommunityId
+                })
+                .ToList();
+
+            return Json(new { success = true, message = "Communities and Topics loaded successfully.", communities = communitiesSelectList, topics = topicsSelectList });
         }
         catch (Exception ex)
         {
