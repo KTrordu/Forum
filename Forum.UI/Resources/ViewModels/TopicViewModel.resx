@@ -117,10 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CommunityNameLabel" xml:space="preserve">
-    <value>Community Name Label</value>
+  <data name="CommunityIdLabel" xml:space="preserve">
+    <value>Community</value>
   </data>
-  <data name="CommunityNameRequired" xml:space="preserve">
-    <value>Community Name Required</value>
+  <data name="CommunityIdRequired" xml:space="preserve">
+    <value>Community is required.</value>
+  </data>
+  <data name="CommunityNameLabel" xml:space="preserve">
+    <value>Community Name</value>
+  </data>
+  <data name="TopicNameLabel" xml:space="preserve">
+    <value>Topic Name</value>
+  </data>
+  <data name="TopicNameRequired" xml:space="preserve">
+    <value>Topic name is required.</value>
   </data>
 </root>

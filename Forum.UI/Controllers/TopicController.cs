@@ -5,6 +5,7 @@ using Forum.UI.DTOs;
 using Forum.UI.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Localization;
 
 namespace Forum.UI.Controllers
 {
@@ -14,13 +15,18 @@ namespace Forum.UI.Controllers
         private readonly TopicRepository _topicRepository;
         private readonly CommunityRepository _communityRepository;
         private readonly HelperRepository _helperRepository;
+        private readonly IStringLocalizer<TopicViewModel> _topicLocalizer;
+        private readonly IStringLocalizer<TopicListViewModel> _topicListLocalizer;
 
-        public TopicController(PostRepository postRepository, TopicRepository topicRepository, CommunityRepository communityRepository, HelperRepository helperRepository)
+        public TopicController(PostRepository postRepository, TopicRepository topicRepository, CommunityRepository communityRepository, 
+            HelperRepository helperRepository, IStringLocalizer<TopicViewModel> topicLocalizer, IStringLocalizer<TopicListViewModel> topicListLocalizer)
         {
             _postRepository = postRepository;
             _topicRepository = topicRepository;
             _communityRepository = communityRepository;
             _helperRepository = helperRepository;
+            _topicLocalizer = topicLocalizer;
+            _topicListLocalizer = topicListLocalizer;
         }
 
         //READ: List topics by the communityId
@@ -32,7 +38,7 @@ namespace Forum.UI.Controllers
             var topics = _topicRepository.GetTopicsByCommunity(community.Id);
             if (topics == null) return NotFound();
 
-            var model = new TopicListViewModel
+            var model = new TopicListViewModel(_topicListLocalizer)
             {
                 CommunityId = communityId,
                 CommunityName = community.CommunityName,
@@ -41,7 +47,7 @@ namespace Forum.UI.Controllers
 
             foreach (var topic in topics)
             {
-                var topicViewModel = new TopicViewModel
+                var topicViewModel = new TopicViewModel(_topicLocalizer)
                 {
                     Id = topic.Id,
                     TopicName = topic.TopicName,
@@ -129,7 +135,7 @@ namespace Forum.UI.Controllers
                 Text = community.CommunityName
             };
 
-            var model = new TopicViewModel
+            var model = new TopicViewModel(_topicLocalizer)
             {
                 CommunityId = community.Id,
                 CommunityName = community.CommunityName
@@ -143,7 +149,18 @@ namespace Forum.UI.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(TopicViewModel model)
         {
-            if (!ModelState.IsValid) return View(model);
+            if (!ModelState.IsValid)
+            {
+                var viewModel = new TopicViewModel(_topicLocalizer)
+                {
+                    Id = model.Id,
+                    TopicName = model.TopicName,
+                    CommunityId = model.CommunityId,
+                    CommunityName = model.CommunityName
+                };
+
+                return View(viewModel);
+            }
             
             var community = _communityRepository.GetCommunity(model.CommunityId);
             if (community == null) return NotFound();
@@ -163,7 +180,7 @@ namespace Forum.UI.Controllers
             var community = _communityRepository.GetCommunity((int)topic.CommunityId!);
             if (community == null) return NotFound();
 
-            var model = new TopicViewModel
+            var model = new TopicViewModel(_topicLocalizer)
             {
                 Id = topic.Id,
                 TopicName = topic.TopicName,
@@ -180,7 +197,18 @@ namespace Forum.UI.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(TopicViewModel model)
         {
-            if (!ModelState.IsValid) return View(model);
+            if (!ModelState.IsValid)
+            {
+                var viewModel = new TopicViewModel(_topicLocalizer)
+                {
+                    Id = model.Id,
+                    TopicName = model.TopicName,
+                    CommunityId = model.CommunityId,
+                    CommunityName = model.CommunityName
+                };
+
+                return View(viewModel);
+            }
 
             var topic = _topicRepository.GetTopic(model.Id);
             if (topic == null) return NotFound();

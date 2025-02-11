@@ -1,4 +1,6 @@
 ﻿@model Forum.UI.ViewModels.TopicViewModel
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
 
 @{
 	ViewData["Title"] = "Create";
@@ -8,23 +10,23 @@
 
 	<div class="border p-3 mt-4">
 		<div class="row pb-2">
-			<h2 class="text-primary">Create a Topic</h2>
+			<h2 class="text-primary">@Localizer["CreateATopic"]</h2>
 			<hr />
 		</div>
 		<div asp-validation-summary="All"></div>
 		<div class="mb-3">
-			<label asp-for="CommunityName"></label>
+			<label asp-for="CommunityName">@Model.CommunityNameLabel</label>
 			<input asp-for="CommunityName" class="form-control" disabled/>
 			<span asp-validation-for="CommunityName" class="text-danger"></span>
 		</div>
 		<div class="mb-3">
-			<label asp-for="TopicName"></label>
+			<label asp-for="TopicName">@Model.TopicNameLabel</label>
 			<input asp-for="TopicName" class="form-control" />
 			<span asp-validation-for="TopicName" class="text-danger"></span>
 		</div>
-		<button type="submit" class="btn btn-primary" style="width:150px">Create</button>
+		<button type="submit" class="btn btn-primary" style="width:150px">@Localizer["Create"]</button>
 		<a asp-controller="Topic" asp-action="Index" asp-route-communityId="@Model.CommunityId" class="btn btn-secondary" style="width:150px">
-			Back to List
+			@Localizer["BackToList"]
 		</a>
 	</div>
 </form>

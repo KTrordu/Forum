@@ -117,10 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CommunityNameLabel" xml:space="preserve">
-    <value>Community Name Label</value>
+  <data name="CreatedAt" xml:space="preserve">
+    <value>Oluşturulma Tarihi</value>
   </data>
-  <data name="CommunityNameRequired" xml:space="preserve">
-    <value>Community Name Required</value>
+  <data name="CreateNewTopic" xml:space="preserve">
+    <value>Konu Oluştur</value>
+  </data>
+  <data name="TopicList" xml:space="preserve">
+    <value>Konu Listesi</value>
+  </data>
+  <data name="TopicName" xml:space="preserve">
+    <value>Konu Adı</value>
   </data>
 </root>

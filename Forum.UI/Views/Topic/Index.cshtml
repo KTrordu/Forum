@@ -1,4 +1,6 @@
 ﻿@model Forum.UI.ViewModels.TopicListViewModel
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
 
 @{
     ViewData["Title"] = "Index";
@@ -7,74 +9,23 @@
 <div class="container p-3">
     <div class="row pt-4">
         <div class="col-6">
-            <h2 class="text-primary">Topic List</h2>
+            <h2 class="text-primary">@Localizer["TopicList"]</h2>
         </div>
         <div class="col-6 text-end">
             <a asp-controller="Topic" asp-action="Create" asp-route-communityId="@Model.CommunityId" data-communityId="@Model.CommunityId" class="btn btn-primary" id="commBut">
-                <i class="bi bi-plus-circle"></i> &nbsp; Create New Topic
+                <i class="bi bi-plus-circle"></i> &nbsp; @Localizer["CreateNewTopic"]
             </a>
         </div>
     </div>
 </div>
 
-@* <table class="table table-bordered table-striped" style="width:100%">
-    <thead>
-        <tr>
-            <th>
-                Topic Name
-            </th>
-            <th>
-                Community Name
-            </th>
-            <th>
-                Created At
-            </th>
-            <th>
-                
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var obj in Model.Topics)
-        {
-            <tr id="topic-@obj.Id">
-                <td width="20%">
-                    <a asp-controller="Post" asp-action="IndexByTopic"  asp-route-topicId="@obj.Id" style="text-decoration:none; color:navy">
-                        @obj.TopicName
-                    </a>
-                </td>
-                <td width="20%">
-                    <a asp-controller="Post" asp-action="Index" asp-route-communityId="@obj.CommunityId" style="text-decoration:none; color:navy">
-                        @obj.CommunityName
-                    </a>
-                </td>
-                <td width="40%">
-                    @obj.CreatedAt.Day.@obj.CreatedAt.Month.@obj.CreatedAt.Year @obj.CreatedAt.DayOfWeek
-                </td>
-                <td width="10%">
-                    <div>
-                        <a asp-controller="Topic" asp-action="Edit" asp-route-communityId="@obj.CommunityId" asp-route-topicId="@obj.Id" style="text-decoration:none; color:navy">
-                            <i class="bi bi-pencil-square" style="color:orange"></i> Edit</a>
-                    </div>
-                </td>
-                <td width="10%">
-                    <div>
-                        <button class="openModal" style="background-color: inherit; border: none; color: darkred;" data-topicId="@obj.Id">
-                            <i class="bi bi-x-circle" style="color:darkred"></i> Delete</button>
-                    </div>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table> *@
-
 <table id="topicTable" class="table table-bordered table-striped">
     <thead>
         <tr>
             <th>Id</th>
-            <th>Topic Name</th>
-            <th>Created At</th>
-            <th>Actions</th>
+            <th>@Localizer["TopicName"]</th>
+            <th>@Localizer["CreatedAt"]</th>
+            <th>@Localizer["Actions"]</th>
         </tr>
     </thead>
 </table>
