@@ -19,3 +19,7 @@
 .dropdown:hover > .dropdown-menu {
     display: block;
 }
+
+.topic:hover {
+    cursor: pointer;
+}
