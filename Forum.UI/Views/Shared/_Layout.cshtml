@@ -65,7 +65,7 @@
 
     <div class="container">
         <main role="main" class="pb-3">
-            <partial name="_Notification" />
+            <div id="navbarPostsCont"></div>
             @RenderBody()
         </main>
     </div>
@@ -98,7 +98,7 @@
                 },
                 success: function (response) {
                     if (response.success) {
-                        toastr.success(response.message);
+                        console.log(response.message);
                         location.reload();
                     } else {
                         toastr.error("Error: " + response.message);
@@ -161,6 +161,27 @@
                     option.value = topic.id;
                     option.textContent = topic.topicName;
                     topicDropdown.append(option);
+                }
+            });
+        });
+
+        $(document).on("change", "#topDrop", function () {
+            var top = $(this).find(":selected").val();
+            if (!top) return;
+            selectedTop.val(top);
+
+            var container = $(".container:first");
+
+            $.ajax({
+                type: "GET",
+                url: "/Home/ListPosts",
+                data: {topicId: top},
+                success: function (response) {
+                    container.html(response);
+                    container.show();
+                },
+                error: function () {
+                    toastr.error("Error loading the Posts.");
                 }
             });
         });

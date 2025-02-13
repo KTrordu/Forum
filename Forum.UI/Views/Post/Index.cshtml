@@ -128,14 +128,14 @@
         //Delete the Post
         $(document).on("click", "#confirmDelete", function () {
             var id = $("#deleteId").val();
-            var token = $('input[name="__RequestVerificationToken"]').val(); // Get CSRF token
+            var token = $('input[name="__RequestVerificationToken"]').val();
 
             $.ajax({
                 type: "POST",
                 url: "/Post/DeletePost",
                 data: { 
                     id: id, 
-                    __RequestVerificationToken: token // Include CSRF token
+                    __RequestVerificationToken: token
                 },
                 success: function (response) {
                     if (response.success) {

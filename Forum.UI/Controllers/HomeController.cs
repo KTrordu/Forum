@@ -169,6 +169,57 @@ public class HomeController : Controller
         }
     }
 
+    public IActionResult ListPosts(int topicId)
+    {
+        var topic = _topicRepository.GetTopic(topicId);
+        if (topic == null) return NotFound();
+
+        var community = _communityRepository.GetCommunity((int)topic.CommunityId!);
+        if (community == null) return NotFound();
+
+        var posts = _postRepository.GetPostsByTopic(topic.Id);
+        if (posts == null) return NotFound();
+
+        var postContents = _postRepository.GetPostContents(posts);
+        if (postContents == null) return NotFound();
+
+        var model = new PostListViewModel
+        {
+            TopicId = topic.Id,
+            TopicName = topic.TopicName,
+            Posts = new List<PostViewModel>(),
+            Contents = new List<PostContentViewModel>()
+        };
+
+        foreach (var post in posts)
+        {
+            var postContentViewModel = new PostContentViewModel
+            {
+                PostTitle = postContents[post.Id].PostTitle,
+                PostDescription = postContents[post.Id].PostDescription,
+                ImagePath = postContents[post.Id].ImagePath,
+                VideoPath = postContents[post.Id].VideoPath
+            };
+
+            var postViewModel = new PostViewModel
+            {
+                Id = post.Id,
+                CommunityId = community.Id,
+                CommunityName = community.CommunityName,
+                TopicId = topic.Id,
+                TopicName = topic.TopicName,
+                PostContent = postContentViewModel,
+                IsLiked = post.IsLiked,
+                CreatedAt = post.CreatedAt
+            };
+
+            model.Posts.Add(postViewModel);
+            model.Contents.Add(postContentViewModel);
+        }
+
+        return PartialView("_NavbarPosts", model);
+    }
+
     public IActionResult Privacy()
     {
         return View();
