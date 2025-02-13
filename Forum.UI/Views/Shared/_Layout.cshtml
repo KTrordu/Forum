@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-
+    <link rel="stylesheet" href="~/css/navbarPosts.css" />
 </head>
 <body>
     <header>
@@ -37,17 +37,20 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="Post" asp-action="Index">Posts</a>
                         </li>
-                        <li class="nav-item mt-2 mx-2">
-                            <input id="selectComm" type="hidden" value="">
-                            <select id="commDrop" name="community">
-                                <option value="">Select a Community</option>
-                            </select>
-                        </li>
-                        <li class="nav-item mt-2">
-                            <input id="selectTop" type="hidden" value="">
-                            <select id="topDrop" name="topic">
-                                <option value="">Select a Topic</option>
-                            </select>
+                        <li class="nav-item mx-2">
+                            <div class="dropdown">
+                                <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="commBut">
+                                    Select a Community
+                                </button>
+                                <ul class="dropdown-menu" id="commMenu">
+                                    <li class="dropdown-submenu comm">
+                                        <a class="dropdown-item dropdown-toggle">Submenu</a>
+                                        <ul class="dropdown-menu topMenu">
+                                            <li><a class="dropdown-item topic">Submenu item 1</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
                         </li>
                         <li class="nav-item ms-auto mt-2">
                             <form id="cultureForm">
@@ -114,8 +117,6 @@
     $(document).ready(function () {
         let communities;
         let topics;
-        let selectedComm = $("#selectComm");
-        let selectedTop = $("#selectTop");
 
         $.ajax({
             type: "GET",
@@ -124,9 +125,9 @@
             success: function (response) {
                 if (response.success) {
                     console.log(response.message);
-                    displayDropdown(response.communities);
                     communities = response.communities;
                     topics = response.topics;
+                    displayDropdown(communities, topics);
                 } else {
                     toastr.error("Error: " + response.message);
                 }
@@ -136,39 +137,30 @@
             }
         });
 
-        function displayDropdown(communities) {
-            var communityDropdown = $("#commDrop");
-            var topicDropdown = $("#topDrop");
+        function displayDropdown(communities, topics) {
+            var commMenu = $("#commMenu");
+            commMenu.html("");
 
             communities.forEach(community => {
-                var option = document.createElement("option");
-                option.value = community.id;
-                option.textContent = community.communityName;
-                communityDropdown.append(option);
+                var option = `<li class="dropdown-submenu comm">
+                                <a class="dropdown-item dropdown-toggle">${community.communityName}</a>
+                                <ul class="dropdown-menu topMenu" data-communityId="${community.id}">
+                                </ul>
+                            </li>`;
+
+                commMenu.append(option);
+            });
+
+            topics.forEach(topic => {
+                var comm = $(`.topMenu[data-communityId="${topic.communityId}"]`);
+
+                var option = `<li><a class="dropdown-item topic" data-topicId="${topic.id}">${topic.topicName}</a></li>`;
+                comm.append(option);
             });
         }
 
-        $(document).on("change", "#commDrop", function () {
-            var comm = $(this).find(":selected").val();
-            var topicDropdown = $("#topDrop");
-
-            selectedComm.val(comm);
-            topicDropdown.html(`<option value="">Select a Topic</option>`);
-
-            topics.forEach(topic => {
-                if (topic.communityId == comm) {
-                    var option = document.createElement("option");
-                    option.value = topic.id;
-                    option.textContent = topic.topicName;
-                    topicDropdown.append(option);
-                }
-            });
-        });
-
-        $(document).on("change", "#topDrop", function () {
-            var top = $(this).find(":selected").val();
-            if (!top) return;
-            selectedTop.val(top);
+        $(document).on("click", ".topic", function () {
+            var top = $(this).attr("data-topicId");
 
             var container = $(".container:first");
 
