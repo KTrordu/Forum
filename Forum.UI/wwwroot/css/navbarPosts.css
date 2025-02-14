@@ -2,21 +2,21 @@
     position: absolute;
 }
 
-.dropdown-submenu .dropdown-menu {
-    top: 0;
-    left: 100%;
-    margin-top: -1px;
-}
-
-.dropdown-submenu:hover > .dropdown-menu {
-    display: block;
-}
-
 .dropdown-menu {
     display: none;
 }
 
 .dropdown:hover > .dropdown-menu {
+    display: block;
+}
+
+.dropdown-menu .dropend .dropdown-menu {
+    left: 100%;
+    top: 0;
+    margin-left: 0.1rem;
+}
+
+.dropend:hover > .dropdown-menu {
     display: block;
 }
 
