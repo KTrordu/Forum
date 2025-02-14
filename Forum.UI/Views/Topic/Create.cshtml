@@ -20,6 +20,13 @@
 			<span asp-validation-for="CommunityName" class="text-danger"></span>
 		</div>
 		<div class="mb-3">
+			<label asp-for="ParentId">Parent Topic</label>
+			<select asp-for="ParentId" asp-items="Model.Topics" class="form-control" id="topicDropdown">
+				<option value="@null">None</option>
+			</select>
+			<span asp-validation-for="ParentId" class="text-danger"></span>
+		</div>
+		<div class="mb-3">
 			<label asp-for="TopicName">@Model.TopicNameLabel</label>
 			<input asp-for="TopicName" class="form-control" />
 			<span asp-validation-for="TopicName" class="text-danger"></span>

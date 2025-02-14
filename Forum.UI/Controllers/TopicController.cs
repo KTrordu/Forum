@@ -129,16 +129,28 @@ namespace Forum.UI.Controllers
             var community = _communityRepository.GetCommunity(communityId);
             if (community == null) return NotFound();
 
+            var topics = _topicRepository.GetTopicsByCommunity(community.Id);
+            if (topics == null) return NotFound();
+
             var communitiesList = new SelectListItem
             {
                 Value = community.Id.ToString(),
                 Text = community.CommunityName
             };
 
+            var topicsList = topics
+                .Select(t => new SelectListItem
+                {
+                    Value = t.Id.ToString(),
+                    Text = t.TopicName
+                })
+                .ToList();
+
             var model = new TopicViewModel(_topicLocalizer)
             {
                 CommunityId = community.Id,
-                CommunityName = community.CommunityName
+                CommunityName = community.CommunityName,
+                Topics = topicsList
             };
 
             return View(model);
@@ -157,6 +169,7 @@ namespace Forum.UI.Controllers
                     TopicName = model.TopicName,
                     CommunityId = model.CommunityId,
                     CommunityName = model.CommunityName,
+                    Topics = model.Topics,
                     ParentId = model.ParentId,
                     SubtopicsIds = new()
                 };

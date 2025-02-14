@@ -36,6 +36,8 @@ namespace Forum.UI.ViewModels
 
         public string? CommunityName { get; set; }
 
+        public List<SelectListItem>? Topics { get; set; }
+
         public int? ParentId { get; set; }
 
         public List<int>? SubtopicsIds { get; set; }
