@@ -12,5 +12,9 @@ namespace Forum.Entities
         public Community Communities { get; set; }
 
         public string TopicName { get; set; }
+
+        public int? ParentId { get; set; }
+
+        public List<Topic> Subtopics { get; set;} = new();
     }
 }
