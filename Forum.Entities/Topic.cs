@@ -19,6 +19,6 @@ namespace Forum.Entities
 
         public Topic? Parent { get; set; }
 
-        public List<Topic> Subtopics { get; set;} = new();
+        public List<Topic>? Subtopics { get; set;} = new();
     }
 }

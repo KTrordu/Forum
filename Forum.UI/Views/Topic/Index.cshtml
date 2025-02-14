@@ -12,7 +12,8 @@
             <h2 class="text-primary">@Localizer["TopicList"]</h2>
         </div>
         <div class="col-6 text-end">
-            <a asp-controller="Topic" asp-action="Create" asp-route-communityId="@Model.CommunityId" data-communityId="@Model.CommunityId" class="btn btn-primary" id="commBut">
+            <input id="commId" type="hidden" value="@Model.CommunityId">
+            <a asp-controller="Topic" asp-action="Create" asp-route-communityId="@Model.CommunityId" class="btn btn-primary" id="commBut">
                 <i class="bi bi-plus-circle"></i> &nbsp; @Localizer["CreateNewTopic"]
             </a>
         </div>
@@ -35,7 +36,7 @@
 <script>
     $(document).ready(function () {
         //List topics
-        var communityId = $("#commBut").attr("data-communityId");
+        let communityId = $("#commId").val();
 
         $('#topicTable').DataTable({
             "ajax": {

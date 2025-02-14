@@ -156,7 +156,9 @@ namespace Forum.UI.Controllers
                     Id = model.Id,
                     TopicName = model.TopicName,
                     CommunityId = model.CommunityId,
-                    CommunityName = model.CommunityName
+                    CommunityName = model.CommunityName,
+                    ParentId = model.ParentId,
+                    SubtopicsIds = new()
                 };
 
                 return View(viewModel);
@@ -165,7 +167,7 @@ namespace Forum.UI.Controllers
             var community = _communityRepository.GetCommunity(model.CommunityId);
             if (community == null) return NotFound();
 
-            _topicRepository.CreateTopic(model.CommunityId, model.TopicName);
+            _topicRepository.CreateTopic(model.CommunityId, model.TopicName, model.ParentId);
             TempData["Success"] = "Topic created successfully.";
 
             return RedirectToAction("Index", new { communityId = model.CommunityId });

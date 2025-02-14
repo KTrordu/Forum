@@ -55,12 +55,14 @@ namespace Forum.DAL.Repositories
                 .ToList();
         }
 
-        public void CreateTopic (int communityId, string topicName)
+        public void CreateTopic (int communityId, string topicName, int? parentId)
         {
             var topic = new Topic
             {
                 CommunityId = communityId,
-                TopicName = topicName
+                TopicName = topicName,
+                ParentId = parentId,
+                Subtopics = new()
             };
 
             _db.Topics.Add(topic);
