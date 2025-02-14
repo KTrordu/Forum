@@ -37,6 +37,7 @@ namespace Forum.DAL.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CommunityId = table.Column<int>(type: "int", nullable: true),
                     TopicName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ParentId = table.Column<int>(type: "int", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -49,6 +50,11 @@ namespace Forum.DAL.Migrations
                         name: "FK_Topics_Communities_CommunityId",
                         column: x => x.CommunityId,
                         principalTable: "Communities",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Topics_Topics_ParentId",
+                        column: x => x.ParentId,
+                        principalTable: "Topics",
                         principalColumn: "Id");
                 });
 
@@ -108,7 +114,8 @@ namespace Forum.DAL.Migrations
                     PostId = table.Column<int>(type: "int", nullable: true),
                     PostTitle = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     PostDescription = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
-                    ImagePath = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    ImagePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    VideoPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -143,6 +150,11 @@ namespace Forum.DAL.Migrations
                 name: "IX_Topics_CommunityId",
                 table: "Topics",
                 column: "CommunityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Topics_ParentId",
+                table: "Topics",
+                column: "ParentId");
         }
 
         /// <inheritdoc />

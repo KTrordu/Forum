@@ -194,9 +194,6 @@ namespace Forum.DAL.Migrations
                     b.Property<int?>("ParentId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TopicId")
-                        .HasColumnType("int");
-
                     b.Property<string>("TopicName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -208,7 +205,7 @@ namespace Forum.DAL.Migrations
 
                     b.HasIndex("CommunityId");
 
-                    b.HasIndex("TopicId");
+                    b.HasIndex("ParentId");
 
                     b.ToTable("Topics");
                 });
@@ -246,11 +243,13 @@ namespace Forum.DAL.Migrations
                         .WithMany()
                         .HasForeignKey("CommunityId");
 
-                    b.HasOne("Forum.Entities.Topic", null)
+                    b.HasOne("Forum.Entities.Topic", "Parent")
                         .WithMany("Subtopics")
-                        .HasForeignKey("TopicId");
+                        .HasForeignKey("ParentId");
 
                     b.Navigation("Communities");
+
+                    b.Navigation("Parent");
                 });
 
             modelBuilder.Entity("Forum.Entities.Topic", b =>

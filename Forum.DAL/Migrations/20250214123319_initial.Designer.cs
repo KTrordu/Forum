@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Forum.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250208084544_second")]
-    partial class second
+    [Migration("20250214123319_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -194,6 +194,9 @@ namespace Forum.DAL.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("int");
+
                     b.Property<string>("TopicName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -204,6 +207,8 @@ namespace Forum.DAL.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CommunityId");
+
+                    b.HasIndex("ParentId");
 
                     b.ToTable("Topics");
                 });
@@ -241,7 +246,18 @@ namespace Forum.DAL.Migrations
                         .WithMany()
                         .HasForeignKey("CommunityId");
 
+                    b.HasOne("Forum.Entities.Topic", "Parent")
+                        .WithMany("Subtopics")
+                        .HasForeignKey("ParentId");
+
                     b.Navigation("Communities");
+
+                    b.Navigation("Parent");
+                });
+
+            modelBuilder.Entity("Forum.Entities.Topic", b =>
+                {
+                    b.Navigation("Subtopics");
                 });
 #pragma warning restore 612, 618
         }
