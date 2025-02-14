@@ -126,6 +126,9 @@
   <data name="CommunityNameLabel" xml:space="preserve">
     <value>Topluluk Adı</value>
   </data>
+  <data name="ParentIdLabel" xml:space="preserve">
+    <value>Üst Konu</value>
+  </data>
   <data name="TopicNameLabel" xml:space="preserve">
     <value>Konu Adı</value>
   </data>

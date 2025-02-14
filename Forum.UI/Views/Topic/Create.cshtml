@@ -20,7 +20,7 @@
 			<span asp-validation-for="CommunityName" class="text-danger"></span>
 		</div>
 		<div class="mb-3">
-			<label asp-for="ParentId">Parent Topic</label>
+			<label asp-for="ParentId">@Model.ParentIdLabel</label>
 			<select asp-for="ParentId" asp-items="Model.Topics" class="form-control" id="topicDropdown">
 				<option value="@null">None</option>
 			</select>

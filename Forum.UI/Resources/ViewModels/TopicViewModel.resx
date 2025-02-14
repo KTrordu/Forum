@@ -126,6 +126,9 @@
   <data name="CommunityNameLabel" xml:space="preserve">
     <value>Community Name</value>
   </data>
+  <data name="ParentIdLabel" xml:space="preserve">
+    <value>Parent Topic</value>
+  </data>
   <data name="TopicNameLabel" xml:space="preserve">
     <value>Topic Name</value>
   </data>
