@@ -195,12 +195,25 @@ namespace Forum.UI.Controllers
             var community = _communityRepository.GetCommunity((int)topic.CommunityId!);
             if (community == null) return NotFound();
 
+            var topics = _topicRepository.GetTopicsByCommunity(community.Id);
+            if (topics == null) return NotFound();
+
+            var topicsList = topics
+                .Select(t => new SelectListItem
+                {
+                    Value = t.Id.ToString(),
+                    Text = t.TopicName
+                })
+                .ToList();
+
             var model = new TopicViewModel(_topicLocalizer)
             {
                 Id = topic.Id,
                 TopicName = topic.TopicName,
                 CommunityId = community.Id,
                 CommunityName = community.CommunityName,
+                Topics = topicsList,
+                ParentId = topic.ParentId,
                 CreatedAt = topic.CreatedAt
             };
 
@@ -219,6 +232,8 @@ namespace Forum.UI.Controllers
                     Id = model.Id,
                     TopicName = model.TopicName,
                     CommunityId = model.CommunityId,
+                    Topics = model.Topics,
+                    ParentId = model.ParentId,
                     CommunityName = model.CommunityName
                 };
 
@@ -228,7 +243,7 @@ namespace Forum.UI.Controllers
             var topic = _topicRepository.GetTopic(model.Id);
             if (topic == null) return NotFound();
 
-            _topicRepository.UpdateTopic(topic.Id, model.CommunityId, model.TopicName);
+            _topicRepository.UpdateTopic(topic.Id, model.CommunityId, model.TopicName, model.ParentId);
             TempData["Success"] = "Topic updated successfully.";
 
             return RedirectToAction("Index", new { communityId = model.CommunityId });

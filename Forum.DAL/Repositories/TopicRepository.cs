@@ -65,6 +65,21 @@ namespace Forum.DAL.Repositories
                 Subtopics = new()
             };
 
+            if (parentId != null)
+            {
+                try
+                {
+                    var superTopic = GetTopic((int)parentId);
+                    if (superTopic == null || superTopic.Subtopics == null) throw new NullReferenceException();
+
+                    superTopic.Subtopics.Add(topic);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+            }
+
             _db.Topics.Add(topic);
             _db.SaveChanges();
         }
@@ -76,6 +91,34 @@ namespace Forum.DAL.Repositories
             topic!.TopicName = newTopicName;
             topic.CommunityId = newCommunityId;
             topic.UpdatedAt = DateTime.Now;
+
+            _db.Topics.Update(topic);
+            _db.SaveChanges();
+        }
+
+        public void UpdateTopic(int topicId, int newCommunityId, string newTopicName, int? parentId)
+        {
+            var topic = GetTopic(topicId);
+
+            topic!.TopicName = newTopicName;
+            topic.CommunityId = newCommunityId;
+            topic.ParentId = parentId;
+            topic.UpdatedAt = DateTime.Now;
+
+            if (parentId != null)
+            {
+                try
+                {
+                    var superTopic = GetTopic((int)parentId);
+                    if (superTopic == null || superTopic.Subtopics == null) throw new NullReferenceException();
+
+                    superTopic.Subtopics.Add(topic);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+            }
 
             _db.Topics.Update(topic);
             _db.SaveChanges();

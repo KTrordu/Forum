@@ -21,12 +21,19 @@
 			<span asp-validation-for="CommunityName" class="text-danger"></span>
 		</div>
 		<div class="mb-3">
+			<label asp-for="ParentId">@Model.ParentIdLabel</label>
+			<select asp-for="ParentId" asp-items="Model.Topics" class="form-control" id="topicDropdown">
+				<option value="@null">None</option>
+			</select>
+			<span asp-validation-for="ParentId" class="text-danger"></span>
+		</div>
+		<div class="mb-3">
 			<label asp-for="TopicName">@Model.TopicNameLabel</label>
 			<input asp-for="TopicName" class="form-control" />
 			<span asp-validation-for="TopicName" class="text-danger"></span>
 		</div>
 		<button type="submit" class="btn btn-primary" style="width:150px">@Localizer["Edit"]</button>
-		<a asp-controller="Topic" asp-action="Index" asp-route-id="@Model.CommunityId" class="btn btn-secondary" style="width:150px">
+		<a asp-controller="Topic" asp-action="Index" asp-route-communityId="@Model.CommunityId" class="btn btn-secondary" style="width:150px">
 			@Localizer["BackToList"]
 		</a>
 	</div>
