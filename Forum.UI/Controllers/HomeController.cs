@@ -6,6 +6,8 @@ using Forum.UI.ViewModels;
 using Forum.DAL.Repositories;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Forum.UI.DTOs;
+using Forum.Entities;
 
 namespace Forum.UI.Controllers;
 
@@ -142,6 +144,7 @@ public class HomeController : Controller
         {
             var communitiesList = _communityRepository.GetSubscribedCommunities();
             if (communitiesList == null) return NotFound();
+
             var communitiesSelectList = communitiesList
                 .Select(c => new
                 {
@@ -152,20 +155,46 @@ public class HomeController : Controller
 
             var topicsList = _topicRepository.GetSubscribedTopics(communitiesList);
             if (topicsList == null) return NotFound();
-            var topicsSelectList = topicsList
-                .Select(t => new
+
+            var topicDtoList = topicsList
+                .Select(t => new TopicDTO
                 {
-                    t.Id,
-                    t.TopicName,
-                    t.CommunityId
+                    Id = t.Id,
+                    TopicName = t.TopicName,
+                    CommunityId = (int)t.CommunityId!,
+                    ParentId = t.ParentId,
+                    Subtopics = new List<TopicDTO>(),
+                    CreatedAt = t.CreatedAt.ToString("yyyy-MM-dd")
                 })
                 .ToList();
 
-            return Json(new { success = true, message = "Communities and Topics loaded successfully.", communities = communitiesSelectList, topics = topicsSelectList });
+            var rootTopics = topicDtoList
+                .Where(t => t.ParentId == null)
+                .ToList();
+
+            foreach (var topic in rootTopics)
+            {
+                BuildTopicHierarchy(topic, topicDtoList);
+            }
+
+            return Json(new { success = true, message = "Communities and Topics loaded successfully.", communities = communitiesSelectList, topics = rootTopics });
         }
         catch (Exception ex)
         {
             return Json(new { success = false, message = ex.Message });
+        }
+    }
+
+    private void BuildTopicHierarchy(TopicDTO parent, List<TopicDTO> topics)
+    {
+        var subtopics = topics
+            .Where(t => t.ParentId == parent.Id)
+            .ToList();
+
+        foreach (var subtopic in subtopics)
+        {
+            BuildTopicHierarchy(subtopic, topics);
+            parent.Subtopics.Add(subtopic);
         }
     }
 

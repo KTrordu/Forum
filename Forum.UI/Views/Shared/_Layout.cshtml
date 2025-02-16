@@ -63,6 +63,7 @@
     <div class="container">
         <main role="main" class="pb-3">
             <div id="navbarPostsCont"></div>
+            <partial name="_Notification" />
             @RenderBody()
         </main>
     </div>
@@ -147,13 +148,31 @@
 
             topics.forEach(topic => {
                 var comm = $(`.topMenu[data-communityId="${topic.communityId}"]`);
-
-                var option = `<li><a class="dropdown-item topic" data-topicId="${topic.id}">${topic.topicName}</a></li>`;
-                comm.append(option);
+                var topicItem = buildTopicItem(topic);
+                comm.append(topicItem);
             });
+
+            $(".dropdown-toggle").dropdown();
         }
 
-        $(document).on("click", ".topic", function () {
+        function buildTopicItem(topic) {
+            var subtopicsHtml = "";
+
+            if (topic.subtopics && topic.subtopics.length > 0) {
+                subtopicsHtml += `<ul class="dropdown-menu">`;
+                topic.subtopics.forEach(subtopic => {
+                    subtopicsHtml += buildTopicItem(subtopic);
+                });
+                subtopicsHtml += `</ul>`;
+            }
+
+            return `<li class="dropend topicList" data-topicId="${topic.id}">
+                        <a class="dropdown-item dropdown-toggle" data-topicId="${topic.id}">${topic.topicName}</a>
+                        ${subtopicsHtml}
+                    </li>`;
+        }
+
+        $(document).on("click", ".topicList", function () {
             var top = $(this).attr("data-topicId");
 
             var container = $(".container:first");
