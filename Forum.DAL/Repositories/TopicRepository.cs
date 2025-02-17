@@ -31,6 +31,14 @@ namespace Forum.DAL.Repositories
                 .ToList();
         }
 
+        public List<Topic>? GetSubtopics(Topic topic)
+        {
+            return _db.Topics
+                .Where(t => !t.IsDeleted && t.ParentId == topic.Id)
+                .OrderByDescending (t => t.UpdatedAt)
+                .ToList();
+        }
+
         public List<Topic>? GetSubscribedTopics(List<Community> subscribedCommunities)
         {
             var topicsList = new List<Topic>();
@@ -133,6 +141,20 @@ namespace Forum.DAL.Repositories
             topic.UpdatedAt = DateTime.Now;
 
             _db.Update(topic);
+            _db.SaveChanges();
+        }
+
+        public void DeleteTopics (List<Topic> topics)
+        {
+            foreach (var topic in topics)
+            {
+                topic!.IsDeleted = true;
+                topic.DeletedAt = DateTime.Now;
+                topic.UpdatedAt = DateTime.Now;
+
+                _db.Update(topic);
+            }
+            
             _db.SaveChanges();
         }
     }

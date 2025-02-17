@@ -263,6 +263,10 @@ namespace Forum.UI.Controllers
             var topic = _topicRepository.GetTopic(topicId);
             if (topic == null) return NotFound();
 
+            var subtopics = _topicRepository.GetSubtopics(topic);
+            if (subtopics == null) return NotFound();
+
+            _topicRepository.DeleteTopics(subtopics);
             _topicRepository.DeleteTopic(topicId);
             return Json(new { success = true, message = "Topic deleted successfully." });
         }
@@ -275,6 +279,9 @@ namespace Forum.UI.Controllers
             var topic = _topicRepository.GetTopic(topicId);
             if (topic == null) return NotFound();
 
+            var subtopics = _topicRepository.GetSubtopics(topic);
+            if (subtopics == null) return NotFound();
+
             var posts = _postRepository.GetPostsByTopic(topic.Id);
             if (posts == null) return NotFound();
 
@@ -284,6 +291,7 @@ namespace Forum.UI.Controllers
             try
             {
                 _helperRepository.DeleteTopicCascading(topic, posts, postContents);
+                _topicRepository.DeleteTopics(subtopics);
                 return Json(new { success = true, message = "Topic and its posts are deleted successfully." });
             }
             catch (Exception ex)
