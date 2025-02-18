@@ -23,3 +23,8 @@
 .topic:hover {
     cursor: pointer;
 }
+
+.dropdown-item:hover {
+    background-color: blue;
+    color: white;
+}
