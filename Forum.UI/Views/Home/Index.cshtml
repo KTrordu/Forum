@@ -6,116 +6,59 @@
     ViewData["Title"] = "Index";
 }
 
-<h2 style="color:darkgreen">@Model.CommunityName <span style="color:darkred">@Localizer["Posts"]</span></h2>
 
-<div class="container p-3">
-    <div class="row pt-4">
-        <div class="col-6">
-            <a asp-controller="Community" asp-action="Index" class="btn btn-dark">@Localizer["BackToCommunities"]</a>
-        </div>
-        <div class="col-6 text-end">
-            <a asp-controller="Post" asp-action="Create" asp-route-communityId="@Model.CommunityId" asp-route-topicId="@Model.TopicId" class="btn btn-primary">
-                <i class="bi bi-plus-circle"></i> &nbsp; @Localizer["PostSomething"]
-            </a>
-        </div>
+<h2 class="text-center text-darkgreen">@Model.CommunityName <span class="text-danger">@Localizer["Posts"]</span></h2>
+
+    <div class="d-flex justify-content-between align-items-center my-3">
+        <a asp-controller="Community" asp-action="Index" class="btn btn-dark">@Localizer["BackToCommunities"]</a>
+        <a asp-controller="Post" asp-action="Create" asp-route-communityId="@Model.CommunityId" asp-route-topicId="@Model.TopicId" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> &nbsp; @Localizer["PostSomething"]
+        </a>
     </div>
-</div>
-@foreach (var post in Model.Posts)
-{
-    <table class="table table-bordered table-striped" id="post-@post.Id">
-        <thead>
-            <tr>
-                <th colspan="7" class="text-center">@post.PostContent.PostTitle</th>
-            </tr>
-            @if (!string.IsNullOrEmpty(post.PostContent.ImagePath))
-            {
-                <tr>
-                    <td colspan="7" class="text-center">
-                        <div class="row">
-                            <div class="col-3"></div>
-                            <div class="col-6">
-                                <img src="@post.PostContent.ImagePath" alt="@post.PostContent.PostTitle"
-                                     class="img-fluid mx-auto" style="width:100%; border-radius:5px; display:inline;" />
-                            </div>
-                            <div class="col-3"></div>
-                        </div>
-                    </td>
-                </tr>
-            }
-            @* @if (!string.IsNullOrEmpty(post.PostContent.VideoPath))
+
+<div class="row g-4">
+        @foreach (var post in Model.Posts)
         {
-            <tr>
-                <td colspan="7" class="text-center">
-                    <div class="row">
-                        <div class="col-3"></div>
-                        <div class="col-6">
-                            <video controls style="width:100%; border-radius:5px; display:inline;">
-                                    <source src="/Media/Video/@System.IO.Path.GetFileName(post.PostContent.VideoPath)" type="video/mp4">
-                            </video>
+            <div class="col-md-6 col-lg-4" id="post-@post.Id">
+                <div class="card shadow-sm">
+                    <div class="card-header text-center fw-bold">@post.PostContent.PostTitle</div>
+                    @if (!string.IsNullOrEmpty(post.PostContent.ImagePath))
+                    {
+                        <img src="@post.PostContent.ImagePath" alt="@post.PostContent.PostTitle" class="card-img-top img-fluid rounded" style="width: 100%;"/>
+                    }
+                    <div class="card-body">
+                        <p class="card-text" style="max-height: 10vw; overflow-y: auto;">@post.PostContent.PostDescription</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">@post.CreatedAt.ToString("dd.MM.yyyy - dddd")</span>
+                            <button class="btn btn-sm like-button @(post.IsLiked ? "btn-danger" : "btn-outline-success")" data-id="@post.Id">
+                                <i class="bi @(post.IsLiked ? "bi-heart-fill" : "bi-heart")"></i> @(post.IsLiked ? Localizer["Unlike"] : Localizer["Like"])
+                            </button>
                         </div>
-                        <div class="col-3"></div>
                     </div>
-                </td>
-            </tr>
-        } *@
-            <tr>
-            <tr>
-                <th>@Localizer["Community"]</th>
-                <th>@Localizer["Topic"]</th>
-                <th>@Localizer["CreatedAt"]</th>
-                <th>@Localizer["Liking"]</th>
-                <th></th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>@post.CommunityName</td>
-                <td>@post.TopicName</td>
-                <td>@post.CreatedAt.Day.@post.CreatedAt.Month.@post.CreatedAt.Year @post.CreatedAt.DayOfWeek</td>
-                <td>
-                    <button class="btn btn-sm like-button @(post.IsLiked ? "bg-danger" : "bg-success")" data-id="@post.Id" style="border:1px solid black;">
-                        <span class="bi" id="like-icon-@post.Id" style="color:white">
-                            @(post.IsLiked ? Localizer["Unlike"] : Localizer["Like"])
-                        </span>
-                    </button>
-                </td>
-                <td>
-                    <div>
-                        <a asp-controller="Post" asp-action="Edit" asp-route-id="@post.Id"
-                           style="text-decoration:none; color:navy">
-                            <i class="bi bi-pencil-square" style="color:orange"></i> @Localizer["Edit"]
+                    <div class="card-footer d-flex justify-content-between">
+                        <a asp-controller="Post" asp-action="Edit" asp-route-id="@post.Id" class="btn btn-warning btn-sm">
+                            <i class="bi bi-pencil-square"></i> @Localizer["Edit"]
                         </a>
-                    </div>
-                </td>
-                <td>
-                    <div>
-                        <button class="openModal" style="background-color: inherit; border: none; color: darkred;" data-id="@post.Id">
-                            <i class="bi bi-x-circle" style="color:darkred"></i> @Localizer["Delete"]
+                        <button class="btn btn-sm btn-danger openModal" data-id="@post.Id">
+                            <i class="bi bi-trash"></i> @Localizer["Delete"]
                         </button>
                     </div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="7" class="text-center">@post.PostContent.PostDescription</td>
-            </tr>
-        </tbody>
-    </table>
-}
+                </div>
+            </div>
+        }
+    </div>
+</div>
 
 <partial name="_DeletePostModal" />
 
 <script>
     $(document).ready(function () {
         //Open Delete Modal
-        $(".openModal").each(function () {
-            var button = $(this);
-            var id = button.attr("data-id");
+        $(".openModal").click(function () {
+            var id = $(this).data("id");
 
-            button.click(function () {
-                $("#deleteModal").modal("show");
-                $("#deleteId").val(id);
-            });
+            $("#deleteModal").modal("show");
+            $("#deleteId").val(id);
         });
     });
 
@@ -153,10 +96,6 @@
             $(".like-button").each(function () {
                 var button = $(this);
                 var postId = button.data("id");
-                var icon = $("#like-icon-" + postId);
-
-                if (icon.text().trim() === "Unlike") button.addClass("bg-danger");
-                else button.addClass("bg-success");
 
                 button.click(function () {
                     $.ajax({
@@ -166,11 +105,11 @@
                         dataType: "json",
                         success: function (data) {
                             if (data.isLiked) {
-                                icon.text("Unlike");
-                                button.removeClass("bg-success").addClass("bg-danger");
+                                button.removeClass("btn-outline-success").addClass("btn-danger");
+                                button.html('<i class="bi bi-heart-fill"></i> ' + "@Localizer["Unlike"]");
                             } else {
-                                icon.text("Like");
-                                button.removeClass("bg-danger").addClass("bg-success");
+                                button.removeClass("btn-danger").addClass("btn-outline-success");
+                                button.html('<i class="bi bi-heart"></i> ' + "@Localizer["Like"]");
                             }
                         }, error: function () {
                             console.error("Error liking post.");
