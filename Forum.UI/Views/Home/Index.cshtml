@@ -10,8 +10,8 @@
 <h2 class="text-center text-darkgreen">@Model.CommunityName <span class="text-danger">@Localizer["Posts"]</span></h2>
 
     <div class="d-flex justify-content-between align-items-center my-3">
-        <a asp-controller="Community" asp-action="Index" class="btn btn-dark">@Localizer["BackToCommunities"]</a>
-        <a asp-controller="Post" asp-action="Create" asp-route-communityId="@Model.CommunityId" asp-route-topicId="@Model.TopicId" class="btn btn-primary">
+        <a asp-controller="Community" asp-action="Index" class="btn btn-secondary">@Localizer["BackToCommunities"]</a>
+        <a asp-controller="Post" asp-action="Create" asp-route-communityId="@Model.CommunityId" asp-route-topicId="@Model.TopicId" class="btn btn-success">
             <i class="bi bi-plus-circle"></i> &nbsp; @Localizer["PostSomething"]
         </a>
     </div>
