@@ -1,0 +1,8 @@
+.langChange {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.langItem:hover {
+    background-color: goldenrod;
+}
