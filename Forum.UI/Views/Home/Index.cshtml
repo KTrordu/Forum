@@ -24,7 +24,9 @@
                     <div class="card-header text-center fw-bold">@post.PostContent.PostTitle</div>
                     @if (!string.IsNullOrEmpty(post.PostContent.ImagePath))
                     {
-                        <img src="@post.PostContent.ImagePath" alt="@post.PostContent.PostTitle" class="card-img-top img-fluid rounded" style="width: 100%;"/>
+                        <a class="zoomLink" style="text-decoration: none; cursor: pointer;">
+                            <img src="@post.PostContent.ImagePath" alt="@post.PostContent.PostTitle" class="card-img-top img-fluid rounded" style="width: fit-content;"/>
+                        </a>
                     }
                     <div class="card-body">
                         <p class="card-text" style="max-height: 10vw; overflow-y: auto;">@post.PostContent.PostDescription</p>
@@ -50,6 +52,7 @@
 </div>
 
 <partial name="_DeletePostModal" />
+<partial name="_ZoomPhotoModal" />
 
 <script>
     $(document).ready(function () {
@@ -59,6 +62,18 @@
 
             $("#deleteModal").modal("show");
             $("#deleteId").val(id);
+        });
+    });
+
+    $(document).ready(function () {
+        //Open zoomed photo
+        $(".zoomLink img").click(function () {
+            var imageUrl = $(this).attr("src");
+            var altText = $(this).attr("alt");
+
+            $("#zoomedImage").attr("src", imageUrl);
+            $("#zoomedImage").attr("alt", altText);
+            $("#zoomModal").modal("show");
         });
     });
 
