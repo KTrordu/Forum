@@ -22,6 +22,8 @@ namespace Forum.UI.ViewModels
         [Required]
         public int Id { get; set; }
 
+        [StringLength(200)]
+        [Required]
         public string CommentText { get; set; }
 
         public int PostId { get; set; }

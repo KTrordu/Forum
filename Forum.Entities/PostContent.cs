@@ -12,10 +12,8 @@ namespace Forum.Entities
         public int? PostId { get; set; }
         public Post Posts { get; set; }
 
-        [StringLength(50)]
         public string PostTitle { get; set; }
 
-        [StringLength(2000)]
         public string PostDescription { get; set; }
 
         public string? ImagePath { get; set; }

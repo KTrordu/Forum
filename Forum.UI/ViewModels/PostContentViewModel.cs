@@ -20,9 +20,11 @@ namespace Forum.UI.ViewModels
         public string? ImagePathLabel => _localizer?["ImagePathLabel"];
 
         [Required(ErrorMessage = "PostTitleRequired")]
+        [StringLength(50)]
         public string PostTitle { get; set; }
 
         [Required(ErrorMessage = "PostDescriptionRequired")]
+        [StringLength(2000)]
         public string PostDescription { get; set; }
 
         public string? ImagePath { get; set; }
