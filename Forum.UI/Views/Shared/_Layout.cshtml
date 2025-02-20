@@ -1,4 +1,7 @@
 ﻿@using System.Globalization
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,18 +33,18 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">@Localizer["Home"]</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Community" asp-action="Index">Communities</a>
+                            <a class="nav-link text-dark" asp-controller="Community" asp-action="Index">@Localizer["Communities"]</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Post" asp-action="Index">Posts</a>
+                            <a class="nav-link text-dark" asp-controller="Post" asp-action="Index">@Localizer["Posts"]</a>
                         </li>
                         <li class="nav-item mx-2">
                             <div class="dropdown">
                                 <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="commBut">
-                                    Select a Community
+                                    @Localizer["SelectCommunityTopic"]
                                 </button>
                                 <ul class="dropdown-menu" id="commMenu">
                                 </ul>
