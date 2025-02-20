@@ -1,18 +1,21 @@
-﻿<div class="modal fade" id="deleteCommentModal" tabindex="-1" aria-labelledby="deleteConfirmationModal" aria-hidden="true">
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+
+<div class="modal fade" id="deleteCommentModal" tabindex="-1" aria-labelledby="deleteConfirmationModal" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" id="modalContent">
             @Html.AntiForgeryToken()
             <div class="modal-header">
-                <h4 class="modal-title">Delete Confirmation</h4>
+                <h4 class="modal-title">@Localizer["DeleteConfirmation"]</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete this comment?</p>
+                <p>@Localizer["AreYouSureYouWantToDeleteThisComment"]</p>
                 <input type="hidden" id="deleteCommentId" />
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button id="confirmCommentDelete" class="btn btn-danger">Delete</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Close"]</button>
+                <button id="confirmCommentDelete" class="btn btn-danger">@Localizer["Delete"]</button>
             </div>
         </div>
     </div>
