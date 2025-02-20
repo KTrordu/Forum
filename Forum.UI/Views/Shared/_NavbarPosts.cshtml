@@ -47,9 +47,9 @@
                 </div>
             </div>
         }
-    </div>
 </div>
 
+<partial name="_DeleteCommentModal" />
 <partial name="_DeletePostModal" />
 <partial name="_ZoomPhotoModal" />
 
@@ -61,6 +61,16 @@
 
             $("#deleteModal").modal("show");
             $("#deleteId").val(id);
+        });
+    });
+
+    $(document).ready(function () {
+        //Open Delete Comment Modal
+        $(".openCommentModal").click(function () {
+            var commentId = $(this).data("id");
+
+            $("#deleteCommentModal").modal("show");
+            $("#deleteCommentId").val(commentId);
         });
     });
 
@@ -105,31 +115,60 @@
         });
     });
 
-        $(document).ready(function () {
-            //Like post
-            $(".like-button").each(function () {
-                var button = $(this);
-                var postId = button.data("id");
+    $(document).ready(function () {
+        //Delete the Comment
+        $(document).on("click", "#confirmCommentDelete", function () {
+            var commentId = $("#deleteCommentId").val();
+            var token = $('input[name="__RequestVerificationToken"]').val();
 
-                button.click(function () {
-                    $.ajax({
-                        type: "POST",
-                        url: "/Post/LikePost",
-                        data: { id : postId },
-                        dataType: "json",
-                        success: function (data) {
-                            if (data.isLiked) {
-                                button.removeClass("btn-outline-success").addClass("btn-danger");
-                                button.html('<i class="bi bi-heart-fill"></i> ' + "@Localizer["Unlike"]");
-                            } else {
-                                button.removeClass("btn-danger").addClass("btn-outline-success");
-                                button.html('<i class="bi bi-heart"></i> ' + "@Localizer["Like"]");
-                            }
-                        }, error: function () {
-                            console.error("Error liking post.");
+            $.ajax({
+                type: "POST",
+                url: "/Comment/DeleteComment",
+                data: {
+                    commentId: commentId,
+                    __RequestVerificationToken: token
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $("#deleteCommentModal").modal("hide");
+                        $("#comment-" + commentId).remove();
+                        toastr.success(response.message);
+                    } else {
+                        toastr.error("Error: " + response.message);
+                    }
+                },
+                error: function () {
+                    toastr.error("Error deleting comment.");
+                }
+            });
+        });
+    });
+
+    $(document).ready(function () {
+        //Like post
+        $(".like-button").each(function () {
+            var button = $(this);
+            var postId = button.data("id");
+
+            button.click(function () {
+                $.ajax({
+                    type: "POST",
+                    url: "/Post/LikePost",
+                    data: { id : postId },
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.isLiked) {
+                            button.removeClass("btn-outline-success").addClass("btn-danger");
+                            button.html('<i class="bi bi-heart-fill"></i> ' + "@Localizer["Unlike"]");
+                        } else {
+                            button.removeClass("btn-danger").addClass("btn-outline-success");
+                            button.html('<i class="bi bi-heart"></i> ' + "@Localizer["Like"]");
                         }
-                    });
+                    }, error: function () {
+                        console.error("Error liking post.");
+                    }
                 });
             });
         });
+    });
 </script>
