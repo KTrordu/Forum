@@ -74,6 +74,9 @@
                     }
                 }
             ],
+            "rowId": function(data) {
+                return "row_" + data.id;
+            },
             "error": function (xhr, error, code) {
                 toastr.error("Error in DataTable AJAX:", error);
                 toastr.error("Response:", xhr.responseText);
@@ -149,7 +152,7 @@
                     success: function (response) {
                         if (response.success) {
                             $("#deleteOptionsModal").modal("hide");
-                            $("#community-" + communityId).remove();
+                            $("#row_" + communityId).remove();
                             toastr.success(response.message);
                         } else {
                             toastr.error("Error: " + response.message);
