@@ -13,5 +13,5 @@ public abstract class BaseEntity
 
     public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
-    public DateTime DeletedAt { get; set; }
+    public DateTime? DeletedAt { get; set; }
 }

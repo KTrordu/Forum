@@ -43,6 +43,7 @@ builder.Services.AddScoped<TopicRepository>();
 builder.Services.AddScoped<CommunityRepository>();
 builder.Services.AddScoped<HelperRepository>();
 builder.Services.AddScoped<MediaHelper>();
+builder.Services.AddScoped<CommentRepository>();
 
 builder.Services.Configure<FormOptions>(options =>
 {

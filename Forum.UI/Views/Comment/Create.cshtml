@@ -1,0 +1,26 @@
+﻿@model Forum.UI.ViewModels.CommentViewModel
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+
+@{
+	ViewData["Title"] = "Create";
+}
+<form asp-controller="Comment" asp-action="Create" method="post">
+	<input type="hidden" asp-for="@Model.PostId" />
+	<div class="border p-3 mt-4">
+		<div class="row pb-2">
+			<h2 class="text-primary">@Localizer["CreateComment"]</h2>
+			<hr />
+		</div>
+		<div asp-validation-summary="All"></div>
+		<div class="mb-3">
+			<label asp-for="CommentText">@Model.CommentTextLabel</label>
+			<textarea asp-for="CommentText" class="form-control" rows="6" placeholder="@Localizer["TypeSomething"]"></textarea>
+			<span asp-validation-for="CommentText" class="text-danger"></span>
+		</div>
+		<button type="submit" class="btn btn-primary" style="width:150px">@Localizer["Create"]</button>
+		<a asp-controller="Post" asp-action="Index" class="btn btn-secondary" style="width:150px">
+			@Localizer["BackToPosts"]
+		</a>
+	</div>
+</form>
