@@ -1,4 +1,5 @@
-﻿using Forum.Entities;
+﻿using Forum.DAL.DTOs;
+using Forum.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,21 +64,21 @@ namespace Forum.DAL.Repositories
                 .ToList();
         }
 
-        public void CreateTopic (int communityId, string topicName, int? parentId)
+        public void CreateTopic (TopicDTO dto)
         {
             var topic = new Topic
             {
-                CommunityId = communityId,
-                TopicName = topicName,
-                ParentId = parentId,
+                CommunityId = dto.CommunityId,
+                TopicName = dto.TopicName,
+                ParentId = dto.ParentId,
                 Subtopics = new()
             };
 
-            if (parentId != null)
+            if (dto.ParentId != null)
             {
                 try
                 {
-                    var superTopic = GetTopic((int)parentId);
+                    var superTopic = GetTopic((int)dto.ParentId);
                     if (superTopic == null || superTopic.Subtopics == null) throw new NullReferenceException();
 
                     superTopic.Subtopics.Add(topic);
@@ -92,12 +93,12 @@ namespace Forum.DAL.Repositories
             _db.SaveChanges();
         }
 
-        public void UpdateTopic (int topicId, int newCommunityId, string newTopicName)
+        public void UpdateTopic (TopicDTO dto)
         {
-            var topic = GetTopic(topicId);
+            var topic = GetTopic(dto.Id);
 
-            topic!.TopicName = newTopicName;
-            topic.CommunityId = newCommunityId;
+            topic!.TopicName = dto.TopicName;
+            topic.CommunityId = dto.CommunityId;
             topic.UpdatedAt = DateTime.Now;
 
             _db.Topics.Update(topic);

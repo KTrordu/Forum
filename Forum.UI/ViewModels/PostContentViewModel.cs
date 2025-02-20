@@ -30,9 +30,5 @@ namespace Forum.UI.ViewModels
         public string? ImagePath { get; set; }
 
         public IFormFile? ImageFile { get; set; }
-
-        public string? VideoPath { get; set; }
-
-        public IFormFile? VideoFile { get; set; }
     }
 }

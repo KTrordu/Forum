@@ -1,4 +1,5 @@
-﻿using Forum.Entities;
+﻿using Forum.DAL.DTOs;
+using Forum.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -105,11 +106,11 @@ namespace Forum.DAL.Repositories
             return new List<Post>();
         }
 
-        public void CreatePost(int topicId, string postTitle, string postDescription, string? imagePath, string? videoPath)
+        public void CreatePost(PostDTO postDto, PostContentDTO postContentDto)
         {
             var post = new Post
             {
-                TopicId = topicId
+                TopicId = postDto.TopicId
             };
             _db.Posts.Add(post);
 
@@ -118,28 +119,26 @@ namespace Forum.DAL.Repositories
             var postContent = new PostContent
             {
                 PostId = post.Id,
-                PostTitle = postTitle,
-                PostDescription = postDescription,
-                ImagePath = imagePath,
-                VideoPath = videoPath
+                PostTitle = postContentDto.PostTitle,
+                PostDescription = postContentDto.PostDescription,
+                ImagePath = postContentDto.ImagePath
             };
             _db.PostContents.Add(postContent);
 
             _db.SaveChanges();
         }
 
-        public void UpdatePost(int id, string newPostTitle, string newPostDescription, string? newImagePath, string? newVideoPath)
+        public void UpdatePost(PostDTO postDto, PostContentDTO postContentDto)
         {
-            var post = GetPost(id);
+            var post = GetPost(postDto.Id);
             var postContent = GetPostContent(post!.Id);
 
             post.UpdatedAt = DateTime.Now;
             _db.Posts.Update(post);
 
-            postContent!.PostTitle = newPostTitle;
-            postContent.PostDescription = newPostDescription;
-            postContent.ImagePath = newImagePath;
-            postContent.VideoPath = newVideoPath;
+            postContent!.PostTitle = postContentDto.PostTitle;
+            postContent.PostDescription = postContentDto.PostDescription;
+            postContent.ImagePath = postContentDto.ImagePath;
             postContent.UpdatedAt = DateTime.Now;
             _db.Posts.Update(post);
             

@@ -1,4 +1,5 @@
-﻿using Forum.Entities;
+﻿using Forum.DAL.DTOs;
+using Forum.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,22 +47,22 @@ namespace Forum.DAL.Repositories
                 .ToList();
         }
 
-        public void CreateCommunity(string communityName)
+        public void CreateCommunity(CommunityDTO dto)
         {
             var community = new Community
             {
-                CommunityName = communityName,
+                CommunityName = dto.CommunityName
             };
 
             _db.Communities.Add(community);
             _db.SaveChanges();
         }
 
-        public void UpdateCommunity(int communityId, string newCommunityName)
+        public void UpdateCommunity(CommunityDTO dto)
         {
-            var community = GetCommunity(communityId);
+            var community = GetCommunity(dto.Id);
 
-            community!.CommunityName = newCommunityName;
+            community!.CommunityName = dto.CommunityName;
             community.UpdatedAt = DateTime.Now;
 
             _db.Communities.Update(community);
@@ -77,9 +78,9 @@ namespace Forum.DAL.Repositories
             _db.SaveChanges();
         }
 
-        public void DeleteCommunity(int communityId)
+        public void DeleteCommunity(CommunityDTO dto)
         {
-            var community = GetCommunity(communityId);
+            var community = GetCommunity(dto.Id);
 
             community!.IsDeleted = true;
             community.DeletedAt = DateTime.Now;

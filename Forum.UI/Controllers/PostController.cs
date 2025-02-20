@@ -1,4 +1,5 @@
 ﻿using Forum.DAL;
+using Forum.DAL.DTOs;
 using Forum.DAL.Repositories;
 using Forum.Entities;
 using Forum.UI.Helpers;
@@ -85,8 +86,7 @@ namespace Forum.UI.ViewModels
                 {
                     PostTitle = postContents[post.Id].PostTitle,
                     PostDescription = postContents[post.Id].PostDescription,
-                    ImagePath = postContents[post.Id].ImagePath,
-                    VideoPath = postContents[post.Id].VideoPath
+                    ImagePath = postContents[post.Id].ImagePath
                 };
 
                 var postViewModel = new PostViewModel(_postLocalizer, _postContentLocalizer)
@@ -150,8 +150,7 @@ namespace Forum.UI.ViewModels
                 {
                     PostTitle = postContents[post.Id].PostTitle,
                     PostDescription = postContents[post.Id].PostDescription,
-                    ImagePath = postContents[post.Id].ImagePath,
-                    VideoPath = postContents[post.Id].VideoPath
+                    ImagePath = postContents[post.Id].ImagePath
                 };
 
                 var postViewModel = new PostViewModel(_postLocalizer, _postContentLocalizer)
@@ -209,8 +208,7 @@ namespace Forum.UI.ViewModels
                     {
                         PostTitle = postContents[post.Id].PostTitle,
                         PostDescription = postContents[post.Id].PostDescription,
-                        ImagePath = postContents[post.Id].ImagePath,
-                        VideoPath = postContents[post.Id].VideoPath
+                        ImagePath = postContents[post.Id].ImagePath
                     };
 
                     var postViewModel = new PostViewModel(_postLocalizer, _postContentLocalizer)
@@ -329,20 +327,19 @@ namespace Forum.UI.ViewModels
                 }
             }
 
-            //if (model.PostContent.VideoFile != null)
-            //{
-            //    try
-            //    {
-            //        model.PostContent.VideoPath = _mediaHelper.SaveVideo(model.PostContent.VideoFile);
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        ModelState.AddModelError("Videofile", ex.Message);
-            //        return View(model);
-            //    }
-            //}
+            var postDto = new PostDTO
+            {
+                TopicId = model.TopicId
+            };
 
-            _postRepository.CreatePost(model.TopicId, model.PostContent.PostTitle, model.PostContent.PostDescription, model.PostContent.ImagePath, model.PostContent.VideoPath);
+            var postContentDto = new PostContentDTO
+            {
+                PostTitle = model.PostContent.PostTitle,
+                PostDescription = model.PostContent.PostDescription,
+                ImagePath = model.PostContent.ImagePath
+            };
+
+            _postRepository.CreatePost(postDto, postContentDto);
             TempData["Success"] = "Post created successfully.";
 
             return RedirectToAction("Index", "Home");
@@ -367,8 +364,7 @@ namespace Forum.UI.ViewModels
             {
                 PostTitle = postContent.PostTitle,
                 PostDescription = postContent.PostDescription,
-                ImagePath = postContent.ImagePath,
-                VideoPath = postContent.VideoPath
+                ImagePath = postContent.ImagePath
             };
 
             var postViewModel = new PostViewModel(_postLocalizer, _postContentLocalizer)
@@ -399,7 +395,19 @@ namespace Forum.UI.ViewModels
                 var postContent = _postRepository.GetPostContent(model.Id);
                 if (postContent == null) return NotFound();
 
-                _postRepository.UpdatePost(post.Id, model.PostContent.PostTitle, model.PostContent.PostDescription, model.PostContent.ImagePath, model.PostContent.VideoPath);
+                var postDto = new PostDTO
+                {
+                    Id = post.Id
+                };
+
+                var postContentDto = new PostContentDTO
+                {
+                    PostTitle = model.PostContent.PostTitle,
+                    PostDescription = model.PostContent.PostDescription,
+                    ImagePath = model.PostContent.ImagePath
+                };
+
+                _postRepository.UpdatePost(postDto, postContentDto);
                 TempData["Success"] = "Post updated successfully.";
 
                 return RedirectToAction("Index", new { communityId = model.CommunityId });

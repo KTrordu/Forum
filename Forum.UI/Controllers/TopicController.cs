@@ -1,7 +1,7 @@
 ﻿using Forum.DAL;
 using Forum.DAL.Repositories;
 using Forum.Entities;
-using Forum.UI.DTOs;
+using Forum.DAL.DTOs;
 using Forum.UI.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -180,7 +180,14 @@ namespace Forum.UI.Controllers
             var community = _communityRepository.GetCommunity(model.CommunityId);
             if (community == null) return NotFound();
 
-            _topicRepository.CreateTopic(model.CommunityId, model.TopicName, model.ParentId);
+            var topicDto = new TopicDTO
+            {
+                CommunityId = model.CommunityId,
+                TopicName = model.TopicName,
+                ParentId = model.ParentId
+            };
+
+            _topicRepository.CreateTopic(topicDto);
             TempData["Success"] = "Topic created successfully.";
 
             return RedirectToAction("Index", new { communityId = model.CommunityId });
@@ -243,7 +250,15 @@ namespace Forum.UI.Controllers
             var topic = _topicRepository.GetTopic(model.Id);
             if (topic == null) return NotFound();
 
-            _topicRepository.UpdateTopic(topic.Id, model.CommunityId, model.TopicName, model.ParentId);
+            var topicDto = new TopicDTO
+            {
+                Id = topic.Id,
+                TopicName = topic.TopicName,
+                CommunityId = model.CommunityId,
+                ParentId = model.ParentId
+            };
+
+            _topicRepository.UpdateTopic(topicDto);
             TempData["Success"] = "Topic updated successfully.";
 
             return RedirectToAction("Index", new { communityId = model.CommunityId });

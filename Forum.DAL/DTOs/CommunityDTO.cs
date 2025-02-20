@@ -1,4 +1,4 @@
-﻿namespace Forum.UI.DTOs
+﻿namespace Forum.DAL.DTOs
 {
     public class CommunityDTO
     {

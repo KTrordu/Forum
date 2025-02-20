@@ -1,6 +1,6 @@
 ﻿using Forum.DAL;
 using Forum.DAL.Repositories;
-using Forum.UI.DTOs;
+using Forum.DAL.DTOs;
 using Forum.UI.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -97,7 +97,14 @@ namespace Forum.UI.Controllers
 
             foreach (var topic in topics)
             {
-                _topicRepository.UpdateTopic(topic.Id, newCommunityId, topic.TopicName);
+                var topicDto = new TopicDTO
+                {
+                    Id = topic.Id,
+                    CommunityId = newCommunityId,
+                    TopicName = topic.TopicName
+                };
+
+                _topicRepository.UpdateTopic(topicDto);
             }
 
             return Json(new { success = true, message = "Community of the topics and posts are updated successfully." });
@@ -124,7 +131,13 @@ namespace Forum.UI.Controllers
 
                 return View(viewModel);
             }
-            _communityRepository.CreateCommunity(model.CommunityName);
+
+            var dto = new CommunityDTO
+            {
+                CommunityName = model.CommunityName
+            };
+
+            _communityRepository.CreateCommunity(dto);
             TempData["Success"] = "Community created successfully.";
 
             return RedirectToAction("Index");
@@ -165,7 +178,13 @@ namespace Forum.UI.Controllers
             var community = _communityRepository.GetCommunity(model.Id);
             if (community == null) return NotFound();
 
-            _communityRepository.UpdateCommunity(community.Id, model.CommunityName);
+            var dto = new CommunityDTO
+            {
+                Id = community.Id,
+                CommunityName = model.CommunityName
+            };
+
+            _communityRepository.UpdateCommunity(dto);
             TempData["Success"] = "Community updated successfully.";
 
             return RedirectToAction("Index");
@@ -185,7 +204,12 @@ namespace Forum.UI.Controllers
             var community = _communityRepository.GetCommunity(communityId);
             if (community == null) return NotFound();
 
-            _communityRepository.DeleteCommunity(community.Id);
+            var dto = new CommunityDTO
+            {
+                Id = community.Id
+            };
+
+            _communityRepository.DeleteCommunity(dto);
             return Json(new { success = true, message = "Community deleted successfully." });
         }
 

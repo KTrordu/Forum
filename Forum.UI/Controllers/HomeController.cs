@@ -6,7 +6,7 @@ using Forum.UI.ViewModels;
 using Forum.DAL.Repositories;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Forum.UI.DTOs;
+using Forum.DAL.DTOs;
 using Forum.Entities;
 using Microsoft.Extensions.Localization;
 
@@ -121,8 +121,7 @@ public class HomeController : Controller
             {
                 PostTitle = postContents[post.Id].PostTitle,
                 PostDescription = postContents[post.Id].PostDescription,
-                ImagePath = postContents[post.Id].ImagePath,
-                VideoPath = postContents[post.Id].VideoPath
+                ImagePath = postContents[post.Id].ImagePath
             };
 
             var postViewModel = new PostViewModel(_postLocalizer, _postContentLocalizer)
@@ -274,8 +273,7 @@ public class HomeController : Controller
             {
                 PostTitle = postContents[post.Id].PostTitle,
                 PostDescription = postContents[post.Id].PostDescription,
-                ImagePath = postContents[post.Id].ImagePath,
-                VideoPath = postContents[post.Id].VideoPath
+                ImagePath = postContents[post.Id].ImagePath
             };
 
             var postViewModel = new PostViewModel(_postLocalizer, _postContentLocalizer)
