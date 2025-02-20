@@ -15,24 +15,29 @@ namespace Forum.UI.ViewModels
         private readonly TopicRepository _topicRepository;
         private readonly CommunityRepository _communityRepository;
         private readonly MediaHelper _mediaHelper;
+        private readonly CommentRepository _commentRepository;
         private readonly IStringLocalizer<PostViewModel> _postLocalizer;
         private readonly IStringLocalizer<PostContentViewModel> _postContentLocalizer;
         private readonly IStringLocalizer<PostListViewModel> _postListLocalizer;
         private readonly IStringLocalizer<PostController> _localizer;
+        private readonly IStringLocalizer<CommentViewModel> _commentLocalizer;
 
         public PostController(PostRepository postRepository, TopicRepository topicRepository, 
-            CommunityRepository communityRepository, MediaHelper mediaHelper, IStringLocalizer<PostViewModel> postLocalizer, 
+            CommunityRepository communityRepository, MediaHelper mediaHelper, 
+            CommentRepository commentRepository, IStringLocalizer<PostViewModel> postLocalizer, 
             IStringLocalizer<PostContentViewModel> postContentLocalizer, IStringLocalizer<PostListViewModel> postListLocalizer,
-            IStringLocalizer<PostController> localizer)
+            IStringLocalizer<PostController> localizer, IStringLocalizer<CommentViewModel> commentLocalizer)
         {
             _postRepository = postRepository;
             _topicRepository = topicRepository;
             _communityRepository = communityRepository;
             _mediaHelper = mediaHelper;
+            _commentRepository = commentRepository;
             _postLocalizer = postLocalizer;
             _postContentLocalizer = postContentLocalizer;
             _postListLocalizer = postListLocalizer;
             _localizer = localizer;
+            _commentLocalizer = commentLocalizer;
         }
 
         //READ: List all posts
@@ -51,16 +56,30 @@ namespace Forum.UI.ViewModels
 
             var postViewModels = new List<PostViewModel>();
             var postContentViewModels = new List<PostContentViewModel>();
+            var commentViewModels = new List<CommentViewModel>();
 
             foreach (var post in posts)
             {
                 var topic = _topicRepository.GetTopic(post.TopicId!.Value);
-
                 if (topic == null) return NotFound();
 
                 var community = _communityRepository.GetCommunity(topic.CommunityId!.Value);
-
                 if (community == null) return NotFound();
+
+                var comments = _commentRepository.GetComments(post.Id);
+                if (comments == null) return NotFound();
+
+                foreach (var comment in comments)
+                {
+                    var commentViewModel = new CommentViewModel
+                    {
+                        Id = comment.Id,
+                        CommentText = comment.CommentText,
+                        PostId = post.Id
+                    };
+
+                    commentViewModels.Add(commentViewModel);
+                }
 
                 var postContentViewModel = new PostContentViewModel(_postContentLocalizer)
                 {
@@ -89,7 +108,8 @@ namespace Forum.UI.ViewModels
             var model = new PostListViewModel(_postListLocalizer)
             {
                 Posts = postViewModels,
-                Contents = postContentViewModels
+                Contents = postContentViewModels,
+                Comments = commentViewModels
             };
 
             return View(model);

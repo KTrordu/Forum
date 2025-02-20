@@ -15,7 +15,7 @@
 		<div asp-validation-summary="All"></div>
 		<div class="mb-3">
 			<label asp-for="CommentText">@Model.CommentTextLabel</label>
-			<textarea asp-for="CommentText" class="form-control" rows="6" placeholder="@Localizer["TypeSomething"]"></textarea>
+			<textarea asp-for="CommentText" class="form-control" rows="3" placeholder="@Localizer["TypeSomething"]"></textarea>
 			<span asp-validation-for="CommentText" class="text-danger"></span>
 		</div>
 		<button type="submit" class="btn btn-primary" style="width:150px">@Localizer["Update"]</button>

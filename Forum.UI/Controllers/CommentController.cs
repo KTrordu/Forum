@@ -109,5 +109,23 @@ namespace Forum.UI.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+
+        //DELETE: GET
+        public IActionResult Delete()
+        {
+            return PartialView("_DeleteCommentModal");
+        }
+
+        //DELETE: POST
+        [HttpPost, ActionName("DeleteComment")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteComment(int commentId)
+        {
+            var comment = _commentRepository.GetComment(commentId);
+            if (comment == null) return NotFound();
+
+            _commentRepository.DeleteComment(comment.Id);
+            return Json(new { success = true, message = "Comment deleted successfully." });
+        }
     }
 }

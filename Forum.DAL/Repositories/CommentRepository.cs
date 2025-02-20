@@ -31,20 +31,18 @@ namespace Forum.DAL.Repositories
                 .ToList();
         }
 
-        public List<Comment>? GetComments(List<int> postIds)
+        public List<Comment>? GetComments(int postId)
         {
-            var commentsList = new List<Comment>();
+            return _db.Comments
+                .Where(c => !c.IsDeleted && c.PostId == postId)
+                .ToList();
+        }
 
-            foreach (var postId in postIds)
-            {
-                var comments = _db.Comments
-                    .Where(c => !c.IsDeleted && c.PostId == postId)
-                    .ToList();
-
-                commentsList.AddRange(comments);
-            }
-
-            return commentsList;
+        public Dictionary<int, Comment>? GetComments(List<int> postIds)
+        {
+            return _db.Comments
+                .Where(c => !c.IsDeleted && postIds.Contains(c.PostId!.Value))
+                .ToDictionary(c => c.PostId!.Value, c => c);
         }
 
         public void CreateComment(CommentDTO dto)
@@ -65,6 +63,18 @@ namespace Forum.DAL.Repositories
 
             comment!.CommentText = dto.CommentText;
             comment.UpdatedAt = DateTime.Now;
+
+            _db.Comments.Update(comment);
+            _db.SaveChanges();
+        }
+
+        public void DeleteComment(int id)
+        {
+            var comment = GetComment(id);
+
+            comment!.IsDeleted = true;
+            comment.DeletedAt = DateTime.Now;
+            comment.UpdatedAt= DateTime.Now;
 
             _db.Comments.Update(comment);
             _db.SaveChanges();

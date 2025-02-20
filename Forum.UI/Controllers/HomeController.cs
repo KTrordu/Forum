@@ -17,13 +17,17 @@ public class HomeController : Controller
     private readonly PostRepository _postRepository;
     private readonly TopicRepository _topicRepository;
     private readonly CommunityRepository _communityRepository;
+    private readonly CommentRepository _commentRepository;
 
-    public HomeController(ILogger<HomeController> logger, PostRepository postRepository, TopicRepository topicRepository, CommunityRepository communityRepository)
+    public HomeController(ILogger<HomeController> logger, PostRepository postRepository, 
+        TopicRepository topicRepository, CommunityRepository communityRepository,
+        CommentRepository commentRepository)
     {
         _logger = logger;
         _postRepository = postRepository;
         _topicRepository = topicRepository;
         _communityRepository = communityRepository;
+        _commentRepository = commentRepository;
     }
 
     public IActionResult Index()
@@ -62,6 +66,7 @@ public class HomeController : Controller
 
         var postViewModels = new List<PostViewModel>();
         var postContentViewModels = new List<PostContentViewModel>();
+        var commentViewModels = new List<CommentViewModel>();
 
         Random random = new Random();
         int postCount = postIds.Count;
@@ -85,6 +90,21 @@ public class HomeController : Controller
 
             var community = _communityRepository.GetCommunity((int)topic.CommunityId!);
             if (community == null) return NotFound();
+
+            var comments = _commentRepository.GetComments(post.Id);
+            if (comments == null) return NotFound();
+
+            foreach (var comment in comments)
+            {
+                var commentViewModel = new CommentViewModel
+                {
+                    Id = comment.Id,
+                    CommentText = comment.CommentText,
+                    PostId = post.Id
+                };
+
+                commentViewModels.Add(commentViewModel);
+            }
 
             var postContentViewModel = new PostContentViewModel
             {
@@ -113,7 +133,8 @@ public class HomeController : Controller
         var model = new PostListViewModel
         {
             Posts = postViewModels,
-            Contents = postContentViewModels
+            Contents = postContentViewModels,
+            Comments = commentViewModels
         };
 
         return View(model);

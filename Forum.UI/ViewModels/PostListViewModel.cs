@@ -29,5 +29,7 @@ namespace Forum.UI.ViewModels
         public List<PostViewModel> Posts { get; set; }
 
         public List<PostContentViewModel> Contents { get; set; }
+
+        public List<CommentViewModel> Comments { get; set; }
     }
 }
