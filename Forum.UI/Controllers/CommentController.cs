@@ -61,9 +61,53 @@ namespace Forum.UI.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        //public IActionResult Edit(int id)
-        //{
+        //UPDATE: GET
+        public IActionResult Edit(int commentId)
+        {
+            var comment = _commentRepository.GetComment(commentId);
+            if (comment == null) return NotFound();
 
-        //}
+            var model = new CommentViewModel(_commentLocalizer)
+            {
+                Id = comment.Id,
+                CommentText = comment.CommentText,
+                PostId = (int)comment.PostId!
+            };
+
+            return View(model);
+        }
+
+        //UPDATE: POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(CommentViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var viewModel = new CommentViewModel(_commentLocalizer)
+                {
+                    Id= model.Id,
+                    CommentText = model.CommentText,
+                    PostId = model.PostId
+                };
+
+                return View(viewModel);
+            }
+
+            var comment = _commentRepository.GetComment(model.Id);
+            if (comment == null) return NotFound();
+
+            var dto = new CommentDTO
+            {
+                Id = comment.Id,
+                CommentText = model.CommentText,
+                PostId = model.PostId
+            };
+
+            _commentRepository.UpdateComment(dto);
+            TempData["Success"] = "Comment updated successfully.";
+
+            return RedirectToAction("Index", "Home");
+        }
     }
 }

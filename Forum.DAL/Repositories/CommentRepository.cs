@@ -17,7 +17,7 @@ namespace Forum.DAL.Repositories
             _db = db;
         }
 
-        public Comment? GetCommunity(int id)
+        public Comment? GetComment(int id)
         {
             return _db.Comments
                 .Where(c => !c.IsDeleted &&  c.Id == id)
@@ -56,6 +56,17 @@ namespace Forum.DAL.Repositories
             };
 
             _db.Comments.Add(comment);
+            _db.SaveChanges();
+        }
+
+        public void UpdateComment(CommentDTO dto)
+        {
+            var comment = GetComment(dto.Id);
+
+            comment!.CommentText = dto.CommentText;
+            comment.UpdatedAt = DateTime.Now;
+
+            _db.Comments.Update(comment);
             _db.SaveChanges();
         }
     }

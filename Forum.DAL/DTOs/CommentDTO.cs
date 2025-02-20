@@ -8,7 +8,7 @@ namespace Forum.DAL.DTOs
 {
     public class CommentDTO
     {
-        public int? Id { get; set; }
+        public int Id { get; set; }
 
         public string CommentText { get; set; }
 

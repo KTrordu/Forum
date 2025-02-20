@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Localization;
+using System.ComponentModel.DataAnnotations;
 
 namespace Forum.UI.ViewModels
 {
@@ -18,7 +19,8 @@ namespace Forum.UI.ViewModels
 
         public string? CommentTextLabel => _localizer?["CommentTextLabel"];
 
-        public int? Id { get; set; }
+        [Required]
+        public int Id { get; set; }
 
         public string CommentText { get; set; }
 
