@@ -117,8 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ChooseATopic" xml:space="preserve">
-    <value>Choose a Topic:</value>
+  <data name="ChooseACommunity" xml:space="preserve">
+    <value>Choose a Community:</value>
   </data>
   <data name="Close" xml:space="preserve">
     <value>Close</value>
@@ -129,11 +129,11 @@
   <data name="DeleteOptions" xml:space="preserve">
     <value>Delete Options</value>
   </data>
-  <data name="DeleteTheTopicButTransferItsPostsToAnotherTopic" xml:space="preserve">
-    <value>Delete the topic but transfer its posts to another topic.</value>
+  <data name="DeleteTheCommunityButTransferItsTopicsAndPostsToAnotherCommunity" xml:space="preserve">
+    <value>Delete the community but transfer its topics and posts to another community.</value>
   </data>
-  <data name="DeleteTheTopicWithItsPosts" xml:space="preserve">
-    <value>Delete the topic with its posts.</value>
+  <data name="DeleteTheCommunityWithItsTopicsAndPosts" xml:space="preserve">
+    <value>Delete the community with its topics and posts.</value>
   </data>
   <data name="PleaseSelectTheDeleteOption" xml:space="preserve">
     <value>Please select the delete option:</value>
