@@ -71,7 +71,7 @@ namespace Forum.UI.ViewModels
 
                 foreach (var comment in comments)
                 {
-                    var commentViewModel = new CommentViewModel
+                    var commentViewModel = new CommentViewModel(_commentLocalizer)
                     {
                         Id = comment.Id,
                         CommentText = comment.CommentText,

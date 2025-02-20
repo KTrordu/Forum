@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Forum.UI.DTOs;
 using Forum.Entities;
+using Microsoft.Extensions.Localization;
 
 namespace Forum.UI.Controllers;
 
@@ -18,16 +19,26 @@ public class HomeController : Controller
     private readonly TopicRepository _topicRepository;
     private readonly CommunityRepository _communityRepository;
     private readonly CommentRepository _commentRepository;
+    private readonly IStringLocalizer<PostViewModel> _postLocalizer;
+    private readonly IStringLocalizer<PostContentViewModel> _postContentLocalizer;
+    private readonly IStringLocalizer<PostListViewModel> _postListLocalizer;
+    private readonly IStringLocalizer<CommentViewModel> _commentLocalizer;
 
     public HomeController(ILogger<HomeController> logger, PostRepository postRepository, 
         TopicRepository topicRepository, CommunityRepository communityRepository,
-        CommentRepository commentRepository)
+        CommentRepository commentRepository, IStringLocalizer<PostViewModel> postLocalizer,
+        IStringLocalizer<PostContentViewModel> postContentLocalizer, IStringLocalizer<PostListViewModel> postListLocalizer,
+        IStringLocalizer<CommentViewModel> commentLocalizer)
     {
         _logger = logger;
         _postRepository = postRepository;
         _topicRepository = topicRepository;
         _communityRepository = communityRepository;
         _commentRepository = commentRepository;
+        _postLocalizer = postLocalizer;
+        _postContentLocalizer = postContentLocalizer;
+        _postListLocalizer = postListLocalizer;
+        _commentLocalizer = commentLocalizer;
     }
 
     public IActionResult Index()
@@ -96,7 +107,7 @@ public class HomeController : Controller
 
             foreach (var comment in comments)
             {
-                var commentViewModel = new CommentViewModel
+                var commentViewModel = new CommentViewModel(_commentLocalizer)
                 {
                     Id = comment.Id,
                     CommentText = comment.CommentText,
@@ -106,7 +117,7 @@ public class HomeController : Controller
                 commentViewModels.Add(commentViewModel);
             }
 
-            var postContentViewModel = new PostContentViewModel
+            var postContentViewModel = new PostContentViewModel(_postContentLocalizer)
             {
                 PostTitle = postContents[post.Id].PostTitle,
                 PostDescription = postContents[post.Id].PostDescription,
@@ -114,7 +125,7 @@ public class HomeController : Controller
                 VideoPath = postContents[post.Id].VideoPath
             };
 
-            var postViewModel = new PostViewModel
+            var postViewModel = new PostViewModel(_postLocalizer, _postContentLocalizer)
             {
                 Id = post.Id,
                 PostContent = postContentViewModel,
@@ -130,7 +141,7 @@ public class HomeController : Controller
             postContentViewModels.Add(postContentViewModel);
         }
 
-        var model = new PostListViewModel
+        var model = new PostListViewModel(_postListLocalizer)
         {
             Posts = postViewModels,
             Contents = postContentViewModels,
@@ -233,17 +244,33 @@ public class HomeController : Controller
         var postContents = _postRepository.GetPostContents(posts);
         if (postContents == null) return NotFound();
 
-        var model = new PostListViewModel
+        var model = new PostListViewModel(_postListLocalizer)
         {
             TopicId = topic.Id,
             TopicName = topic.TopicName,
             Posts = new List<PostViewModel>(),
-            Contents = new List<PostContentViewModel>()
+            Contents = new List<PostContentViewModel>(),
+            Comments = new List<CommentViewModel>()
         };
 
         foreach (var post in posts)
         {
-            var postContentViewModel = new PostContentViewModel
+            var comments = _commentRepository.GetComments(post.Id);
+            if (comments == null) return NotFound();
+
+            foreach (var comment in comments)
+            {
+                var commentViewModel = new CommentViewModel(_commentLocalizer)
+                {
+                    Id = comment.Id,
+                    CommentText = comment.CommentText,
+                    PostId = post.Id
+                };
+
+                model.Comments.Add(commentViewModel);
+            }
+
+            var postContentViewModel = new PostContentViewModel(_postContentLocalizer)
             {
                 PostTitle = postContents[post.Id].PostTitle,
                 PostDescription = postContents[post.Id].PostDescription,
@@ -251,7 +278,7 @@ public class HomeController : Controller
                 VideoPath = postContents[post.Id].VideoPath
             };
 
-            var postViewModel = new PostViewModel
+            var postViewModel = new PostViewModel(_postLocalizer, _postContentLocalizer)
             {
                 Id = post.Id,
                 CommunityId = community.Id,

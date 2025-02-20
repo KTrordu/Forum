@@ -27,9 +27,5 @@ namespace Forum.UI.ViewModels
         public string CommentText { get; set; }
 
         public int PostId { get; set; }
-
-        public bool IsLiked { get; set; } = false;
-
-        public DateTime CreatedAt { get; set; }
     }
 }

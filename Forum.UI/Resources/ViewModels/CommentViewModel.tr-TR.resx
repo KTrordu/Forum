@@ -117,40 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AddComment" xml:space="preserve">
-    <value>Add Comment</value>
-  </data>
-  <data name="BackToCommunities" xml:space="preserve">
-    <value>Back to Communities</value>
-  </data>
-  <data name="Community" xml:space="preserve">
-    <value>Community</value>
-  </data>
-  <data name="CreatedAt" xml:space="preserve">
-    <value>Created At</value>
-  </data>
-  <data name="Delete" xml:space="preserve">
-    <value>Delete</value>
-  </data>
-  <data name="Edit" xml:space="preserve">
-    <value>Edit</value>
-  </data>
-  <data name="Like" xml:space="preserve">
-    <value>Like</value>
-  </data>
-  <data name="Liking" xml:space="preserve">
-    <value>Like</value>
-  </data>
-  <data name="Posts" xml:space="preserve">
-    <value>Posts</value>
-  </data>
-  <data name="PostSomething" xml:space="preserve">
-    <value>Post Something</value>
-  </data>
-  <data name="Topic" xml:space="preserve">
-    <value>Topic</value>
-  </data>
-  <data name="Unlike" xml:space="preserve">
-    <value>Unlike</value>
+  <data name="CommentTextLabel" xml:space="preserve">
+    <value>Yorum Metni</value>
   </data>
 </root>

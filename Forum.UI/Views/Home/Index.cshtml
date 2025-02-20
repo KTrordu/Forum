@@ -53,9 +53,9 @@
                         {
                             @if (comment.PostId == post.Id)
                             {
-                                <div id="comment-@comment.Id" class="col-12 mb-2 d-flex" style="border: 1px solid gray; border-radius: 10px;">
-                                    <p class="col-10" style="height: 6vw;max-height: 6vw; overflow-y: auto;">@comment.CommentText</p>
-                                    <div class="col-2 d-flex flex-column justify-content-between">
+                                <div id="comment-@comment.Id" class="col-12 mb-2 d-flex" style="border: 1px solid gray; border-radius: 10px;padding: 0;padding-left: 1vw;padding-right: 0.1vw;">
+                                    <p class="col-9" style="height: 6vw;max-height: 6vw; overflow-y: auto;margin: 0;">@comment.CommentText</p>
+                                    <div class="col-3 d-flex flex-column justify-content-between">
                                         <a asp-controller="Comment" asp-action="Edit" asp-route-commentId="@comment.Id" class="btn btn-warning btn-sm">
                                             @Localizer["Edit"]
                                         </a>
