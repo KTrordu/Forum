@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Forum.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250220122751_initial")]
+    [Migration("20250221115059_initial")]
     partial class initial
     {
         /// <inheritdoc />
@@ -160,9 +160,6 @@ namespace Forum.DAL.Migrations
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("VideoPath")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

@@ -141,11 +141,27 @@ namespace Forum.UI.ViewModels
                 TopicId = topic.Id,
                 TopicName = topic.TopicName,
                 Posts = new List<PostViewModel> { },
-                Contents = new List<PostContentViewModel> { }
+                Contents = new List<PostContentViewModel> { },
+                Comments = new List<CommentViewModel> { }
             };
 
             foreach (var post in posts)
             {
+                var comments = _commentRepository.GetComments(post.Id);
+                if (comments == null) return NotFound();
+
+                foreach (var comment in comments)
+                {
+                    var commentViewModel = new CommentViewModel(_commentLocalizer)
+                    {
+                        Id = comment.Id,
+                        CommentText = comment.CommentText,
+                        PostId = post.Id
+                    };
+
+                    model.Comments.Add(commentViewModel);
+                }
+
                 var postContentViewModel = new PostContentViewModel(_postContentLocalizer)
                 {
                     PostTitle = postContents[post.Id].PostTitle,
@@ -186,7 +202,8 @@ namespace Forum.UI.ViewModels
                 CommunityId = community.Id,
                 CommunityName = community.CommunityName,
                 Posts = new List<PostViewModel> {},
-                Contents = new List<PostContentViewModel> {}
+                Contents = new List<PostContentViewModel> {},
+                Comments = new List<CommentViewModel> { }
             };
 
             foreach (var topic in topics)
@@ -204,6 +221,21 @@ namespace Forum.UI.ViewModels
 
                 foreach (var post in posts)
                 {
+                    var comments = _commentRepository.GetComments(post.Id);
+                    if (comments == null) return NotFound();
+
+                    foreach (var comment in comments)
+                    {
+                        var commentViewModel = new CommentViewModel(_commentLocalizer)
+                        {
+                            Id = comment.Id,
+                            CommentText = comment.CommentText,
+                            PostId = post.Id
+                        };
+
+                        model.Comments.Add(commentViewModel);
+                    }
+
                     var postContentViewModel = new PostContentViewModel(_postContentLocalizer)
                     {
                         PostTitle = postContents[post.Id].PostTitle,
